@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carlsberg Sale Tracking</title>
+  <title>Carlsberg Sale Tracking - Team Hồ Đức Lợi</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Thư viện đọc Excel -->
+  <!-- Thư viện đọc & xuất Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Thư viện Supabase Cloud -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -57,10 +57,10 @@
   <!-- THANH CHUYỂN TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
-      📅 SỐ BÁN TOTAL
+      📅 SỐ BÁN HÀNG NGÀY
     </button>
     <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
-      🎯 OLS TRƯNG BÀY BIA
+      🎯 ĐIỂM BÁN TRƯNG BÀY BIA
     </button>
   </div>
 
@@ -235,12 +235,35 @@
         <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
           ⚡ XÁC NHẬN CẬP NHẬT
         </button>
+
+        <!-- KHU VỰC KHÓA BÍ MẬT TẢI FILE TỪ CLOUD (PIN: 8888) -->
+        <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+          <span class="text-[11px] text-gray-400 font-medium">Bảo mật hệ thống</span>
+          <button onclick="promptExportFiles()" class="text-base p-1.5 rounded-full hover:bg-amber-100 active:scale-90 transition-all select-none" title="Mở khóa tải file">
+            🍺
+          </button>
+        </div>
+
+        <!-- Khối chứa 2 nút tải file khi nhập đúng PIN 8888 -->
+        <div id="exportActionBox" class="hidden space-y-2 pt-2 bg-amber-50/60 p-3 rounded-2xl border border-amber-200/70">
+          <p class="text-[11px] font-bold text-amber-900 text-center">🔓 ĐÃ MỞ KHÓA TẢI FILE CLOUD</p>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="downloadCloudFile('TRACKING')" class="py-2 px-2 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[11px] shadow-sm flex items-center justify-center gap-1 active:scale-95 transition-all">
+              📥 File Tracking
+            </button>
+            <button onclick="downloadCloudFile('SEC')" class="py-2 px-2 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[11px] shadow-sm flex items-center justify-center gap-1 active:scale-95 transition-all">
+              📥 File SEC-06
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script>
     const ADMIN_PIN = "6868";
+    const EXPORT_PIN = "8888"; // Mã mở khóa tải file
     const CASE_VOLUME = 0.0792;
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
@@ -365,6 +388,62 @@
       } else {
         alert("Mã PIN không đúng!");
         document.getElementById('inputPin').value = '';
+      }
+    }
+
+    // MỞ KHÓA TẢI FILE CLOUD (PIN: 8888)
+    function promptExportFiles() {
+      const pin = prompt("Nhập mật khẩu mở khóa tải file:");
+      if (pin === EXPORT_PIN) {
+        document.getElementById('exportActionBox').classList.remove('hidden');
+        alert("Mở khóa thành công! Bạn có thể chọn file để tải về máy.");
+      } else if (pin !== null) {
+        alert("Mật khẩu không chính xác!");
+      }
+    }
+
+    // XUẤT VÀ TẢI FILE EXCEL TRỰC TIẾP TỪ CLOUD
+    function downloadCloudFile(type) {
+      if (type === 'TRACKING') {
+        if (!MASTER || MASTER.length === 0) {
+          alert("Không có dữ liệu Tracking trên Cloud để tải!");
+          return;
+        }
+        // Chuẩn hóa dữ liệu sang bảng Excel đẹp mắt
+        const exportData = MASTER.map(m => ({
+          "Mã Chương Trình": m.prog,
+          "Mã Điểm Bán": m.code,
+          "Tên Điểm Bán": m.name,
+          "SR Quản Lý": m.sr,
+          "Level": m.level,
+          "Target Huda (HL)": m.tarHuda,
+          "Target Premium (HL)": m.tarPre,
+          "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
+        }));
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Tracking Master");
+        XLSX.writeFile(wb, `Tracking_Master_Backup_${new Date().toISOString().slice(0,10)}.xlsx`);
+      } else if (type === 'SEC') {
+        if (!SEC_ORDERS || SEC_ORDERS.length === 0) {
+          alert("Không có dữ liệu đơn SEC-06 trên Cloud để tải!");
+          return;
+        }
+        const exportData = SEC_ORDERS.map(s => ({
+          "Ngày Đặt": s.date,
+          "SR": s.sr,
+          "Mã Điểm Bán": s.code,
+          "Tên Điểm Bán": s.name,
+          "Brand": s.brand,
+          "Sản Phẩm": s.product,
+          "Phân Loại": s.category,
+          "Sản Lượng (HL)": s.vol,
+          "Số Thùng": s.qty
+        }));
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "SEC-06 Detail");
+        XLSX.writeFile(wb, `SEC06_Daily_Backup_${new Date().toISOString().slice(0,10)}.xlsx`);
       }
     }
 
@@ -578,9 +657,7 @@
         document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
       }
 
-      // ==========================================
       // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY
-      // ==========================================
       let listDaily = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       if (selectedDate !== "ALL") {
         listDaily = listDaily.filter(o => o.date === selectedDate);
@@ -624,7 +701,6 @@
       document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} th)`;
       document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} th)`;
 
-      // Phân rã Brand Premium
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
       if (Object.keys(preBrandMap).length === 0) {
@@ -638,7 +714,6 @@
         });
       }
 
-      // Render danh sách Outlet
       const aggBox = document.getElementById('aggregatedOutletList');
       aggBox.innerHTML = '';
       const sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
@@ -676,7 +751,6 @@
         aggBox.appendChild(detailCard);
       });
 
-      // Render Khuyến mãi
       let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
       if (selectedDate !== "ALL") {
         promoList = promoList.filter(p => p.date === selectedDate);
@@ -715,9 +789,7 @@
         });
       }
 
-      // ==========================================
       // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA
-      // ==========================================
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -743,7 +815,6 @@
         const tarTot = m.tarHuda + m.tarPre;
 
         // CÔNG THỨC ĐẠT TARGET:
-        // Đạt cả hai dòng HOẶC (Tổng thực bán >= Target tổng VÀ Premium chiếm > 50% tổng thực bán)
         const condStandard = (actH >= m.tarHuda) && (actP >= m.tarPre);
         const condPreDominant = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) > 0.5);
         const isPass = condStandard || condPreDominant;
@@ -753,7 +824,6 @@
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
-        // HIỂN THỊ SỐ THÙNG THIẾU CHUẨN XÁC THEO TARGET
         let missingNotice = '';
         if (isPass) {
           missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
@@ -778,7 +848,7 @@
         });
       });
 
-      // SẮP XẾP: CHƯA ĐẠT LÊN TRÊN, ĐÃ ĐẠT XUỐNG DƯỚI
+      // Sắp xếp Chưa Đạt lên trên, Đã Đạt xuống dưới
       preparedList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
         return a.isPass ? 1 : -1;
