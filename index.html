@@ -37,7 +37,7 @@
     </button>
   </div>
 
-  <!-- BỘ LỌC TÊN SR (TEAM 9 THÀNH VIÊN) -->
+  <!-- BỘ LỌC TÊN SR -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
     <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
@@ -229,13 +229,13 @@
       </div>
 
       <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs">
-        <div class="bg-amber-50/70 p-2 rounded-xl border border-amber-100">
+        <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100">
           <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
           <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Premium</span>
         </div>
-        <div class="bg-emerald-50/70 p-2 rounded-xl border border-emerald-100">
+        <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
           <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
-          <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda lon 20</span>
+          <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
         </div>
       </div>
     </div>
@@ -308,8 +308,8 @@
   <script>
     const ADMIN_PIN = "6868";
     const EXPORT_PIN = "8888";
-    const CASE_VOLUME = 0.0792;
-    const HUDA_CAN20_VOL = 0.066;
+    const CASE_VOLUME = 0.0792;       // 1 thùng tiêu chuẩn (24x330ml) = 0.0792 HL
+    const HUDA_CAN20_VOL = 0.066;      // 1 thùng Huda lon 20x330ml = 0.066 HL
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
@@ -321,17 +321,18 @@
 
     let currentLFChannel = "ALL";
 
-    // CHUẨN HÓA TÊN SR - PHÂN BIỆT RÕ RÀNG NGUYỄN HOÀNG TUẤN VS PHAN TUẤN VŨ
+    // CHUẨN HÓA TÊN SR - PHÂN BIỆT TUYỆT ĐỐI NGUYỄN HOÀNG TUẤN VỚI PHAN TUẤN VŨ
     function normalizeSR(name) {
       if (!name) return "";
       const s = String(name).trim();
       const sLower = s.toLowerCase();
 
-      // Nếu là Phan Tuấn Vũ thì giữ nguyên, không nhận nhầm vào Nguyễn Hoàng Tuấn
+      // Nếu là Phan Tuấn Vũ (Vu2 Phan Tuan) thì loại trừ
       if (sLower.includes("phan tuan vu") || sLower.includes("vu2") || sLower.includes("phan tuấn vũ")) {
         return "Vu2 Phan Tuan";
       }
 
+      // Chỉ nhận đúng Nguyễn Hoàng Tuấn
       if (sLower.includes("tuan nguyen hoang") || sLower.includes("nguyễn hoàng tuấn") || sLower.includes("nguyen hoang tuan")) {
         return "Tuan Nguyen Hoang";
       }
@@ -501,7 +502,7 @@
           "Kênh Phân Loại": l.channelType,
           "Mô Tả Kênh": l.channelDesc,
           "Huyện": l.district,
-          "Target Thùng": l.tarCases,
+          "Target Thùng TC": l.tarCases,
           "Target HL": l.tarHL
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -628,11 +629,10 @@
           });
         }
 
-        // 2. ĐỌC SHEET LISTING FEE (QUÉT TUYỆT ĐỐI CHUẨN XÁC THEO Ô EXCEL)
+        // 2. ĐỌC SHEET LISTING FEE (QUÉT TUYỆT ĐỐI CHUẨN XÁC)
         const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
         if (sLFName) {
           const wsLF = wbTrack.Sheets[sLFName];
-          // Bắt buộc quét từ ô A1 để không bao giờ bị lệch cột
           const rawLF = XLSX.utils.sheet_to_json(wsLF, { header: 1, range: 0, defval: "" });
           LISTING_FEE = [];
 
@@ -640,7 +640,6 @@
             const row = rawLF[r];
             if (!row || row.length === 0) continue;
 
-            // Kiểm tra xem dòng này có phải của SS Hồ Đức Lợi hay không
             let isHDL = false;
             let dragonCode = "";
             let rawSR = "";
@@ -657,7 +656,6 @@
               }
               if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
                 dragonCode = cell;
-                // Vị trí chuẩn trong dòng:
                 rawSR = String(row[c + 1] || '').trim();
                 rawOutlet = String(row[c + 2] || '').trim();
                 onOff = String(row[c + 3] || row[c + 4] || '').trim().toUpperCase();
@@ -667,7 +665,6 @@
               }
             }
 
-            // Chỉ lấy đúng điểm bán có mã và thuộc SS Hồ Đức Lợi
             if (isHDL && dragonCode) {
               let channelType = "TONT";
               if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
@@ -676,14 +673,16 @@
                 channelType = "TONT";
               }
 
-              // QUY TẮC CHỈ TIÊU CHUẨN:
-              // - TONT (Quán nhậu): Tối thiểu 15 thùng Premium
-              // - TOFT (Tạp hóa): Tối thiểu 30 thùng Huda lon 20
+              // QUY TẮC TARGET LISTING FEE CHUẨN:
+              // - TONT (Quán nhậu): Tối thiểu 15 thùng Premium tiêu chuẩn (15 * 0.0792 = 1.188 HL)
+              // - TOFT (Tạp hóa): Tối thiểu 30 thùng Huda tiêu chuẩn (30 * 0.0792 = 2.376 HL)
               let tarCases = 15;
               if (channelType === "TONT") {
                 tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
+                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
               } else {
-                tarCases = Math.max(30, Math.round(tarHL / HUDA_CAN20_VOL) || 30);
+                tarCases = Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
+                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
               }
 
               LISTING_FEE.push({
@@ -1009,8 +1008,13 @@
         const actTot = actH + actP;
         const tarTot = m.tarHuda + m.tarPre;
 
-        const condStandard = (actH >= m.tarHuda) && (actP >= m.tarPre);
-        const condPreDominant = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) > 0.5);
+        // Làm tròn 2 số thập phân để so sánh chuẩn xác với ngưỡng Target (ví dụ 0.40 HL)
+        const roundTarH = Math.round(m.tarHuda * 100) / 100;
+        const roundTarP = Math.round(m.tarPre * 100) / 100;
+        const roundTarTot = Math.round(tarTot * 100) / 100;
+
+        const condStandard = (actH >= roundTarH) && (actP >= roundTarP);
+        const condPreDominant = (actTot >= roundTarTot) && (roundTarTot > 0) && ((actP / actTot) > 0.5);
         const isPass = condStandard || condPreDominant;
 
         if (isPass) passCount++;
@@ -1018,19 +1022,24 @@
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
-        const pctOutlet = tarTot > 0 ? Math.min(100, Math.round((actTot / tarTot) * 100)) : 0;
+        // Hiển thị % THỰC TẾ (VƯỢT 100% CŨNG HIỂN THỊ CỤ THỂ)
+        const pctOutlet = tarTot > 0 ? Math.round((actTot / tarTot) * 100) : 0;
 
         let missingNotice = '';
         if (isPass) {
           missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctOutlet}%)</span>`;
         } else {
-          const gapPreHL = Math.max(0, m.tarPre - actP);
+          const gapPreHL = Math.max(0, roundTarP - actP);
           const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
-          const gapHudaHL = Math.max(0, m.tarHuda - actH);
-          const gapHudaCan20 = Math.ceil(gapHudaHL / HUDA_CAN20_VOL);
+          
+          // QUY TẮC BẢO ĐẢM KHÔNG BỊ HỤT HL CHO HUDA LON 20:
+          // Gap tính theo mức làm tròn 0.40 HL để bảo đảm tính đủ 7 thùng (không bị 6 thùng hụt)
+          const gapHudaHL = Math.max(0, roundTarH - actH);
+          const gapHudaCan20 = Math.ceil((gapHudaHL - 0.0001) / HUDA_CAN20_VOL) + 1 > Math.ceil(gapHudaHL / HUDA_CAN20_VOL) ? Math.ceil(gapHudaHL / HUDA_CAN20_VOL) : Math.ceil(gapHudaHL / HUDA_CAN20_VOL);
+          const safeHudaCases = Math.ceil(Math.round(gapHudaHL * 1000) / 1000 / HUDA_CAN20_VOL);
 
           let missingParts = [];
-          if (gapHudaCan20 > 0) missingParts.push(`Thiếu <b>${gapHudaCan20}</b> th Huda lon 20`);
+          if (safeHudaCases > 0) missingParts.push(`Thiếu <b>${safeHudaCases}</b> th Huda lon 20`);
           if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
           missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')} (${pctOutlet}%)</span>`;
         }
@@ -1071,7 +1080,7 @@
           </div>
 
           <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-            <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${pct}%"></div>
+            <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, pct)}%"></div>
           </div>
 
           <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
@@ -1092,7 +1101,7 @@
       const pctPass = listMaster.length ? Math.round((passCount / listMaster.length) * 100) : 0;
       document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
       document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${listMaster.length}`;
-      document.getElementById('barOutlet').style.width = `${pctPass}%`;
+      document.getElementById('barOutlet').style.width = `${Math.min(100, pctPass)}%`;
 
       document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
       document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
@@ -1114,41 +1123,54 @@
       const preparedLFList = [];
 
       listLF.forEach(l => {
-        let actCount = 0;
         let isPassLF = false;
-        let unitText = "";
+        let pctLF = 0;
+        let statusDisplay = "";
         let missingNoticeLF = "";
 
         if (l.channelType === "TONT") {
-          // TONT (Quán nhậu): Tính theo Premium (≥ 15 thùng)
-          actCount = salesPreQtyByOutlet[l.code] || 0;
-          unitText = "th Pre";
+          // TONT (Quán nhậu): Tính theo Premium (Target: ≥ 15 th Pre)
+          const actCount = salesPreQtyByOutlet[l.code] || 0;
           isPassLF = actCount >= l.tarCases;
-          const pctLF = Math.min(100, Math.round((actCount / l.tarCases) * 100));
+          pctLF = l.tarCases > 0 ? Math.round((actCount / l.tarCases) * 100) : 0;
+
+          statusDisplay = `Thực bán: <b class="text-gray-900">${actCount}</b>/${l.tarCases} th Pre`;
           if (isPassLF) {
             missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
           } else {
             const gap = l.tarCases - actCount;
             missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Pre (${pctLF}%)</span>`;
           }
-          preparedLFList.push({ item: l, actCount, isPass: isPassLF, pct: pctLF, unitText, missingNotice: missingNoticeLF });
         } else {
-          // TOFT (Tạp hóa): Tính theo Huda lon 20 (≥ 30 thùng)
-          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          actCount = salesHudaCan20ByOutlet[l.code] || Math.round(hudaHL / HUDA_CAN20_VOL);
-          unitText = "th Huda lon 20";
-          isPassLF = actCount >= l.tarCases;
-          const pctLF = Math.min(100, Math.round((actCount / l.tarCases) * 100));
+          // TOFT (Tạp hóa): Target chuẩn: ≥ 30 th Huda (Tiêu chuẩn 24x330ml = 2.376 HL)
+          // Thực tế đang bán Huda lon 20x330ml (0.066 HL/thùng).
+          const actHudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+          // Quy đổi số thùng tiêu chuẩn đã đạt được
+          const actCasesTC = Math.round((actHudaHL / CASE_VOLUME) * 10) / 10;
+          isPassLF = actHudaHL >= (l.tarHL - 0.001);
+          pctLF = l.tarHL > 0 ? Math.round((actHudaHL / l.tarHL) * 100) : 0;
+
+          statusDisplay = `Thực bán: <b class="text-gray-900">${actCasesTC}</b>/${l.tarCases} th Huda TC <span class="text-gray-400">(${actHudaHL.toFixed(2)} HL)</span>`;
+
           if (isPassLF) {
             missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
           } else {
-            const gap = l.tarCases - actCount;
-            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Huda lon 20 (${pctLF}%)</span>`;
+            // QUY ĐỔI CHUẨN XÁC RA SỐ THÙNG HUDA LON 20 CẦN BÙ ĐỂ TRÁNH BỊ HỤT HL
+            const gapHL = Math.max(0, l.tarHL - actHudaHL);
+            const needCan20 = Math.ceil(gapHL / HUDA_CAN20_VOL);
+            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${needCan20}</b> th Huda lon 20 (${pctLF}%)</span>`;
           }
-          preparedLFList.push({ item: l, actCount, isPass: isPassLF, pct: pctLF, unitText, missingNotice: missingNoticeLF });
         }
 
         if (isPassLF) passLFCount++;
+
+        preparedLFList.push({
+          item: l,
+          isPass: isPassLF,
+          pct: pctLF,
+          statusDisplay: statusDisplay,
+          missingNotice: missingNoticeLF
+        });
       });
 
       preparedLFList.sort((a, b) => {
@@ -1162,7 +1184,7 @@
       if (preparedLFList.length === 0) {
         lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee cho nhân viên này.</div>`;
       } else {
-        preparedLFList.forEach(({ item: l, actCount, isPass, pct, unitText, missingNotice }) => {
+        preparedLFList.forEach(({ item: l, isPass, pct, statusDisplay, missingNotice }) => {
           const card = document.createElement('div');
           card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
           card.innerHTML = `
@@ -1179,14 +1201,13 @@
               </div>
             </div>
 
+            <!-- Thanh tiến độ % -->
             <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${pct}%"></div>
+              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, pct)}%"></div>
             </div>
 
             <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
-              <div class="text-[11px] text-gray-500 space-x-2">
-                <span>Thực bán: <b class="text-gray-900">${actCount}</b>/${l.tarCases} ${unitText}</span>
-              </div>
+              <div class="text-[11px] text-gray-500">${statusDisplay}</div>
               <div>${missingNotice}</div>
             </div>
           `;
@@ -1197,7 +1218,7 @@
       const pctLFPass = listLF.length ? Math.round((passLFCount / listLF.length) * 100) : 0;
       document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
       document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
-      document.getElementById('barLF').style.width = `${pctLFPass}%`;
+      document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
       document.getElementById('txtLFListCount').textContent = `${listLF.length} điểm bán`;
     }
   </script>
