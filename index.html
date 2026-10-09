@@ -27,7 +27,7 @@
         🍺 Carlsberg Sale Tracking
       </h1>
       <div class="flex items-center gap-2 mt-0.5">
-        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu từ mây...</p>
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang đồng bộ dữ liệu...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
         <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
@@ -37,11 +37,19 @@
     </button>
   </div>
 
-  <!-- BỘ LỌC TÊN SR -->
+  <!-- BỘ LỌC TÊN SR (CHỈ LỌC 8 BẠN TRONG TEAM) -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
-    <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
+    <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (TEAM LHN):</label>
     <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
-      <option value="ALL">-- Tất cả nhân viên --</option>
+      <option value="ALL">-- Toàn bộ Team --</option>
+      <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
+      <option value="Thuong Hoang Van">Hoàng Văn Thưởng</option>
+      <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
+      <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
+      <option value="Nam Le Hoang">Lê Hoàng Nam</option>
+      <option value="Phu Tran Trong">Trần Trọng Phú</option>
+      <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
+      <option value="Lien Dinh Thi">Đinh Thị Liên</option>
     </select>
   </div>
 
@@ -57,32 +65,59 @@
 
   <!-- ================= TAB 1: SỐ BÁN HÀNG NGÀY ================= -->
   <div id="tab1Content" class="space-y-3">
-    <!-- Card Tổng sản lượng & Quy đổi -->
+    <!-- Bộ lọc ngày thu gọn -->
+    <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
+      <summary class="p-3 flex justify-between items-center cursor-pointer select-none bg-blue-50/50">
+        <span class="text-xs font-bold text-[#1F4E79] flex items-center gap-1.5">
+          🗓️ <span id="lblSelectedDate">Lọc theo ngày: Tất cả</span>
+        </span>
+        <span class="text-xs text-blue-600 font-bold">Tùy chọn ▼</span>
+      </summary>
+      <div class="p-3 border-t border-gray-100 bg-white">
+        <div class="flex gap-2 items-center">
+          <select id="dateFilter" onchange="renderAll()" class="flex-1 p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
+            <option value="ALL">-- Tất cả các ngày (Tổng) --</option>
+          </select>
+          <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold">Reset</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Card Tổng sản lượng to rõ -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
-      <div class="flex justify-between items-center mb-2">
-        <span class="text-xs font-bold text-gray-500">📦 TỔNG SẢN LƯỢNG BÁN RA</span>
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📦 Tổng Sản Lượng Bán Ra</span>
         <span class="text-[10px] font-bold text-gray-400">1 Thùng QC = 0.0792 HL</span>
       </div>
-      <div class="grid grid-cols-2 gap-3 pt-1">
-        <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-100">
-          <p class="text-[10px] font-bold text-blue-700 uppercase">Tổng sản lượng (HL)</p>
-          <p id="totalDailyHL" class="text-xl font-extrabold text-[#1F4E79] mt-0.5">0.00</p>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <div class="bg-blue-50/90 p-3.5 rounded-2xl border border-blue-100">
+          <p class="text-[11px] font-bold text-blue-700 uppercase">Sản Lượng (HL)</p>
+          <p id="totalDailyHL" class="text-2xl font-black text-[#1F4E79] mt-0.5 tracking-tight">0.00</p>
         </div>
-        <div class="bg-amber-50/80 p-3 rounded-xl border border-amber-100">
-          <p class="text-[10px] font-bold text-amber-800 uppercase">Quy đổi két / thùng</p>
-          <p id="totalDailyCases" class="text-xl font-extrabold text-amber-700 mt-0.5">0</p>
+        <div class="bg-amber-50/90 p-3.5 rounded-2xl border border-amber-100">
+          <p class="text-[11px] font-bold text-amber-800 uppercase">Két / Thùng QC</p>
+          <p id="totalDailyCases" class="text-2xl font-black text-amber-700 mt-0.5 tracking-tight">0</p>
         </div>
       </div>
 
-      <div class="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <span class="text-gray-500 font-semibold block">🍺 Mainstream:</span>
-          <span id="txtMainstreamSum" class="font-bold text-emerald-700">0.00 HL (0 thùng)</span>
+      <div class="mt-3 pt-3 border-t border-gray-100 space-y-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500 font-semibold">🍺 Mainstream:</span>
+          <span id="txtMainstreamSum" class="font-extrabold text-emerald-700 text-sm">0.00 HL (0 th)</span>
         </div>
-        <div>
-          <span class="text-gray-500 font-semibold block">👑 Premium:</span>
-          <span id="txtPremiumSum" class="font-bold text-amber-600">0.00 HL (0 thùng)</span>
-        </div>
+        
+        <!-- Premium bấm xem Brand -->
+        <details class="bg-amber-50/40 rounded-xl border border-amber-100/60 overflow-hidden">
+          <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none">
+            <span class="text-amber-800 font-bold flex items-center gap-1">
+              👑 Premium: <span id="txtPremiumSum" class="ml-1 text-sm font-black text-amber-600">0.00 HL</span>
+            </span>
+            <span class="text-[10px] text-amber-600 font-bold bg-amber-100 px-2 py-0.5 rounded-lg">Xem Brand ▼</span>
+          </summary>
+          <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]">
+            <!-- Rendered by JS -->
+          </div>
+        </details>
       </div>
     </div>
 
@@ -209,9 +244,29 @@
     const ADMIN_PIN = "6868";
     const CASE_VOLUME = 0.0792;
 
-    // THÔNG SỐ CHUẨN XÁC 100% CỦA SUPABASE
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
+
+    // 8 SR THUỘC TEAM CỦA BẠN
+    const TEAM_SRS = [
+      "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
+      "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi"
+    ];
+
+    // Chuẩn hóa tên SR từ DMS về chuẩn Tracking
+    function normalizeSR(name) {
+      if (!name) return "";
+      const s = String(name).trim();
+      if (s.includes("Tai") || s.includes("Tài")) return "Tai Nguyen Ngoc";
+      if (s.includes("Thuong") || s.includes("Thưởng")) return "Thuong Hoang Van";
+      if (s.includes("Luan") || s.includes("Luân")) return "Luan Nguyen Van";
+      if (s.includes("Oanh")) return "Oanh Nguyen Kieu";
+      if (s.includes("Nam") && !s.includes("Nam1")) return "Nam Le Hoang";
+      if (s.includes("Phu") || s.includes("Phú")) return "Phu Tran Trong";
+      if (s.includes("Huynh") || s.includes("Huỳnh")) return "Huynh Mai Trong";
+      if (s.includes("Lien") || s.includes("Liên")) return "Lien Dinh Thi";
+      return s;
+    }
 
     let supabaseClient = null;
     try {
@@ -226,7 +281,6 @@
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
-    // KÉO DỮ LIỆU ĐÁM MÂY TỰ ĐỘNG
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
@@ -237,7 +291,7 @@
           .maybeSingle();
 
         if (error) {
-          console.error("Lỗi lấy dữ liệu:", error);
+          console.error("Lỗi lấy dữ liệu Cloud:", error);
           document.getElementById('lblLastUpdate').textContent = "Chưa kết nối Cloud";
           return;
         }
@@ -256,7 +310,7 @@
           document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm trên mây)`;
           document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
 
-          populateSRList();
+          populateDateFilter();
           renderAll();
         } else {
           document.getElementById('lblLastUpdate').textContent = "Chưa có dữ liệu trên Cloud";
@@ -277,7 +331,7 @@
       if (localPromo) PROMOTIONS = JSON.parse(localPromo);
       if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
-      populateSRList();
+      populateDateFilter();
       renderAll();
 
       loadDataFromCloud();
@@ -305,9 +359,32 @@
       if (!isNaN(num) && num > 30000) {
         const utc_days = Math.floor(num - 25569);
         const date = new Date(utc_days * 86400 * 1000);
-        return date.toLocaleDateString('vi-VN');
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const y = date.getFullYear();
+        return `${y}-${m}-${d}`;
       }
       return String(serial);
+    }
+
+    function populateDateFilter() {
+      const dateSet = new Set();
+      SEC_ORDERS.forEach(o => { if (o.date) dateSet.add(o.date); });
+      const sel = document.getElementById('dateFilter');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="ALL">-- Tất cả các ngày (Tổng) --</option>';
+      Array.from(dateSet).sort().reverse().forEach(dt => {
+        const opt = document.createElement('option');
+        opt.value = dt;
+        opt.textContent = `Ngày ${dt}`;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur;
+    }
+
+    function resetDateFilter() {
+      document.getElementById('dateFilter').value = 'ALL';
+      renderAll();
     }
 
     async function processAndSave() {
@@ -363,7 +440,7 @@
             prog: progCode,
             code: String(r[colCode]).trim(),
             name: String(r[colName] || '').trim(),
-            sr: String(r[colSr] || 'Chưa phân bổ').trim(),
+            sr: normalizeSR(r[colSr]),
             level: parsedLevel,
             tarHuda: parseFloat(r[colTarH]) || 0,
             tarPre: parseFloat(r[colTarP]) || 0
@@ -388,7 +465,7 @@
           const qty = parseInt(r['Quantity']) || 0;
           const price = parseFloat(r['Price']) || 0;
           const rev = parseFloat(r['Revenue']) || 0;
-          const srName = String(r['CVTCSR'] || r['Fullname'] || 'Chưa rõ').trim();
+          const srName = normalizeSR(r['CVTCSR'] || r['Fullname']);
           const ocode = String(r['OutletCode'] || '').trim();
           const oname = String(r['OutletName'] || '').trim();
           const dateStr = parseExcelDate(r['OrderedDate']);
@@ -397,6 +474,7 @@
           if (promoName && isReward) {
             PROMOTIONS.push({
               sr: srName,
+              date: dateStr,
               outletCode: ocode,
               outletName: oname,
               promoName: promoName,
@@ -420,6 +498,7 @@
             sr: srName,
             code: ocode,
             name: oname,
+            brand: brand,
             product: prod,
             category: cat,
             vol: vol,
@@ -456,29 +535,9 @@
       document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
       toggleAdminModal();
       document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
-      populateSRList();
+      populateDateFilter();
       renderAll();
       alert("Đồng bộ đám mây thành công! Tất cả thiết bị đã cập nhật dữ liệu.");
-    }
-
-    function populateSRList() {
-      const srSet = new Set();
-      MASTER.forEach(m => { if (m.sr && m.sr !== 'Chưa phân bổ') srSet.add(m.sr); });
-      SEC_ORDERS.forEach(o => { if (o.sr && o.sr !== 'Chưa rõ') srSet.add(o.sr); });
-
-      const sel = document.getElementById('srFilter');
-      const curVal = sel.value;
-      sel.innerHTML = '<option value="ALL">-- Tất cả nhân viên --</option>';
-
-      Array.from(srSet).sort().forEach(sr => {
-        const opt = document.createElement('option');
-        opt.value = sr; opt.textContent = sr;
-        sel.appendChild(opt);
-      });
-
-      if (curVal && Array.from(srSet).includes(curVal)) {
-        sel.value = curVal;
-      }
     }
 
     function switchTab(tab) {
@@ -497,15 +556,30 @@
 
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
+      const selectedDate = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'ALL';
 
+      if (document.getElementById('lblSelectedDate')) {
+        document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
+      }
+
+      // ==========================================
       // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY
-      const listDaily = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
+      // ==========================================
+      let listDaily = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
+      if (selectedDate !== "ALL") {
+        listDaily = listDaily.filter(o => o.date === selectedDate);
+      }
+
       let sumHudaHL = 0, sumPreHL = 0;
+      const preBrandMap = {};
 
       const outletGroup = {};
       listDaily.forEach(o => {
         if (o.category === "Mainstream") sumHudaHL += o.vol;
-        if (o.category === "Premium") sumPreHL += o.vol;
+        if (o.category === "Premium") {
+          sumPreHL += o.vol;
+          preBrandMap[o.brand] = (preBrandMap[o.brand] || 0) + o.vol;
+        }
 
         if (!outletGroup[o.code]) {
           outletGroup[o.code] = {
@@ -530,9 +604,24 @@
 
       document.getElementById('totalDailyHL').textContent = totalHL.toFixed(2);
       document.getElementById('totalDailyCases').textContent = totalCases.toLocaleString('vi-VN');
-      document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} thùng)`;
-      document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} thùng)`;
+      document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} th)`;
+      document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} th)`;
 
+      // Phân rã Brand Premium
+      const preBox = document.getElementById('preBrandBreakdown');
+      preBox.innerHTML = '';
+      if (Object.keys(preBrandMap).length === 0) {
+        preBox.innerHTML = '<span class="text-gray-400">Chưa có sản lượng Premium</span>';
+      } else {
+        Object.entries(preBrandMap).sort((a,b) => b[1] - a[1]).forEach(([br, vol]) => {
+          const div = document.createElement('div');
+          div.className = "flex justify-between items-center text-gray-700 font-semibold";
+          div.innerHTML = `<span>● ${br}</span> <span class="font-black text-amber-700">${vol.toFixed(2)} HL</span>`;
+          preBox.appendChild(div);
+        });
+      }
+
+      // Render danh sách Outlet
       const aggBox = document.getElementById('aggregatedOutletList');
       aggBox.innerHTML = '';
       const sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
@@ -570,11 +659,14 @@
         aggBox.appendChild(detailCard);
       });
 
-      // RENDER KHUYẾN MÃI
-      const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
+      // Render Khuyến mãi
+      let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
+      if (selectedDate !== "ALL") {
+        promoList = promoList.filter(p => p.date === selectedDate);
+      }
+
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
-
       const promoGroup = {};
       promoList.forEach(p => {
         const key = p.promoName;
@@ -587,7 +679,7 @@
       document.getElementById('badgePromoCount').textContent = promoKeys.length;
 
       if (promoKeys.length === 0) {
-        promoBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào được key.</p>`;
+        promoBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào trong đợt này.</p>`;
       } else {
         promoKeys.forEach(k => {
           const item = promoGroup[k];
@@ -606,20 +698,22 @@
         });
       }
 
+      // ==========================================
       // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA
+      // ==========================================
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
+        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
         if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
         if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+        salesByOutlet[o.code].total += o.vol;
       });
 
-      const listMaster = (selectedSR === "ALL") ? MASTER : MASTER.filter(m => m.sr === selectedSR);
+      const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
 
-      const outletBox = document.getElementById('outletList');
-      outletBox.innerHTML = '';
+      const preparedList = [];
 
       listMaster.forEach(m => {
         if (m.level === "LV1") cLV1++;
@@ -628,27 +722,55 @@
 
         const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-        const isPass = (actH >= m.tarHuda) && (actP >= m.tarPre);
+        const actTot = actH + actP;
+        const tarTot = m.tarHuda + m.tarPre;
+
+        // THUẬT TOÁN ĐẠT TARGET MỚI:
+        // Đạt chuẩn cả 2 dòng HOẶC (Tổng sản lượng đạt target tổng VÀ Premium chiếm >= 50%)
+        const condition1 = (actH >= m.tarHuda) && (actP >= m.tarPre);
+        const condition2 = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) >= 0.5);
+        const isPass = condition1 || condition2;
+
         if (isPass) passCount++;
 
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
-        const gapHudaHL = Math.max(0, m.tarHuda - actH);
-        const gapPreHL = Math.max(0, m.tarPre - actP);
-        const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
-        const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
-
+        // Tính số thùng thiếu
         let missingNotice = '';
         if (isPass) {
-          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ Đã đủ sản lượng</span>`;
+          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
         } else {
+          const gapTotHL = Math.max(0, tarTot - actTot);
+          const gapPreHL = Math.max(0, m.tarPre - actP);
+          const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
+          const gapTotCases = Math.ceil(gapTotHL / CASE_VOLUME);
+
           let missingParts = [];
-          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
           if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
+          else if (gapTotCases > 0) missingParts.push(`Thiếu <b>${gapTotCases}</b> th`);
           missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
         }
 
+        preparedList.push({
+          item: m,
+          actH: actH,
+          actP: actP,
+          isPass: isPass,
+          missingNotice: missingNotice
+        });
+      });
+
+      // SẮP XẾP: ĐIỂM CHƯA ĐẠT NẰM TRÊN, ĐIỂM ĐÃ ĐẠT NẰM DƯỚI
+      preparedList.sort((a, b) => {
+        if (a.isPass === b.isPass) return 0;
+        return a.isPass ? 1 : -1; // false (Chưa Đạt) xếp trước, true (Đạt) xếp sau
+      });
+
+      const outletBox = document.getElementById('outletList');
+      outletBox.innerHTML = '';
+
+      preparedList.forEach(({ item: m, actH, actP, isPass, missingNotice }) => {
         const card = document.createElement('div');
         card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
         card.innerHTML = `
