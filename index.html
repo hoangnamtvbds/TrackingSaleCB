@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carlsberg Sales Hub</title>
+  <title>Carlsberg Sale Tracking</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Thư viện đọc Excel -->
@@ -18,13 +18,17 @@
 </head>
 <body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header -->
+  <!-- Header & Chữ ký LHN -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
-        🍺 CARLSBERG SALES HUB
+        🍺 Carlsberg Sale Tracking
       </h1>
-      <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa nạp dữ liệu</p>
+      <div class="flex items-center gap-2 mt-0.5">
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa nạp dữ liệu</p>
+        <span class="text-[10px] font-bold text-gray-300">•</span>
+        <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider" title="Designed by LHN">by LHN</span>
+      </div>
     </div>
     <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
       ⚙️ Cập nhật
@@ -39,65 +43,18 @@
     </select>
   </div>
 
-  <!-- THANH CHUYỂN TAB -->
+  <!-- THANH CHUYỂN TAB (SỐ BÁN HÀNG NGÀY LÊN TAB 1) -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
-      🎯 TIẾN ĐỘ ĐIỂM BÁN
-    </button>
-    <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       📅 SỐ BÁN HÀNG NGÀY
     </button>
+    <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
+      🎯 ĐIỂM BÁN TRƯNG BÀY BIA
+    </button>
   </div>
 
-  <!-- ================= TAB 1: TIẾN ĐỘ ĐIỂM BÁN ================= -->
-  <div id="tab1Content">
-    <!-- Card KPI tiến độ -->
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 mb-3 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500">🏆 TỔNG ĐIỂM BÁN ĐẠT</span>
-        <span id="txtOutletPercent" class="text-xs font-extrabold text-blue-600">0%</span>
-      </div>
-      <div class="flex items-baseline justify-between">
-        <span id="txtOutletAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
-        <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
-      </div>
-      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-        <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
-      </div>
-
-      <div class="pt-2 border-t border-gray-100 space-y-2">
-        <div>
-          <div class="flex justify-between text-xs font-semibold mb-1">
-            <span class="text-emerald-700">● Huda Core</span>
-            <span id="txtVolHuda">0.00 / 0.00 HL</span>
-          </div>
-          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div id="barHuda" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between text-xs font-semibold mb-1">
-            <span class="text-amber-600">● Premium (Tuborg / Blanc)</span>
-            <span id="txtVolPre">0.00 / 0.00 HL</span>
-          </div>
-          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div id="barPre" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Danh sách chi tiết điểm bán (Kèm số thùng thiếu) -->
-    <div class="flex justify-between items-center mb-2 px-1">
-      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán</span>
-      <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-    </div>
-    <div id="outletList" class="space-y-2.5"></div>
-  </div>
-
-  <!-- ================= TAB 2: SỐ BÁN NGÀY, DỒN OUTLET & KHUYẾN MÃI ================= -->
-  <div id="tab2Content" class="hidden space-y-3">
+  <!-- ================= TAB 1: SỐ BÁN HÀNG NGÀY, DỒN OUTLET & KHUYẾN MÃI ================= -->
+  <div id="tab1Content" class="space-y-3">
     <!-- Card Tổng sản lượng & Quy đổi -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-2">
@@ -152,6 +109,72 @@
     <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
+  <!-- ================= TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA (KÈM LEVEL 1,2,3) ================= -->
+  <div id="tab2Content" class="hidden space-y-3">
+    <!-- Card KPI tiến độ -->
+    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-gray-500">🏆 TỔNG ĐIỂM BÁN ĐẠT</span>
+        <span id="txtOutletPercent" class="text-xs font-extrabold text-blue-600">0%</span>
+      </div>
+      <div class="flex items-baseline justify-between">
+        <span id="txtOutletAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
+        <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
+      </div>
+      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+        <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+      </div>
+
+      <!-- Thống kê Level LV1, LV2, LV3 -->
+      <div class="pt-2 border-t border-gray-100">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Phân bổ cấp độ điểm bán:</span>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-blue-50/70 p-2 rounded-xl border border-blue-100">
+            <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
+            <span id="countLV1" class="text-sm font-extrabold text-blue-900">0</span>
+          </div>
+          <div class="bg-emerald-50/70 p-2 rounded-xl border border-emerald-100">
+            <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
+            <span id="countLV2" class="text-sm font-extrabold text-emerald-900">0</span>
+          </div>
+          <div class="bg-purple-50/70 p-2 rounded-xl border border-purple-100">
+            <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
+            <span id="countLV3" class="text-sm font-extrabold text-purple-900">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-gray-100 space-y-2">
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-emerald-700">● Huda Core</span>
+            <span id="txtVolHuda">0.00 / 0.00 HL</span>
+          </div>
+          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+            <div id="barHuda" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-amber-600">● Premium (Tuborg / Blanc)</span>
+            <span id="txtVolPre">0.00 / 0.00 HL</span>
+          </div>
+          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+            <div id="barPre" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danh sách chi tiết điểm bán (Kèm số thùng thiếu) -->
+    <div class="flex justify-between items-center mb-1 px-1">
+      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách trưng bày</span>
+      <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+    </div>
+    <div id="outletList" class="space-y-2.5"></div>
+  </div>
+
   <!-- MODAL ADMIN CẬP NHẬT (MÃ PIN 6868 KHÔNG GỢI Ý) -->
   <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
@@ -185,13 +208,12 @@
   </div>
 
   <script>
-    const ADMIN_PIN = "6868"; // Mã PIN chuẩn 6868 không hiển thị gợi ý
-    const CASE_VOLUME = 0.0792; // 1 két/thùng 24x330ml = 0.0792 HL
+    const ADMIN_PIN = "6868"; // Mã PIN chuẩn 6868
+    const CASE_VOLUME = 0.0792; // 1 thùng 24x330ml = 0.0792 HL
     let MASTER = [];
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
-    // Tự động load dữ liệu cũ khi mở app
     window.addEventListener('DOMContentLoaded', () => {
       const savedMaster = localStorage.getItem('MASTER_DATA');
       const savedSec = localStorage.getItem('SEC_DATA');
@@ -261,7 +283,6 @@
         const oname = String(r['OutletName'] || '').trim();
         const dateStr = parseExcelDate(r['OrderedDate']);
 
-        // Thu thập Khuyến mãi
         if (promoName || prod.toLowerCase().includes('phiếu') || brand.toLowerCase().includes('posm')) {
           PROMOTIONS.push({
             sr: srName,
@@ -273,7 +294,6 @@
           });
         }
 
-        // Bỏ qua phiếu giảm giá & POSM khi tính số bán bia
         if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
 
         let cat = "Other";
@@ -281,7 +301,7 @@
         if (pLower.includes("huda") || pLower.includes("halida")) {
           cat = "Mainstream";
         } else {
-          cat = "Premium"; // Tuborg, 1664 Blanc, Carlsberg, Somersby...
+          cat = "Premium";
         }
 
         SEC_ORDERS.push({
@@ -309,11 +329,12 @@
       }
 
       const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
-      let colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
+      let colCode = 5, colName = 6, colSr = 8, colLevel = 9, colTarH = 10, colTarP = 13;
       h.forEach((val, i) => {
         if (val.includes('mã điểm bán')) colCode = i;
         if (val.includes('tên điểm bán')) colName = i;
         if (val.includes('sr')) colSr = i;
+        if (val.includes('level')) colLevel = i;
         if (val.includes('tar') && val.includes('huda')) colTarH = i;
         if (val.includes('tar') && val.includes('pre')) colTarP = i;
       });
@@ -326,12 +347,12 @@
           code: String(r[colCode]).trim(),
           name: String(r[colName] || '').trim(),
           sr: String(r[colSr] || 'Chưa phân bổ').trim(),
+          level: String(r[colLevel] || '').trim().toUpperCase(),
           tarHuda: parseFloat(r[colTarH]) || 0,
           tarPre: parseFloat(r[colTarP]) || 0
         });
       }
 
-      // Lưu LocalStorage
       const nowStr = new Date().toLocaleString('vi-VN');
       localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
       localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
@@ -375,88 +396,12 @@
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
 
-      // 1. TÍNH TOÁN THEO OUTLETCODE TỪ SEC
-      const salesByOutlet = {};
-      SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
-        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
-        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
-      });
-
-      // 2. RENDER TAB 1: TIẾN ĐỘ VÀ SỐ THÙNG CÒN THIẾU
-      const list1 = (selectedSR === "ALL") ? MASTER : MASTER.filter(m => m.sr === selectedSR);
-      let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
-      const outletBox = document.getElementById('outletList');
-      outletBox.innerHTML = '';
-
-      list1.forEach(m => {
-        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-        const isPass = (actH >= m.tarHuda) && (actP >= m.tarPre);
-        if (isPass) passCount++;
-
-        totTarH += m.tarHuda; totActH += actH;
-        totTarP += m.tarPre; totActP += actP;
-
-        // Tính số thùng thiếu
-        const gapHudaHL = Math.max(0, m.tarHuda - actH);
-        const gapPreHL = Math.max(0, m.tarPre - actP);
-        const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
-        const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
-
-        let missingNotice = '';
-        if (isPass) {
-          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ Đã đủ sản lượng</span>`;
-        } else {
-          let missingParts = [];
-          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
-          if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
-          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
-        }
-
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr}</div>
-              <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
-            </div>
-            <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-              ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-            </span>
-          </div>
-
-          <div class="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center text-xs">
-            <div class="text-[11px] text-gray-500 space-x-2">
-              <span>Huda: <b>${actH.toFixed(2)}</b>/${m.tarHuda.toFixed(2)}</span>
-              <span>Pre: <b>${actP.toFixed(2)}</b>/${m.tarPre.toFixed(2)}</span>
-            </div>
-            <div>${missingNotice}</div>
-          </div>
-        `;
-        outletBox.appendChild(card);
-      });
-
-      const pctPass = list1.length ? Math.round((passCount / list1.length) * 100) : 0;
-      document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
-      document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${list1.length}`;
-      document.getElementById('barOutlet').style.width = `${pctPass}%`;
-
-      document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
-      document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
-
-      document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
-      document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
-      document.getElementById('txtListCount').textContent = `${list1.length} điểm bán`;
-
-      // 3. RENDER TAB 2: TỔNG QUAN & DỒN CHI TIẾT TỪNG ĐIỂM BÁN
-      const list2 = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
+      // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY & DỒN OUTLET
+      const listDaily = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let sumHudaHL = 0, sumPreHL = 0;
 
-      // Gom theo Outlet để không bị trùng lặp
       const outletGroup = {};
-      list2.forEach(o => {
+      listDaily.forEach(o => {
         if (o.category === "Mainstream") sumHudaHL += o.vol;
         if (o.category === "Premium") sumPreHL += o.vol;
 
@@ -486,7 +431,6 @@
       document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} thùng)`;
       document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} thùng)`;
 
-      // Render danh sách Outlet đã dồn
       const aggBox = document.getElementById('aggregatedOutletList');
       aggBox.innerHTML = '';
       const sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
@@ -494,11 +438,8 @@
 
       sortedOutlets.forEach(ot => {
         const otCases = (ot.totalVol / CASE_VOLUME).toFixed(1);
-        
-        // Tạo chi tiết sản phẩm xổ xuống
         let prodItemsHtml = '';
         Object.entries(ot.products).forEach(([pName, pData]) => {
-          const pCases = (pData.vol / CASE_VOLUME).toFixed(1);
           prodItemsHtml += `
             <div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]">
               <span class="text-gray-700 font-medium">${pName}</span>
@@ -527,12 +468,11 @@
         aggBox.appendChild(detailCard);
       });
 
-      // 4. RENDER KHUYẾN MÃI THU GỌN
+      // RENDER KHUYẾN MÃI THU GỌN
       const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
 
-      // Gom theo tên khuyến mãi
       const promoGroup = {};
       promoList.forEach(p => {
         const key = p.promoName || p.product;
@@ -563,6 +503,91 @@
           promoBox.appendChild(div);
         });
       }
+
+      // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA (TOFT TRACKING)
+      const salesByOutlet = {};
+      SEC_ORDERS.forEach(o => {
+        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
+        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+      });
+
+      const listMaster = (selectedSR === "ALL") ? MASTER : MASTER.filter(m => m.sr === selectedSR);
+      let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
+      let cLV1 = 0, cLV2 = 0, cLV3 = 0;
+
+      const outletBox = document.getElementById('outletList');
+      outletBox.innerHTML = '';
+
+      listMaster.forEach(m => {
+        // Đếm Level
+        if (m.level.includes("LV1")) cLV1++;
+        else if (m.level.includes("LV2")) cLV2++;
+        else if (m.level.includes("LV3")) cLV3++;
+
+        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
+        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
+        const isPass = (actH >= m.tarHuda) && (actP >= m.tarPre);
+        if (isPass) passCount++;
+
+        totTarH += m.tarHuda; totActH += actH;
+        totTarP += m.tarPre; totActP += actP;
+
+        const gapHudaHL = Math.max(0, m.tarHuda - actH);
+        const gapPreHL = Math.max(0, m.tarPre - actP);
+        const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
+        const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
+
+        let missingNotice = '';
+        if (isPass) {
+          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ Đã đủ sản lượng</span>`;
+        } else {
+          let missingParts = [];
+          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
+          if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
+          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr} • <span class="text-blue-600 font-extrabold">${m.level}</span></div>
+              <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
+            </div>
+            <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+              ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+            </span>
+          </div>
+
+          <div class="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center text-xs">
+            <div class="text-[11px] text-gray-500 space-x-2">
+              <span>Huda: <b>${actH.toFixed(2)}</b>/${m.tarHuda.toFixed(2)}</span>
+              <span>Pre: <b>${actP.toFixed(2)}</b>/${m.tarPre.toFixed(2)}</span>
+            </div>
+            <div>${missingNotice}</div>
+          </div>
+        `;
+        outletBox.appendChild(card);
+      });
+
+      // Cập nhật số lượng Level
+      document.getElementById('countLV1').textContent = cLV1;
+      document.getElementById('countLV2').textContent = cLV2;
+      document.getElementById('countLV3').textContent = cLV3;
+
+      const pctPass = listMaster.length ? Math.round((passCount / listMaster.length) * 100) : 0;
+      document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
+      document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${listMaster.length}`;
+      document.getElementById('barOutlet').style.width = `${pctPass}%`;
+
+      document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
+      document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
+
+      document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
+      document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
+      document.getElementById('txtListCount').textContent = `${listMaster.length} điểm bán`;
     }
   </script>
 </body>
