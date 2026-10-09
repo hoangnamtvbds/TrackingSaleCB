@@ -27,7 +27,7 @@
         🍺 Carlsberg Sale Tracking
       </h1>
       <div class="flex items-center gap-2 mt-0.5">
-        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu...</p>
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu từ mây...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
         <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
@@ -209,7 +209,8 @@
     const ADMIN_PIN = "6868";
     const CASE_VOLUME = 0.0792;
 
-    const SUPABASE_URL = "https://incbokfnoabjhvbwzkli.supabase.co";
+    // THÔNG SỐ CHUẨN XÁC 100% CỦA SUPABASE
+    const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
     let supabaseClient = null;
@@ -225,6 +226,7 @@
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
+    // KÉO DỮ LIỆU ĐÁM MÂY TỰ ĐỘNG
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
@@ -235,8 +237,8 @@
           .maybeSingle();
 
         if (error) {
-          console.error("Lỗi lấy dữ liệu Cloud:", error);
-          document.getElementById('lblLastUpdate').textContent = "Lỗi kết nối Cloud";
+          console.error("Lỗi lấy dữ liệu:", error);
+          document.getElementById('lblLastUpdate').textContent = "Chưa kết nối Cloud";
           return;
         }
 
