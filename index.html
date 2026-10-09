@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Theo Dõi Doanh Số & Điểm Bán</title>
+  <title>Carlsberg Sales Hub</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Thư viện đọc Excel -->
@@ -12,18 +12,21 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F9FA; }
     .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
   </style>
 </head>
-<body class="p-3 pb-20 max-w-lg mx-auto text-gray-800">
+<body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Quản lý Upload -->
+  <!-- Header -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
-      <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight">🍺 CARLSPERG SALES HUB</h1>
-      <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa cập nhật dữ liệu</p>
+      <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
+        🍺 CARLSBERG SALES HUB
+      </h1>
+      <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa nạp dữ liệu</p>
     </div>
-    <button onclick="toggleAdminModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+    <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
       ⚙️ Cập nhật
     </button>
   </div>
@@ -31,24 +34,24 @@
   <!-- BỘ LỌC TÊN SR -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
-    <select id="srFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
+    <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
       <option value="ALL">-- Tất cả nhân viên --</option>
     </select>
   </div>
 
   <!-- THANH CHUYỂN TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
-    <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
+    <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       🎯 TIẾN ĐỘ ĐIỂM BÁN
     </button>
-    <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2 rounded-xl text-gray-500 transition-all text-center">
+    <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       📅 SỐ BÁN HÀNG NGÀY
     </button>
   </div>
 
-  <!-- ================= TAB 1: TIẾN ĐỘ TOFT TRACKING ================= -->
+  <!-- ================= TAB 1: TIẾN ĐỘ ĐIỂM BÁN ================= -->
   <div id="tab1Content">
-    <!-- Thẻ KPI tổng hợp -->
+    <!-- Card KPI tiến độ -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 mb-3 space-y-3">
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-gray-500">🏆 TỔNG ĐIỂM BÁN ĐẠT</span>
@@ -66,7 +69,7 @@
         <div>
           <div class="flex justify-between text-xs font-semibold mb-1">
             <span class="text-emerald-700">● Huda Core</span>
-            <span id="txtVolHuda">0 / 0 HL</span>
+            <span id="txtVolHuda">0.00 / 0.00 HL</span>
           </div>
           <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
             <div id="barHuda" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
@@ -76,7 +79,7 @@
         <div>
           <div class="flex justify-between text-xs font-semibold mb-1">
             <span class="text-amber-600">● Premium (Tuborg / Blanc)</span>
-            <span id="txtVolPre">0 / 0 HL</span>
+            <span id="txtVolPre">0.00 / 0.00 HL</span>
           </div>
           <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
             <div id="barPre" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
@@ -85,84 +88,96 @@
       </div>
     </div>
 
-    <!-- Danh sách điểm bán -->
+    <!-- Danh sách chi tiết điểm bán (Kèm số thùng thiếu) -->
     <div class="flex justify-between items-center mb-2 px-1">
-      <span class="text-xs font-bold text-gray-600">DANH SÁCH CHI TIẾT</span>
+      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán</span>
       <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
-    <div id="outletList" class="space-y-2"></div>
+    <div id="outletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- ================= TAB 2: SỐ BÁN HÀNG NGÀY & QUY ĐỔI THÙNG ================= -->
+  <!-- ================= TAB 2: SỐ BÁN NGÀY, DỒN OUTLET & KHUYẾN MÃI ================= -->
   <div id="tab2Content" class="hidden space-y-3">
     <!-- Card Tổng sản lượng & Quy đổi -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-2">
         <span class="text-xs font-bold text-gray-500">📦 TỔNG SẢN LƯỢNG BÁN RA</span>
-        <span class="text-[11px] font-bold text-gray-400">1 Thùng = 0.0792 HL</span>
+        <span class="text-[10px] font-bold text-gray-400">1 Thùng QC = 0.0792 HL</span>
       </div>
       <div class="grid grid-cols-2 gap-3 pt-1">
-        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
-          <p class="text-[11px] font-bold text-blue-700">TỔNG SẢN LƯỢNG (HL)</p>
+        <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-100">
+          <p class="text-[10px] font-bold text-blue-700 uppercase">Tổng sản lượng (HL)</p>
           <p id="totalDailyHL" class="text-xl font-extrabold text-[#1F4E79] mt-0.5">0.00</p>
         </div>
-        <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
-          <p class="text-[11px] font-bold text-amber-800">QUY ĐỔI KÉT / THÙNG</p>
+        <div class="bg-amber-50/80 p-3 rounded-xl border border-amber-100">
+          <p class="text-[10px] font-bold text-amber-800 uppercase">Quy đổi két / thùng</p>
           <p id="totalDailyCases" class="text-xl font-extrabold text-amber-700 mt-0.5">0</p>
         </div>
       </div>
 
-      <!-- Phân bổ Mainstream vs Premium -->
       <div class="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2 text-xs">
         <div>
           <span class="text-gray-500 font-semibold block">🍺 Mainstream:</span>
-          <span id="txtMainstreamSum" class="font-bold text-emerald-700">0 HL (0 thùng)</span>
+          <span id="txtMainstreamSum" class="font-bold text-emerald-700">0.00 HL (0 thùng)</span>
         </div>
         <div>
           <span class="text-gray-500 font-semibold block">👑 Premium:</span>
-          <span id="txtPremiumSum" class="font-bold text-amber-600">0 HL (0 thùng)</span>
+          <span id="txtPremiumSum" class="font-bold text-amber-600">0.00 HL (0 thùng)</span>
         </div>
       </div>
     </div>
 
-    <!-- Toggle mở rộng chi tiết -->
-    <div class="flex justify-between items-center px-1">
-      <span class="text-xs font-bold text-gray-600">CHI TIẾT SẢN PHẨM & OUTLET</span>
-      <button onclick="toggleDailyDetail()" id="btnToggleDetail" class="text-xs font-bold text-blue-600 hover:underline">
-        + Xem chi tiết
-      </button>
+    <!-- KHỐI KHUYẾN MÃI THU GỌN -->
+    <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
+      <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">🎁</span>
+          <span class="text-xs font-bold text-gray-800">KHUYẾN MÃI ĐÃ KEY</span>
+          <span id="badgePromoCount" class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-extrabold rounded-full">0</span>
+        </div>
+        <span class="text-xs text-gray-400 font-bold">Chạm để xem ▼</span>
+      </summary>
+      <div id="promoListContent" class="p-3 border-t border-gray-100 space-y-2 text-xs">
+        <!-- Rendered by JS -->
+      </div>
+    </details>
+
+    <!-- TIÊU ĐỀ CHI TIẾT SỐ BÁN ĐÃ DỒN ĐIỂM -->
+    <div class="flex justify-between items-center px-1 pt-1">
+      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Chi tiết theo điểm bán</span>
+      <span id="txtAggCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
 
-    <!-- Danh sách chi tiết (ẩn mặc định cho gọn) -->
-    <div id="dailyDetailBox" class="hidden space-y-2"></div>
+    <!-- DANH SÁCH OUTLET DỒN VÀ BUNG SẢN PHẨM -->
+    <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- MODAL ADMIN UPLOAD (Cần mã PIN) -->
-  <div id="adminModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+  <!-- MODAL ADMIN CẬP NHẬT (MÃ PIN 6868 KHÔNG GỢI Ý) -->
+  <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
       <div class="flex justify-between items-center">
-        <h3 class="text-sm font-extrabold text-gray-900">🔒 KHU VỰC CẬP NHẬT FILE</h3>
-        <button onclick="toggleAdminModal()" class="text-gray-400 font-bold">✕</button>
+        <h3 class="text-sm font-extrabold text-gray-900">🔒 CẬP NHẬT DỮ LIỆU</h3>
+        <button onclick="toggleAdminModal()" class="text-gray-400 font-bold text-lg">✕</button>
       </div>
 
       <div id="pinBox">
-        <label class="text-xs font-bold text-gray-600 block mb-1">Nhập mã PIN Quản lý:</label>
+        <label class="text-xs font-bold text-gray-600 block mb-1.5">Nhập mã PIN xác thực:</label>
         <div class="flex gap-2">
-          <input type="password" id="inputPin" placeholder="Mã PIN (Mặc định: 8888)" class="flex-1 p-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none">
-          <button onclick="verifyPin()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold">Xác nhận</button>
+          <input type="password" id="inputPin" placeholder="••••" class="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-center text-base tracking-widest font-bold outline-none focus:border-amber-500">
+          <button onclick="verifyPin()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Xác nhận</button>
         </div>
       </div>
 
       <div id="uploadBox" class="hidden space-y-3">
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. TẢI FILE TRACKING MASTER (.xlsx)</label>
-          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5">
+          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">2. TẢI FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
-          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5">
+          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
-        <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md">
+        <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
           ⚡ XÁC NHẬN NẠP DỮ LIỆU
         </button>
       </div>
@@ -170,18 +185,22 @@
   </div>
 
   <script>
-    const ADMIN_PIN = "8888"; // Bạn có thể đổi mã PIN này
+    const ADMIN_PIN = "6868"; // Mã PIN chuẩn 6868 không hiển thị gợi ý
+    const CASE_VOLUME = 0.0792; // 1 két/thùng 24x330ml = 0.0792 HL
     let MASTER = [];
     let SEC_ORDERS = [];
+    let PROMOTIONS = [];
 
-    // Tự động load dữ liệu đã lưu khi mở trang
+    // Tự động load dữ liệu cũ khi mở app
     window.addEventListener('DOMContentLoaded', () => {
       const savedMaster = localStorage.getItem('MASTER_DATA');
       const savedSec = localStorage.getItem('SEC_DATA');
+      const savedPromo = localStorage.getItem('PROMO_DATA');
       const savedTime = localStorage.getItem('UPDATE_TIME');
       if (savedMaster && savedSec) {
         MASTER = JSON.parse(savedMaster);
         SEC_ORDERS = JSON.parse(savedSec);
+        PROMOTIONS = savedPromo ? JSON.parse(savedPromo) : [];
         if (savedTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${savedTime}`;
         populateSRList();
         renderAll();
@@ -199,13 +218,26 @@
         document.getElementById('uploadBox').classList.remove('hidden');
       } else {
         alert("Mã PIN không đúng!");
+        document.getElementById('inputPin').value = '';
       }
+    }
+
+    function parseExcelDate(serial) {
+      if (!serial) return '';
+      if (typeof serial === 'string' && serial.includes('-')) return serial.substring(0, 10);
+      const num = parseFloat(serial);
+      if (!isNaN(num) && num > 30000) {
+        const utc_days = Math.floor(num - 25569);
+        const date = new Date(utc_days * 86400 * 1000);
+        return date.toLocaleDateString('vi-VN');
+      }
+      return String(serial);
     }
 
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
-      if (!fTrack || !fSec) { alert("Vui lòng chọn đủ 2 file!"); return; }
+      if (!fTrack || !fSec) { alert("Vui lòng chọn đủ cả 2 file!"); return; }
 
       document.getElementById('btnSaveData').textContent = "Đang xử lý...";
 
@@ -216,14 +248,34 @@
       const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
 
       SEC_ORDERS = [];
+      PROMOTIONS = [];
+
       rawSec.forEach(r => {
         const prod = String(r['Product'] || '').trim();
+        const promoName = String(r['Promotion Name'] || '').trim();
         const brand = String(r['Brand'] || '').trim();
         const vol = parseFloat(r['VolumeHL']) || 0;
         const qty = parseInt(r['Quantity']) || 0;
+        const srName = String(r['CVTCSR'] || r['Fullname'] || 'Chưa rõ').trim();
+        const ocode = String(r['OutletCode'] || '').trim();
+        const oname = String(r['OutletName'] || '').trim();
+        const dateStr = parseExcelDate(r['OrderedDate']);
+
+        // Thu thập Khuyến mãi
+        if (promoName || prod.toLowerCase().includes('phiếu') || brand.toLowerCase().includes('posm')) {
+          PROMOTIONS.push({
+            sr: srName,
+            outletCode: ocode,
+            outletName: oname,
+            promoName: promoName || prod,
+            product: prod,
+            qty: qty
+          });
+        }
+
+        // Bỏ qua phiếu giảm giá & POSM khi tính số bán bia
         if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
 
-        // Phân loại nhóm
         let cat = "Other";
         const pLower = prod.toLowerCase();
         if (pLower.includes("huda") || pLower.includes("halida")) {
@@ -233,10 +285,10 @@
         }
 
         SEC_ORDERS.push({
-          date: r['OrderedDate'] ? String(r['OrderedDate']).substring(0, 10) : '',
-          sr: String(r['Fullname'] || r['CVTCSR'] || 'Chưa rõ').trim(),
-          code: String(r['OutletCode'] || '').trim(),
-          name: String(r['OutletName'] || '').trim(),
+          date: dateStr,
+          sr: srName,
+          code: ocode,
+          name: oname,
           product: prod,
           category: cat,
           vol: vol,
@@ -244,7 +296,7 @@
         });
       });
 
-      // Đọc Tracking
+      // Đọc Tracking Master
       const bTrack = await fTrack.arrayBuffer();
       const wbTrack = XLSX.read(bTrack);
       const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display') || s.toLowerCase().includes('master')) || wbTrack.SheetNames[0];
@@ -279,10 +331,11 @@
         });
       }
 
-      // Lưu trữ
+      // Lưu LocalStorage
       const nowStr = new Date().toLocaleString('vi-VN');
       localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
       localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+      localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
       localStorage.setItem('UPDATE_TIME', nowStr);
 
       document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
@@ -290,11 +343,12 @@
       document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN NẠP DỮ LIỆU";
       populateSRList();
       renderAll();
-      alert("Nạp và tính toán dữ liệu thành công!");
+      alert("Đã cập nhật và đồng bộ dữ liệu thành công!");
     }
 
     function populateSRList() {
       const srSet = new Set(MASTER.map(m => m.sr));
+      SEC_ORDERS.forEach(o => { if (o.sr && o.sr !== 'Chưa rõ') srSet.add(o.sr); });
       const sel = document.getElementById('srFilter');
       sel.innerHTML = '<option value="ALL">-- Tất cả nhân viên --</option>';
       Array.from(srSet).sort().forEach(sr => {
@@ -308,20 +362,20 @@
       if (tab === 1) {
         document.getElementById('tab1Content').classList.remove('hidden');
         document.getElementById('tab2Content').classList.add('hidden');
-        document.getElementById('tabBtn1').className = "flex-1 py-2 rounded-xl bg-white text-[#1F4E79] shadow-sm text-center";
-        document.getElementById('tabBtn2').className = "flex-1 py-2 rounded-xl text-gray-500 text-center";
+        document.getElementById('tabBtn1').className = "flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm text-center";
+        document.getElementById('tabBtn2').className = "flex-1 py-2.5 rounded-xl text-gray-500 text-center";
       } else {
         document.getElementById('tab1Content').classList.add('hidden');
         document.getElementById('tab2Content').classList.remove('hidden');
-        document.getElementById('tabBtn2').className = "flex-1 py-2 rounded-xl bg-white text-[#1F4E79] shadow-sm text-center";
-        document.getElementById('tabBtn1').className = "flex-1 py-2 rounded-xl text-gray-500 text-center";
+        document.getElementById('tabBtn2').className = "flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm text-center";
+        document.getElementById('tabBtn1').className = "flex-1 py-2.5 rounded-xl text-gray-500 text-center";
       }
     }
 
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
 
-      // 1. TỔNG HỢP THEO OUTLETCODE TỪ SEC
+      // 1. TÍNH TOÁN THEO OUTLETCODE TỪ SEC
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
@@ -329,7 +383,7 @@
         if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
       });
 
-      // 2. RENDER TAB 1 (TOFT PROGRESS)
+      // 2. RENDER TAB 1: TIẾN ĐỘ VÀ SỐ THÙNG CÒN THIẾU
       const list1 = (selectedSR === "ALL") ? MASTER : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       const outletBox = document.getElementById('outletList');
@@ -344,20 +398,42 @@
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
+        // Tính số thùng thiếu
+        const gapHudaHL = Math.max(0, m.tarHuda - actH);
+        const gapPreHL = Math.max(0, m.tarPre - actP);
+        const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
+        const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
+
+        let missingNotice = '';
+        if (isPass) {
+          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ Đã đủ sản lượng</span>`;
+        } else {
+          let missingParts = [];
+          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
+          if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
+          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
+        }
+
         const card = document.createElement('div');
-        card.className = "bg-white rounded-xl p-3 card-shadow border border-gray-100 flex justify-between items-center";
+        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
         card.innerHTML = `
-          <div>
-            <div class="text-[10px] font-bold text-gray-400">${m.code} • ${m.sr}</div>
-            <div class="text-xs font-bold text-gray-800 line-clamp-1">${m.name}</div>
-            <div class="text-[11px] text-gray-500 mt-1 flex gap-3">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr}</div>
+              <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
+            </div>
+            <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+              ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+            </span>
+          </div>
+
+          <div class="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center text-xs">
+            <div class="text-[11px] text-gray-500 space-x-2">
               <span>Huda: <b>${actH.toFixed(2)}</b>/${m.tarHuda.toFixed(2)}</span>
               <span>Pre: <b>${actP.toFixed(2)}</b>/${m.tarPre.toFixed(2)}</span>
             </div>
+            <div>${missingNotice}</div>
           </div>
-          <span class="px-2 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-            ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-          </span>
         `;
         outletBox.appendChild(card);
       });
@@ -374,59 +450,120 @@
       document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
       document.getElementById('txtListCount').textContent = `${list1.length} điểm bán`;
 
-      // 3. RENDER TAB 2 (DAILY SALES & QUY ĐỔI THÙNG)
+      // 3. RENDER TAB 2: TỔNG QUAN & DỒN CHI TIẾT TỪNG ĐIỂM BÁN
       const list2 = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let sumHudaHL = 0, sumPreHL = 0;
 
+      // Gom theo Outlet để không bị trùng lặp
+      const outletGroup = {};
       list2.forEach(o => {
         if (o.category === "Mainstream") sumHudaHL += o.vol;
         if (o.category === "Premium") sumPreHL += o.vol;
+
+        if (!outletGroup[o.code]) {
+          outletGroup[o.code] = {
+            code: o.code,
+            name: o.name,
+            totalVol: 0,
+            products: {}
+          };
+        }
+        outletGroup[o.code].totalVol += o.vol;
+        if (!outletGroup[o.code].products[o.product]) {
+          outletGroup[o.code].products[o.product] = { vol: 0, qty: 0 };
+        }
+        outletGroup[o.code].products[o.product].vol += o.vol;
+        outletGroup[o.code].products[o.product].qty += o.qty;
       });
 
       const totalHL = sumHudaHL + sumPreHL;
-      // 1 Thùng 24x330ml = 0.0792 HL
-      const totalCases = Math.round(totalHL / 0.0792);
-      const hudaCases = Math.round(sumHudaHL / 0.0792);
-      const preCases = Math.round(sumPreHL / 0.0792);
+      const totalCases = Math.round(totalHL / CASE_VOLUME);
+      const hudaCases = Math.round(sumHudaHL / CASE_VOLUME);
+      const preCases = Math.round(sumPreHL / CASE_VOLUME);
 
       document.getElementById('totalDailyHL').textContent = totalHL.toFixed(2);
       document.getElementById('totalDailyCases').textContent = totalCases.toLocaleString('vi-VN');
       document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} thùng)`;
       document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} thùng)`;
 
-      // Render danh sách chi tiết (ẩn mặc định)
-      const detailBox = document.getElementById('dailyDetailBox');
-      detailBox.innerHTML = '';
-      list2.slice(0, 100).forEach(o => { // Hiển thị 100 đơn mới nhất
-        const cases = (o.vol / 0.0792).toFixed(1);
-        const item = document.createElement('div');
-        item.className = "bg-white p-2.5 rounded-xl border border-gray-100 card-shadow flex justify-between items-center text-xs";
-        item.innerHTML = `
-          <div>
-            <div class="font-bold text-gray-800">${o.name} <span class="text-[10px] text-gray-400">(${o.code})</span></div>
-            <div class="text-[11px] text-gray-500 mt-0.5">${o.product} • ${o.date}</div>
-          </div>
-          <div class="text-right">
-            <div class="font-bold ${o.category === 'Mainstream' ? 'text-emerald-700' : 'text-amber-600'}">${o.vol.toFixed(2)} HL</div>
-            <div class="text-[11px] font-bold text-gray-500">${cases} thùng Q/C</div>
+      // Render danh sách Outlet đã dồn
+      const aggBox = document.getElementById('aggregatedOutletList');
+      aggBox.innerHTML = '';
+      const sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
+      document.getElementById('txtAggCount').textContent = `${sortedOutlets.length} điểm bán`;
+
+      sortedOutlets.forEach(ot => {
+        const otCases = (ot.totalVol / CASE_VOLUME).toFixed(1);
+        
+        // Tạo chi tiết sản phẩm xổ xuống
+        let prodItemsHtml = '';
+        Object.entries(ot.products).forEach(([pName, pData]) => {
+          const pCases = (pData.vol / CASE_VOLUME).toFixed(1);
+          prodItemsHtml += `
+            <div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]">
+              <span class="text-gray-700 font-medium">${pName}</span>
+              <span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span>
+            </div>
+          `;
+        });
+
+        const detailCard = document.createElement('details');
+        detailCard.className = "bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden";
+        detailCard.innerHTML = `
+          <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none">
+            <div class="pr-2">
+              <div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div>
+              <div class="text-[10px] font-bold text-amber-700">${otCases} thùng QC ▼</div>
+            </div>
+          </summary>
+          <div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">
+            ${prodItemsHtml}
           </div>
         `;
-        detailBox.appendChild(item);
+        aggBox.appendChild(detailCard);
       });
-    }
 
-    function toggleDailyDetail() {
-      const box = document.getElementById('dailyDetailBox');
-      const btn = document.getElementById('btnToggleDetail');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        btn.textContent = "- Thu gọn";
+      // 4. RENDER KHUYẾN MÃI THU GỌN
+      const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
+      const promoBox = document.getElementById('promoListContent');
+      promoBox.innerHTML = '';
+
+      // Gom theo tên khuyến mãi
+      const promoGroup = {};
+      promoList.forEach(p => {
+        const key = p.promoName || p.product;
+        if (!promoGroup[key]) promoGroup[key] = { count: 0, outlets: new Set() };
+        promoGroup[key].count += (p.qty || 1);
+        promoGroup[key].outlets.add(p.outletName);
+      });
+
+      const promoKeys = Object.keys(promoGroup);
+      document.getElementById('badgePromoCount').textContent = promoKeys.length;
+
+      if (promoKeys.length === 0) {
+        promoBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào được key.</p>`;
       } else {
-        box.classList.add('hidden');
-        btn.textContent = "+ Xem chi tiết";
+        promoKeys.forEach(k => {
+          const item = promoGroup[k];
+          const div = document.createElement('div');
+          div.className = "p-2 bg-white rounded-xl border border-gray-100 flex justify-between items-center";
+          div.innerHTML = `
+            <div>
+              <div class="font-bold text-gray-800">${k}</div>
+              <div class="text-[10px] text-gray-400 mt-0.5">Áp dụng cho ${item.outlets.size} điểm bán</div>
+            </div>
+            <span class="px-2 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs">
+              ${item.count} suất
+            </span>
+          `;
+          promoBox.appendChild(div);
+        });
       }
     }
   </script>
 </body>
 </html>
-
