@@ -20,7 +20,7 @@
 </head>
 <body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN Tinh Tế -->
+  <!-- Header & Chữ ký LHN -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
@@ -69,7 +69,6 @@
 
   <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
   <div id="tab1Content" class="space-y-3">
-    <!-- Bộ lọc ngày thu gọn -->
     <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
       <summary class="p-3 flex justify-between items-center cursor-pointer select-none bg-blue-50/50">
         <span class="text-xs font-bold text-[#1F4E79] flex items-center gap-1.5">
@@ -87,7 +86,6 @@
       </div>
     </details>
 
-    <!-- Card Tổng sản lượng -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-1">
         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📦 Tổng Sản Lượng Bán Ra</span>
@@ -221,14 +219,23 @@
         <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <div class="pt-2 border-t border-gray-100 grid grid-cols-2 gap-3 text-center">
-        <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100">
-          <span class="text-[10px] font-bold text-blue-700 block">TIÊU CHUẨN ĐẠT</span>
-          <span class="text-xs font-black text-blue-900 mt-0.5 block">≥ 15 Thùng Pre</span>
+      <!-- Phân loại kênh TONT / TOFT -->
+      <div class="pt-2 border-t border-gray-100">
+        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold">
+          <button id="btnLFAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+          <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center">TONT (Quán nhậu)</button>
+          <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center">TOFT (Tạp hóa)</button>
         </div>
+      </div>
+
+      <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs">
         <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100">
-          <span class="text-[10px] font-bold text-amber-800 block">TỔNG PRE BÁN RA</span>
-          <span id="txtLFTotalPreCases" class="text-xs font-black text-amber-900 mt-0.5 block">0 Thùng</span>
+          <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
+          <span class="text-[11px] font-black text-amber-900 block mt-0.5">Tiêu chuẩn: ≥ 15 th Pre</span>
+        </div>
+        <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
+          <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
+          <span class="text-[11px] font-black text-emerald-900 block mt-0.5">Tiêu chuẩn: Huda lon 20</span>
         </div>
       </div>
     </div>
@@ -302,7 +309,8 @@
   <script>
     const ADMIN_PIN = "6868";
     const EXPORT_PIN = "8888";
-    const CASE_VOLUME = 0.0792;
+    const CASE_VOLUME = 0.0792;       // 1 thùng tiêu chuẩn 24x330ml = 0.0792 HL
+    const HUDA_CAN20_VOL = 0.066;      // 1 thùng Huda lon 20x330ml = 0.066 HL
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
@@ -311,6 +319,8 @@
       "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
       "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi", "Tuan Nguyen Hoang"
     ];
+
+    let currentLFChannel = "ALL";
 
     function normalizeSR(name) {
       if (!name) return "";
@@ -358,7 +368,6 @@
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
-    // TẢI DỮ LIỆU TỰ ĐỘNG TỪ CLOUD (TƯƠNG THÍCH 100%)
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
@@ -375,7 +384,6 @@
         }
 
         if (data && data.updated_at) {
-          // Xử lý cả cấu trúc cũ lẫn mới một cách hoàn hảo
           if (Array.isArray(data.master)) {
             MASTER = data.master;
             LISTING_FEE = data.listing || [];
@@ -480,9 +488,10 @@
           "CODE DRAGON": l.code,
           "Tên Điểm Bán": l.name,
           "SR": l.sr,
-          "Kênh": l.channel,
+          "Kênh Phân Loại": l.channelType,
+          "Mô Tả Kênh": l.channelDesc,
           "Huyện": l.district,
-          "Target Thùng Pre": l.tarCases,
+          "Target Thùng": l.tarCases,
           "Target HL": l.tarHL
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -609,7 +618,7 @@
           });
         }
 
-        // 2. ĐỌC SHEET LISTING FEE (QUÉT THEO VỊ TRÍ CHUẨN XÁC)
+        // 2. ĐỌC SHEET LISTING FEE (CHUẨN 29 ĐIỂM THUỘC SS HỒ ĐỨC LỢI)
         const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
         if (sLFName) {
           const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1 });
@@ -619,36 +628,43 @@
             const r = rawLF[i];
             if (!r || r.length === 0) continue;
 
-            // Tìm ô chứa CODE DRAGON
-            let dragonCode = "";
-            let colDragon = -1;
-            for (let c = 0; c < Math.min(5, r.length); c++) {
-              const val = String(r[c] || '').trim().toUpperCase();
-              if (val.startsWith('CB') || val.startsWith('CD')) {
-                dragonCode = val;
-                colDragon = c;
-                break;
-              }
+            const ssCol = String(r[1] || '').trim();
+            // LỌC CHUẨN XÁC: Chỉ lấy các điểm thuộc SS "Hồ Đức Lợi"
+            if (!ssCol.includes("Hồ Đức Lợi") && !ssCol.includes("Ho Duc Loi") && !ssCol.includes("Lợi")) continue;
+
+            const dragonCode = String(r[2] || '').trim();
+            if (!dragonCode.startsWith('CB') && !dragonCode.startsWith('CD')) continue;
+
+            const rawSR = String(r[3] || '').trim();
+            const rawOutlet = String(r[4] || '').trim();
+            const onOff = String(r[5] || '').trim().toUpperCase(); // On hoặc Off
+            const kenhDesc = String(r[6] || '').trim();           // Quan nhau binh dan / Tap hoa nho
+            const district = String(r[7] || '').trim();
+
+            // Phân loại Kênh: TONT (Quán nhậu - On) hoặc TOFT (Tạp hóa - Off)
+            let channelType = "TONT";
+            if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
+              channelType = "TOFT";
+            } else {
+              channelType = "TONT";
             }
 
-            if (!dragonCode) continue;
-
-            // Trong sheet Listing Free của Carlsberg:
-            // Ô kế tiếp là SR, ô sau nữa là Tên quán
-            const rawSR = String(r[colDragon + 1] || '').trim();
-            const rawOutlet = String(r[colDragon + 2] || '').trim();
-            const channel = String(r[colDragon + 4] || r[colDragon + 3] || 'LF').trim();
-            const district = String(r[colDragon + 5] || '').trim();
-
-            const srName = normalizeSR(rawSR);
-            const tarHL = parseFloat(r[colDragon + 6]) || 0;
-            const tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
+            const tarHL = parseFloat(r[8]) || (channelType === "TONT" ? 1.1876 : 0.99);
+            // Đối với TONT: Tiêu chuẩn tối thiểu 15 thùng Pre 24x330ml
+            // Đối với TOFT: Tiêu chuẩn tính theo Huda lon 20 (0.066 HL/th)
+            let tarCases = 15;
+            if (channelType === "TONT") {
+              tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
+            } else {
+              tarCases = Math.max(15, Math.round(tarHL / HUDA_CAN20_VOL) || 15);
+            }
 
             LISTING_FEE.push({
               code: dragonCode,
               name: rawOutlet || dragonCode,
-              sr: srName,
-              channel: channel,
+              sr: normalizeSR(rawSR),
+              channelType: channelType,      // TONT hoặc TOFT
+              channelDesc: kenhDesc || (channelType === "TONT" ? "Quán nhậu" : "Tạp hóa"),
               district: district,
               tarCases: tarCases,
               tarHL: tarHL
@@ -718,7 +734,6 @@
 
       const nowStr = new Date().toLocaleString('vi-VN');
 
-      // GOM MASTER VÀ LISTING_FEE VÀO CÙNG CỘT MASTER ĐÃ CÓ SẴN (TRÁNH LỖI CỘT SCHEMA CỦA SUPABASE)
       if (supabaseClient) {
         try {
           const { error } = await supabaseClient.from('sales_data').upsert({
@@ -751,7 +766,7 @@
       document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       populateDateFilter();
       renderAll();
-      alert(`Đồng bộ thành công! Tìm thấy ${LISTING_FEE.length} điểm Listing Fee.`);
+      alert(`Đồng bộ thành công! Đã nạp đúng ${LISTING_FEE.length} điểm Listing Fee của Team.`);
     }
 
     function switchTab(tab) {
@@ -776,6 +791,16 @@
         document.getElementById('tab3Content').classList.remove('hidden');
         document.getElementById('tabBtn3').className = activeClass;
       }
+    }
+
+    function filterLFChannel(type) {
+      currentLFChannel = type;
+      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
+      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
+      document.getElementById('btnLFAll').className = (type === 'ALL') ? act : inact;
+      document.getElementById('btnLFTont').className = (type === 'TONT') ? act : inact;
+      document.getElementById('btnLFToft').className = (type === 'TOFT') ? act : inact;
+      renderAll();
     }
 
     function renderAll() {
@@ -925,9 +950,15 @@
       // ==========================================
       const salesByOutlet = {};
       const salesPreQtyByOutlet = {};
+      const salesHudaCan20ByOutlet = {};
+
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+        if (o.category === "Mainstream") {
+          salesByOutlet[o.code].huda += o.vol;
+          // Đếm thùng Huda lon 20 (hoặc quy đổi từ HL mainstream sang thùng lon 20)
+          salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
+        }
         if (o.category === "Premium") {
           salesByOutlet[o.code].pre += o.vol;
           salesPreQtyByOutlet[o.code] = (salesPreQtyByOutlet[o.code] || 0) + o.qty;
@@ -960,19 +991,23 @@
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
+        // Tính % đạt trưng bày
+        const pctOutlet = tarTot > 0 ? Math.min(100, Math.round((actTot / tarTot) * 100)) : 0;
+
+        // GỢI Ý THÙNG THIẾU CHUẨN XÁC:
         let missingNotice = '';
         if (isPass) {
-          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
+          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctOutlet}%)</span>`;
         } else {
-          const gapHudaHL = Math.max(0, m.tarHuda - actH);
           const gapPreHL = Math.max(0, m.tarPre - actP);
-          const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
           const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
+          const gapHudaHL = Math.max(0, m.tarHuda - actH);
+          const gapHudaCan20 = Math.ceil(gapHudaHL / HUDA_CAN20_VOL);
 
           let missingParts = [];
-          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
+          if (gapHudaCan20 > 0) missingParts.push(`Thiếu <b>${gapHudaCan20}</b> th Huda lon 20`);
           if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
-          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
+          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')} (${pctOutlet}%)</span>`;
         }
 
         preparedList.push({
@@ -980,6 +1015,7 @@
           actH: actH,
           actP: actP,
           isPass: isPass,
+          pct: pctOutlet,
           missingNotice: missingNotice
         });
       });
@@ -992,21 +1028,29 @@
       const outletBox = document.getElementById('outletList');
       outletBox.innerHTML = '';
 
-      preparedList.forEach(({ item: m, actH, actP, isPass, missingNotice }) => {
+      preparedList.forEach(({ item: m, actH, actP, isPass, pct, missingNotice }) => {
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
+        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <div>
               <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr} • <span class="text-blue-600 font-extrabold">${m.level}</span></div>
               <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
             </div>
-            <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-              ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-            </span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
+              <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+                ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+              </span>
+            </div>
           </div>
 
-          <div class="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center text-xs">
+          <!-- Thanh tiến độ % trực quan -->
+          <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+            <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${pct}%"></div>
+          </div>
+
+          <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
             <div class="text-[11px] text-gray-500 space-x-2">
               <span>Huda: <b>${actH.toFixed(2)}</b>/${m.tarHuda.toFixed(2)}</span>
               <span>Pre: <b>${actP.toFixed(2)}</b>/${m.tarPre.toFixed(2)}</span>
@@ -1034,38 +1078,56 @@
       document.getElementById('txtListCount').textContent = `${listMaster.length} điểm bán`;
 
       // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE
+      // 3. RENDER TAB 3: OLS LISTING FEE (CHUẨN TONT & TOFT)
       // ==========================================
-      const listLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
-      let passLFCount = 0;
-      let totalLFPreCases = 0;
+      let listLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
+      
+      // Lọc kênh TONT / TOFT
+      if (currentLFChannel !== "ALL") {
+        listLF = listLF.filter(l => l.channelType === currentLFChannel);
+      }
 
+      let passLFCount = 0;
       const preparedLFList = [];
 
       listLF.forEach(l => {
-        const actPreCases = salesPreQtyByOutlet[l.code] || 0;
-        totalLFPreCases += actPreCases;
+        let actCount = 0;
+        let isPassLF = false;
+        let unitText = "";
+        let missingNoticeLF = "";
 
-        const isPassLF = actPreCases >= l.tarCases;
-        if (isPassLF) passLFCount++;
-
-        let missingNoticeLF = '';
-        if (isPassLF) {
-          missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
+        if (l.channelType === "TONT") {
+          // QUÁN NHẬU: Cần bia Premium (≥ 15 thùng)
+          actCount = salesPreQtyByOutlet[l.code] || 0;
+          unitText = "th Pre";
+          isPassLF = actCount >= l.tarCases;
+          const pctLF = Math.min(100, Math.round((actCount / l.tarCases) * 100));
+          if (isPassLF) {
+            missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
+          } else {
+            const gap = l.tarCases - actCount;
+            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Pre (${pctLF}%)</span>`;
+          }
+          preparedLFList.push({ item: l, actCount, isPass: isPassLF, pct: pctLF, unitText, missingNotice: missingNoticeLF });
         } else {
-          const gapCases = l.tarCases - actPreCases;
-          missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gapCases}</b> th Pre</span>`;
+          // TẠP HÓA: Cần Huda (tính theo Huda lon 20x330ml)
+          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+          actCount = salesHudaCan20ByOutlet[l.code] || Math.round(hudaHL / HUDA_CAN20_VOL);
+          unitText = "th Huda lon 20";
+          isPassLF = actCount >= l.tarCases;
+          const pctLF = Math.min(100, Math.round((actCount / l.tarCases) * 100));
+          if (isPassLF) {
+            missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
+          } else {
+            const gap = l.tarCases - actCount;
+            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Huda lon 20 (${pctLF}%)</span>`;
+          }
+          preparedLFList.push({ item: l, actCount, isPass: isPassLF, pct: pctLF, unitText, missingNotice: missingNoticeLF });
         }
 
-        preparedLFList.push({
-          item: l,
-          actPreCases: actPreCases,
-          isPass: isPassLF,
-          missingNotice: missingNoticeLF
-        });
+        if (isPassLF) passLFCount++;
       });
 
-      // Sắp xếp: Chưa Đạt lên trên, Đã Đạt xuống dưới
       preparedLFList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
         return a.isPass ? 1 : -1;
@@ -1077,23 +1139,31 @@
       if (preparedLFList.length === 0) {
         lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee cho nhân viên này.</div>`;
       } else {
-        preparedLFList.forEach(({ item: l, actPreCases, isPass, missingNotice }) => {
+        preparedLFList.forEach(({ item: l, actCount, isPass, pct, unitText, missingNotice }) => {
           const card = document.createElement('div');
-          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100";
+          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
           card.innerHTML = `
             <div class="flex justify-between items-start">
               <div>
-                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${l.code} • ${l.sr} • <span class="text-amber-600 font-extrabold">${l.channel || 'LF'}</span></div>
+                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${l.code} • ${l.sr} • <span class="${l.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${l.channelType}</span> <span class="text-gray-400 font-normal">(${l.channelDesc})</span></div>
                 <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${l.name}</div>
               </div>
-              <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-                ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-              </span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
+                <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+                  ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+                </span>
+              </div>
             </div>
 
-            <div class="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center text-xs">
+            <!-- Thanh tiến độ % -->
+            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${pct}%"></div>
+            </div>
+
+            <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
               <div class="text-[11px] text-gray-500 space-x-2">
-                <span>Thực bán: <b class="text-gray-900">${actPreCases}</b>/${l.tarCases} th Pre</span>
+                <span>Thực bán: <b class="text-gray-900">${actCount}</b>/${l.tarCases} ${unitText}</span>
               </div>
               <div>${missingNotice}</div>
             </div>
@@ -1106,7 +1176,6 @@
       document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
       document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
       document.getElementById('barLF').style.width = `${pctLFPass}%`;
-      document.getElementById('txtLFTotalPreCases').textContent = `${totalLFPreCases.toLocaleString('vi-VN')} Thùng`;
       document.getElementById('txtLFListCount').textContent = `${listLF.length} điểm bán`;
     }
   </script>
