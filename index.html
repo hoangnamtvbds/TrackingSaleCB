@@ -27,7 +27,7 @@
       <div class="flex items-center gap-2 mt-0.5">
         <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa nạp dữ liệu</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
-        <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider" title="Designed by LHN">by LHN</span>
+        <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
     </div>
     <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
@@ -43,7 +43,7 @@
     </select>
   </div>
 
-  <!-- THANH CHUYỂN TAB (SỐ BÁN HÀNG NGÀY LÊN TAB 1) -->
+  <!-- THANH CHUYỂN TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📅 SỐ BÁN HÀNG NGÀY
@@ -53,7 +53,7 @@
     </button>
   </div>
 
-  <!-- ================= TAB 1: SỐ BÁN HÀNG NGÀY, DỒN OUTLET & KHUYẾN MÃI ================= -->
+  <!-- ================= TAB 1: SỐ BÁN HÀNG NGÀY ================= -->
   <div id="tab1Content" class="space-y-3">
     <!-- Card Tổng sản lượng & Quy đổi -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
@@ -94,22 +94,18 @@
         </div>
         <span class="text-xs text-gray-400 font-bold">Chạm để xem ▼</span>
       </summary>
-      <div id="promoListContent" class="p-3 border-t border-gray-100 space-y-2 text-xs">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="promoListContent" class="p-3 border-t border-gray-100 space-y-2 text-xs"></div>
     </details>
 
-    <!-- TIÊU ĐỀ CHI TIẾT SỐ BÁN ĐÃ DỒN ĐIỂM -->
     <div class="flex justify-between items-center px-1 pt-1">
       <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Chi tiết theo điểm bán</span>
       <span id="txtAggCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
 
-    <!-- DANH SÁCH OUTLET DỒN VÀ BUNG SẢN PHẨM -->
     <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- ================= TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA (KÈM LEVEL 1,2,3) ================= -->
+  <!-- ================= TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA ================= -->
   <div id="tab2Content" class="hidden space-y-3">
     <!-- Card KPI tiến độ -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
@@ -125,7 +121,7 @@
         <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- Thống kê Level LV1, LV2, LV3 -->
+      <!-- Thống kê Level LV1, LV2, LV3 từ Mã Chương Trình -->
       <div class="pt-2 border-t border-gray-100">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Phân bổ cấp độ điểm bán:</span>
         <div class="grid grid-cols-3 gap-2 text-center">
@@ -167,7 +163,6 @@
       </div>
     </div>
 
-    <!-- Danh sách chi tiết điểm bán (Kèm số thùng thiếu) -->
     <div class="flex justify-between items-center mb-1 px-1">
       <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách trưng bày</span>
       <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
@@ -192,24 +187,27 @@
       </div>
 
       <div id="uploadBox" class="hidden space-y-3">
+        <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
+          💡 <b>Mẹo:</b> File Tracking nạp 1 lần sẽ tự lưu vĩnh viễn. Hôm sau bạn chỉ cần nạp riêng file <b>SEC-06 hàng ngày</b> là xong!
+        </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. TẢI FILE TRACKING MASTER (.xlsx)</label>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
           <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">2. TẢI FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">2. FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
           <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
         <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
-          ⚡ XÁC NHẬN NẠP DỮ LIỆU
+          ⚡ XÁC NHẬN CẬP NHẬT
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    const ADMIN_PIN = "6868"; // Mã PIN chuẩn 6868
-    const CASE_VOLUME = 0.0792; // 1 thùng 24x330ml = 0.0792 HL
+    const ADMIN_PIN = "6868";
+    const CASE_VOLUME = 0.0792;
     let MASTER = [];
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
@@ -219,14 +217,22 @@
       const savedSec = localStorage.getItem('SEC_DATA');
       const savedPromo = localStorage.getItem('PROMO_DATA');
       const savedTime = localStorage.getItem('UPDATE_TIME');
-      if (savedMaster && savedSec) {
+
+      if (savedMaster) {
         MASTER = JSON.parse(savedMaster);
-        SEC_ORDERS = JSON.parse(savedSec);
-        PROMOTIONS = savedPromo ? JSON.parse(savedPromo) : [];
-        if (savedTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${savedTime}`;
-        populateSRList();
-        renderAll();
+        document.getElementById('trackStatusText').textContent = `(Đã lưu ${MASTER.length} điểm)`;
+        document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
+      } else {
+        document.getElementById('trackStatusText').textContent = "(Chưa có - Cần tải)";
+        document.getElementById('trackStatusText').className = "text-rose-500 font-bold";
       }
+
+      if (savedSec) SEC_ORDERS = JSON.parse(savedSec);
+      if (savedPromo) PROMOTIONS = JSON.parse(savedPromo);
+      if (savedTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${savedTime}`;
+
+      populateSRList();
+      renderAll();
     });
 
     function toggleAdminModal() {
@@ -259,124 +265,154 @@
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
-      if (!fTrack || !fSec) { alert("Vui lòng chọn đủ cả 2 file!"); return; }
+
+      if (!fTrack && (!MASTER || MASTER.length === 0)) {
+        alert("Chưa có dữ liệu Tracking Master! Vui lòng chọn file Tracking ít nhất 1 lần.");
+        return;
+      }
+      if (!fSec && (!SEC_ORDERS || SEC_ORDERS.length === 0)) {
+        alert("Vui lòng chọn file SEC-06 để cập nhật!");
+        return;
+      }
 
       document.getElementById('btnSaveData').textContent = "Đang xử lý...";
 
-      // Đọc SEC-06
-      const bSec = await fSec.arrayBuffer();
-      const wbSec = XLSX.read(bSec);
-      const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
-      const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
+      // 1. Đọc file Tracking Master (nếu người dùng có tải file mới)
+      if (fTrack) {
+        const bTrack = await fTrack.arrayBuffer();
+        const wbTrack = XLSX.read(bTrack);
+        const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display') || s.toLowerCase().includes('master')) || wbTrack.SheetNames[0];
+        const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
 
-      SEC_ORDERS = [];
-      PROMOTIONS = [];
+        let hIdx = 3;
+        for (let i = 0; i < Math.min(10, rawTrack.length); i++) {
+          const str = (rawTrack[i] || []).join(' ').toLowerCase();
+          if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
+        }
 
-      rawSec.forEach(r => {
-        const prod = String(r['Product'] || '').trim();
-        const promoName = String(r['Promotion Name'] || '').trim();
-        const brand = String(r['Brand'] || '').trim();
-        const vol = parseFloat(r['VolumeHL']) || 0;
-        const qty = parseInt(r['Quantity']) || 0;
-        const srName = String(r['CVTCSR'] || r['Fullname'] || 'Chưa rõ').trim();
-        const ocode = String(r['OutletCode'] || '').trim();
-        const oname = String(r['OutletName'] || '').trim();
-        const dateStr = parseExcelDate(r['OrderedDate']);
+        const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
+        let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
+        h.forEach((val, i) => {
+          if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
+          if (val.includes('mã điểm bán')) colCode = i;
+          if (val.includes('tên điểm bán')) colName = i;
+          if (val.includes('sr')) colSr = i;
+          if (val.includes('tar') && val.includes('huda')) colTarH = i;
+          if (val.includes('tar') && val.includes('pre')) colTarP = i;
+        });
 
-        if (promoName || prod.toLowerCase().includes('phiếu') || brand.toLowerCase().includes('posm')) {
-          PROMOTIONS.push({
-            sr: srName,
-            outletCode: ocode,
-            outletName: oname,
-            promoName: promoName || prod,
-            product: prod,
-            qty: qty
+        MASTER = [];
+        for (let i = hIdx + 1; i < rawTrack.length; i++) {
+          const r = rawTrack[i];
+          if (!r || !r[colCode]) continue;
+
+          // Nhận diện Level trực tiếp từ Mã chương trình
+          const progCode = String(r[colProg] || '').trim().toUpperCase();
+          let parsedLevel = "LV3";
+          if (progCode.includes("LV1")) parsedLevel = "LV1";
+          else if (progCode.includes("LV2")) parsedLevel = "LV2";
+          else if (progCode.includes("LV3")) parsedLevel = "LV3";
+
+          MASTER.push({
+            prog: progCode,
+            code: String(r[colCode]).trim(),
+            name: String(r[colName] || '').trim(),
+            sr: String(r[colSr] || 'Chưa phân bổ').trim(),
+            level: parsedLevel,
+            tarHuda: parseFloat(r[colTarH]) || 0,
+            tarPre: parseFloat(r[colTarP]) || 0
           });
         }
-
-        if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
-
-        let cat = "Other";
-        const pLower = prod.toLowerCase();
-        if (pLower.includes("huda") || pLower.includes("halida")) {
-          cat = "Mainstream";
-        } else {
-          cat = "Premium";
-        }
-
-        SEC_ORDERS.push({
-          date: dateStr,
-          sr: srName,
-          code: ocode,
-          name: oname,
-          product: prod,
-          category: cat,
-          vol: vol,
-          qty: qty
-        });
-      });
-
-      // Đọc Tracking Master
-      const bTrack = await fTrack.arrayBuffer();
-      const wbTrack = XLSX.read(bTrack);
-      const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display') || s.toLowerCase().includes('master')) || wbTrack.SheetNames[0];
-      const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
-
-      let hIdx = 3;
-      for (let i = 0; i < Math.min(10, rawTrack.length); i++) {
-        const str = (rawTrack[i] || []).join(' ').toLowerCase();
-        if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
+        localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
       }
 
-      const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
-      let colCode = 5, colName = 6, colSr = 8, colLevel = 9, colTarH = 10, colTarP = 13;
-      h.forEach((val, i) => {
-        if (val.includes('mã điểm bán')) colCode = i;
-        if (val.includes('tên điểm bán')) colName = i;
-        if (val.includes('sr')) colSr = i;
-        if (val.includes('level')) colLevel = i;
-        if (val.includes('tar') && val.includes('huda')) colTarH = i;
-        if (val.includes('tar') && val.includes('pre')) colTarP = i;
-      });
+      // 2. Đọc file SEC-06 Hàng Ngày (nếu có tải mới)
+      if (fSec) {
+        const bSec = await fSec.arrayBuffer();
+        const wbSec = XLSX.read(bSec);
+        const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
+        const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
 
-      MASTER = [];
-      for (let i = hIdx + 1; i < rawTrack.length; i++) {
-        const r = rawTrack[i];
-        if (!r || !r[colCode]) continue;
-        MASTER.push({
-          code: String(r[colCode]).trim(),
-          name: String(r[colName] || '').trim(),
-          sr: String(r[colSr] || 'Chưa phân bổ').trim(),
-          level: String(r[colLevel] || '').trim().toUpperCase(),
-          tarHuda: parseFloat(r[colTarH]) || 0,
-          tarPre: parseFloat(r[colTarP]) || 0
+        SEC_ORDERS = [];
+        PROMOTIONS = [];
+
+        rawSec.forEach(r => {
+          const prod = String(r['Product'] || '').trim();
+          const promoName = String(r['Promotion Name'] || '').trim();
+          const brand = String(r['Brand'] || '').trim();
+          const vol = parseFloat(r['VolumeHL']) || 0;
+          const qty = parseInt(r['Quantity']) || 0;
+          const srName = String(r['CVTCSR'] || r['Fullname'] || 'Chưa rõ').trim();
+          const ocode = String(r['OutletCode'] || '').trim();
+          const oname = String(r['OutletName'] || '').trim();
+          const dateStr = parseExcelDate(r['OrderedDate']);
+
+          if (promoName || prod.toLowerCase().includes('phiếu') || brand.toLowerCase().includes('posm')) {
+            PROMOTIONS.push({
+              sr: srName,
+              outletCode: ocode,
+              outletName: oname,
+              promoName: promoName || prod,
+              product: prod,
+              qty: qty
+            });
+          }
+
+          if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
+
+          let cat = "Other";
+          const pLower = prod.toLowerCase();
+          if (pLower.includes("huda") || pLower.includes("halida")) {
+            cat = "Mainstream";
+          } else {
+            cat = "Premium";
+          }
+
+          SEC_ORDERS.push({
+            date: dateStr,
+            sr: srName,
+            code: ocode,
+            name: oname,
+            product: prod,
+            category: cat,
+            vol: vol,
+            qty: qty
+          });
         });
+
+        localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+        localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
       }
 
       const nowStr = new Date().toLocaleString('vi-VN');
-      localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-      localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-      localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
       localStorage.setItem('UPDATE_TIME', nowStr);
-
       document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
+
       toggleAdminModal();
-      document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN NẠP DỮ LIỆU";
+      document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       populateSRList();
       renderAll();
       alert("Đã cập nhật và đồng bộ dữ liệu thành công!");
     }
 
     function populateSRList() {
-      const srSet = new Set(MASTER.map(m => m.sr));
+      const srSet = new Set();
+      MASTER.forEach(m => { if (m.sr && m.sr !== 'Chưa phân bổ') srSet.add(m.sr); });
       SEC_ORDERS.forEach(o => { if (o.sr && o.sr !== 'Chưa rõ') srSet.add(o.sr); });
+
       const sel = document.getElementById('srFilter');
+      const curVal = sel.value;
       sel.innerHTML = '<option value="ALL">-- Tất cả nhân viên --</option>';
+
       Array.from(srSet).sort().forEach(sr => {
         const opt = document.createElement('option');
         opt.value = sr; opt.textContent = sr;
         sel.appendChild(opt);
       });
+
+      if (curVal && Array.from(srSet).includes(curVal)) {
+        sel.value = curVal;
+      }
     }
 
     function switchTab(tab) {
@@ -396,7 +432,7 @@
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
 
-      // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY & DỒN OUTLET
+      // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY
       const listDaily = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let sumHudaHL = 0, sumPreHL = 0;
 
@@ -468,7 +504,7 @@
         aggBox.appendChild(detailCard);
       });
 
-      // RENDER KHUYẾN MÃI THU GỌN
+      // RENDER KHUYẾN MÃI
       const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
@@ -504,7 +540,7 @@
         });
       }
 
-      // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA (TOFT TRACKING)
+      // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
@@ -520,10 +556,9 @@
       outletBox.innerHTML = '';
 
       listMaster.forEach(m => {
-        // Đếm Level
-        if (m.level.includes("LV1")) cLV1++;
-        else if (m.level.includes("LV2")) cLV2++;
-        else if (m.level.includes("LV3")) cLV3++;
+        if (m.level === "LV1") cLV1++;
+        else if (m.level === "LV2") cLV2++;
+        else if (m.level === "LV3") cLV3++;
 
         const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
@@ -572,7 +607,6 @@
         outletBox.appendChild(card);
       });
 
-      // Cập nhật số lượng Level
       document.getElementById('countLV1').textContent = cLV1;
       document.getElementById('countLV2').textContent = cLV2;
       document.getElementById('countLV3').textContent = cLV3;
