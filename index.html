@@ -307,7 +307,6 @@
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
-    // 9 THÀNH VIÊN TRONG TEAM
     const TEAM_SRS = [
       "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
       "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi", "Tuan Nguyen Hoang"
@@ -359,12 +358,13 @@
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
+    // TẢI DỮ LIỆU TỰ ĐỘNG TỪ CLOUD (TƯƠNG THÍCH 100%)
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
         const { data, error } = await supabaseClient
           .from('sales_data')
-          .select('master, listing, sec, promo, updated_at')
+          .select('*')
           .eq('id', 'CURRENT_DATA')
           .maybeSingle();
 
@@ -375,8 +375,15 @@
         }
 
         if (data && data.updated_at) {
-          MASTER = data.master || [];
-          LISTING_FEE = data.listing || [];
+          // Xử lý cả cấu trúc cũ lẫn mới một cách hoàn hảo
+          if (Array.isArray(data.master)) {
+            MASTER = data.master;
+            LISTING_FEE = data.listing || [];
+          } else if (data.master && typeof data.master === 'object') {
+            MASTER = data.master.toft || [];
+            LISTING_FEE = data.master.listing || [];
+          }
+
           SEC_ORDERS = data.sec || [];
           PROMOTIONS = data.promo || [];
 
@@ -602,67 +609,44 @@
           });
         }
 
-        // 2. ĐỌC SHEET LISTING FEE (QUÉT LINH HOẠT CHUẨN XÁC)
+        // 2. ĐỌC SHEET LISTING FEE (QUÉT THEO VỊ TRÍ CHUẨN XÁC)
         const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
         if (sLFName) {
           const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1 });
           LISTING_FEE = [];
 
-          for (let i = 0; i < rawLF.length; i++) {
-            const row = rawLF[i];
-            if (!row || row.length === 0) continue;
+          for (let i = 2; i < rawLF.length; i++) {
+            const r = rawLF[i];
+            if (!r || r.length === 0) continue;
 
-            // Tìm ô chứa Mã CODE DRAGON (bắt đầu bằng CB hoặc CD)
-            let dragonIdx = -1;
-            for (let c = 0; c < Math.min(6, row.length); c++) {
-              const cellStr = String(row[c] || '').trim().toUpperCase();
-              if (cellStr.startsWith('CB') || cellStr.startsWith('CD')) {
-                dragonIdx = c;
+            // Tìm ô chứa CODE DRAGON
+            let dragonCode = "";
+            let colDragon = -1;
+            for (let c = 0; c < Math.min(5, r.length); c++) {
+              const val = String(r[c] || '').trim().toUpperCase();
+              if (val.startsWith('CB') || val.startsWith('CD')) {
+                dragonCode = val;
+                colDragon = c;
                 break;
               }
             }
 
-            if (dragonIdx === -1) continue; // Bỏ qua nếu không phải dòng điểm bán
+            if (!dragonCode) continue;
 
-            const dragonCode = String(row[dragonIdx]).trim();
-            const val1 = String(row[dragonIdx + 1] || '').trim();
-            const val2 = String(row[dragonIdx + 2] || '').trim();
+            // Trong sheet Listing Free của Carlsberg:
+            // Ô kế tiếp là SR, ô sau nữa là Tên quán
+            const rawSR = String(r[colDragon + 1] || '').trim();
+            const rawOutlet = String(r[colDragon + 2] || '').trim();
+            const channel = String(r[colDragon + 4] || r[colDragon + 3] || 'LF').trim();
+            const district = String(r[colDragon + 5] || '').trim();
 
-            let srName = "";
-            let outletName = "";
-
-            // Nhận diện chuẩn xác đâu là tên SR và đâu là Tên quán
-            const norm1 = normalizeSR(val1);
-            const norm2 = normalizeSR(val2);
-
-            if (TEAM_SRS.includes(norm1)) {
-              srName = norm1;
-              outletName = val2;
-            } else if (TEAM_SRS.includes(norm2)) {
-              srName = norm2;
-              outletName = val1;
-            } else {
-              srName = norm1 || val1;
-              outletName = val2;
-            }
-
-            const channel = String(row[dragonIdx + 4] || row[dragonIdx + 3] || 'LF').trim();
-            const district = String(row[dragonIdx + 5] || '').trim();
-
-            // Tìm chỉ tiêu sản lượng (Tar Total)
-            let tarHL = 0;
-            for (let c = dragonIdx + 5; c < Math.min(dragonIdx + 9, row.length); c++) {
-              const num = parseFloat(row[c]);
-              if (!isNaN(num) && num > 0.5) {
-                tarHL = num;
-                break;
-              }
-            }
+            const srName = normalizeSR(rawSR);
+            const tarHL = parseFloat(r[colDragon + 6]) || 0;
             const tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
 
             LISTING_FEE.push({
               code: dragonCode,
-              name: outletName || dragonCode,
+              name: rawOutlet || dragonCode,
               sr: srName,
               channel: channel,
               district: district,
@@ -734,12 +718,15 @@
 
       const nowStr = new Date().toLocaleString('vi-VN');
 
+      // GOM MASTER VÀ LISTING_FEE VÀO CÙNG CỘT MASTER ĐÃ CÓ SẴN (TRÁNH LỖI CỘT SCHEMA CỦA SUPABASE)
       if (supabaseClient) {
         try {
           const { error } = await supabaseClient.from('sales_data').upsert({
             id: 'CURRENT_DATA',
-            master: MASTER,
-            listing: LISTING_FEE,
+            master: {
+              toft: MASTER,
+              listing: LISTING_FEE
+            },
             sec: SEC_ORDERS,
             promo: PROMOTIONS,
             updated_at: nowStr
