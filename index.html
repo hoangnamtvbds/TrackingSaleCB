@@ -15,8 +15,9 @@
     details > summary::-webkit-details-marker { display: none; }
   </style>
 </head>
-<body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
+<body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
+  <!-- Header & Chữ ký LHN -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
@@ -28,14 +29,31 @@
         <span class="text-[10px] font-semibold text-gray-400 tracking-wider opacity-80 italic">by LHN</span>
       </div>
     </div>
-    <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
-      ⚙️ Cập nhật
-    </button>
+    <div class="flex items-center gap-1.5">
+      <button onclick="copyZaloReport()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1" title="Sao chép báo cáo gửi Zalo">
+        📋 Báo cáo
+      </button>
+      <button onclick="toggleAdminModal()" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+        ⚙️ Nạp file
+      </button>
+    </div>
   </div>
 
+  <!-- Dòng hiển thị ngày đơn gần nhất (Độ trễ duyệt T+1) -->
+  <div id="latestOrderBanner" class="hidden mb-3 bg-blue-50/80 border border-blue-100 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
+    <span class="text-blue-800 font-medium flex items-center gap-1">
+      📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-blue-950">--</b>
+    </span>
+    <span class="text-[10px] text-blue-600 font-bold bg-blue-100 px-1.5 py-0.5 rounded">T+1</span>
+  </div>
+
+  <!-- BỘ LỌC TÊN SR (Tự động ghi nhớ cho từng nhân viên) -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
-    <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
-    <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
+    <div class="flex justify-between items-center mb-1">
+      <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
+      <span class="text-[10px] text-gray-400 italic" id="srSaveStatus">Tự lưu máy này</span>
+    </div>
+    <select id="srFilter" onchange="onSRChange()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
       <option value="ALL">-- Toàn bộ Team --</option>
       <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
       <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
@@ -49,19 +67,30 @@
     </select>
   </div>
 
+  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN (SEARCH BAR) -->
+  <div class="mb-3">
+    <div class="relative">
+      <input type="text" id="searchInput" oninput="renderAll()" placeholder="🔍 Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
+        class="w-full p-2.5 pl-9 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-800 placeholder-gray-400 card-shadow outline-none focus:border-blue-500">
+      <span class="absolute left-3 top-2.5 text-gray-400 text-xs">🔍</span>
+      <button onclick="clearSearch()" id="btnClearSearch" class="hidden absolute right-3 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold">✕</button>
+    </div>
+  </div>
+
+  <!-- THANH CHUYỂN 3 TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold gap-1">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN TOTAL
     </button>
     <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
-      🎯 OLS TRƯNG BÀY BIA
+      🎯 OLS TRƯNG BÀY
     </button>
     <button id="tabBtn3" onclick="switchTab(3)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       💰 LISTING FEE
     </button>
   </div>
 
-  <!-- TAB 1: SỐ BÁN TOTAL -->
+  <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
   <div id="tab1Content" class="space-y-3">
     <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
       <summary class="p-3 flex justify-between items-center cursor-pointer select-none bg-blue-50/50">
@@ -83,7 +112,7 @@
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-1">
         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📦 Tổng Sản Lượng Bán Ra</span>
-        <span class="text-[10px] font-bold text-gray-400">1 Thùng QC = 0.0792 HL</span>
+        <span class="text-[10px] font-bold text-gray-400">1 Thùng = 0.0792 HL</span>
       </div>
       <div class="grid grid-cols-2 gap-3 pt-2">
         <div class="bg-blue-50/90 p-3.5 rounded-2xl border border-blue-100">
@@ -91,7 +120,7 @@
           <p id="totalDailyHL" class="text-2xl font-black text-[#1F4E79] mt-0.5 tracking-tight">0.00</p>
         </div>
         <div class="bg-amber-50/90 p-3.5 rounded-2xl border border-amber-100">
-          <p class="text-[11px] font-bold text-amber-800 uppercase">Két / Thùng QC</p>
+          <p class="text-[11px] font-bold text-amber-800 uppercase">Két / Thùng</p>
           <p id="totalDailyCases" class="text-2xl font-black text-amber-700 mt-0.5 tracking-tight">0</p>
         </div>
       </div>
@@ -114,6 +143,7 @@
       </div>
     </div>
 
+    <!-- KHỐI KHUYẾN MÃI THU GỌN -->
     <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
       <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
         <div class="flex items-center gap-2">
@@ -134,7 +164,7 @@
     <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- TAB 2: OLS TRƯNG BÀY -->
+  <!-- ================= TAB 2: OLS TRƯNG BÀY BIA ================= -->
   <div id="tab2Content" class="hidden space-y-3">
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
@@ -149,7 +179,16 @@
         <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
       </div>
 
+      <!-- BỘ LỌC TRẠNG THÁI: TẤT CẢ / CHƯA ĐẠT / ĐÃ ĐẠT -->
       <div class="pt-2 border-t border-gray-100">
+        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+          <button id="btnFilterTBAll" onclick="setTBStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+          <button id="btnFilterTBFail" onclick="setTBStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
+          <button id="btnFilterTBPass" onclick="setTBStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
+        </div>
+      </div>
+
+      <div class="pt-1 border-t border-gray-100">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Phân bổ cấp độ điểm bán:</span>
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-blue-50/70 p-2 rounded-xl border border-blue-100">
@@ -197,7 +236,7 @@
     <div id="outletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- TAB 3: OLS LISTING FEE -->
+  <!-- ================= TAB 3: OLS LISTING FEE ================= -->
   <div id="tab3Content" class="hidden space-y-3">
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
@@ -212,11 +251,19 @@
         <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
       </div>
 
+      <!-- BỘ LỌC TRẠNG THÁI LF: TẤT CẢ / CHƯA ĐẠT / ĐÃ ĐẠT -->
       <div class="pt-2 border-t border-gray-100">
-        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold">
-          <button id="btnLFAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
-          <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center">TONT (Quán nhậu)</button>
-          <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center">TOFT (Tạp hóa)</button>
+        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1 mb-2">
+          <button id="btnFilterLFAll" onclick="setLFStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+          <button id="btnFilterLFFail" onclick="setLFStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
+          <button id="btnFilterLFPass" onclick="setLFStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
+        </div>
+
+        <!-- Lọc Kênh TONT / TOFT -->
+        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+          <button id="btnLFChannelAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
+          <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán nhậu)</button>
+          <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-emerald-700 text-center">TOFT (Tạp hóa)</button>
         </div>
       </div>
 
@@ -239,7 +286,7 @@
     <div id="lfOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- MODAL ADMIN -->
+  <!-- MODAL ADMIN CẬP NHẬT -->
   <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
       <div class="flex justify-between items-center">
@@ -257,10 +304,10 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          ☁️ Dữ liệu được lưu lên Cloud, tất cả điện thoại của nhân viên sẽ cập nhật ngay lập tức!
+          💡 <b>Mẹo:</b> File Tracking Master chỉ cần nạp đầu tháng. Hằng ngày chỉ cần chọn file <b>SEC-06</b> rồi bấm xác nhận là xong!
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (Gồm TOFT & Listing Fee) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (Rút gọn .xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
           <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
         <div>
@@ -300,8 +347,8 @@
   <script>
     const ADMIN_PIN = "6868";
     const EXPORT_PIN = "8888";
-    const CASE_VOLUME = 0.0792;
-    const HUDA_CAN20_VOL = 0.066;
+    const CASE_VOLUME = 0.0792;       // 1 thùng tiêu chuẩn (24x330ml) = 0.0792 HL
+    const HUDA_CAN20_VOL = 0.066;      // 1 thùng Huda lon 20x330ml = 0.066 HL
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
@@ -312,6 +359,8 @@
     ];
 
     let currentLFChannel = "ALL";
+    let currentTBStatus = "ALL";
+    let currentLFStatus = "ALL";
 
     function normalizeSR(name) {
       if (!name) return "";
@@ -405,6 +454,7 @@
           document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
           document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
 
+          updateLatestOrderDateBanner();
           populateDateFilter();
           renderAll();
         } else {
@@ -413,6 +463,19 @@
       } catch (err) {
         console.error("Lỗi:", err);
       }
+    }
+
+    function updateLatestOrderDateBanner() {
+      if (SEC_ORDERS && SEC_ORDERS.length > 0) {
+        const dates = SEC_ORDERS.map(o => o.date).filter(Boolean).sort().reverse();
+        if (dates.length > 0) {
+          const latest = dates[0];
+          document.getElementById('lblLatestOrderDate').textContent = latest;
+          document.getElementById('latestOrderBanner').classList.remove('hidden');
+          return latest;
+        }
+      }
+      return null;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -428,11 +491,24 @@
       if (localPromo) PROMOTIONS = JSON.parse(localPromo);
       if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
+      // GHI NHỚ TÊN SR LẦN TRƯỚC ĐÃ CHỌN
+      const savedSR = localStorage.getItem('SAVED_SR');
+      if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
+        document.getElementById('srFilter').value = savedSR;
+      }
+
+      updateLatestOrderDateBanner();
       populateDateFilter();
       renderAll();
 
       loadDataFromCloud();
     });
+
+    function onSRChange() {
+      const selected = document.getElementById('srFilter').value;
+      localStorage.setItem('SAVED_SR', selected);
+      renderAll();
+    }
 
     function toggleAdminModal() {
       document.getElementById('adminModal').classList.toggle('hidden');
@@ -491,7 +567,7 @@
           "Kênh Phân Loại": l.channelType,
           "Mô Tả Kênh": l.channelDesc,
           "Huyện": l.district,
-          "Target Thùng TC": l.tarCases,
+          "Target Thùng": l.tarCases,
           "Target HL": l.tarHL
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -556,6 +632,13 @@
       renderAll();
     }
 
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('btnClearSearch').classList.add('hidden');
+      renderAll();
+    }
+
+    // XỬ LÝ FILE SIÊU NHẸ VÀ TỐI ƯU
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -573,183 +656,185 @@
       btnSave.textContent = "Đang xử lý dữ liệu...";
       await new Promise(r => setTimeout(r, 30));
 
-      if (fTrack) {
-        const bTrack = await fTrack.arrayBuffer();
-        const wbTrack = XLSX.read(bTrack, { sheets: [' Display TOFT', 'Listing Free'], dense: false });
+      try {
+        if (fTrack) {
+          const bTrack = await fTrack.arrayBuffer();
+          const wbTrack = XLSX.read(bTrack, { sheets: [' Display TOFT', 'Listing Free'], dense: false });
 
-        const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
-        if (wbTrack.Sheets[sTrack]) {
-          const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
-          let hIdx = 3;
-          for (let i = 0; i < Math.min(10, rawTrack.length); i++) {
-            const str = (rawTrack[i] || []).join(' ').toLowerCase();
-            if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
-          }
-
-          const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
-          let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
-          h.forEach((val, i) => {
-            if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
-            if (val.includes('mã điểm bán')) colCode = i;
-            if (val.includes('tên điểm bán')) colName = i;
-            if (val.includes('sr')) colSr = i;
-            if (val.includes('tar') && val.includes('huda')) colTarH = i;
-            if (val.includes('tar') && val.includes('pre')) colTarP = i;
-          });
-
-          MASTER = [];
-          for (let i = hIdx + 1; i < rawTrack.length; i++) {
-            const r = rawTrack[i];
-            if (!r || !r[colCode]) continue;
-
-            const progCode = String(r[colProg] || '').trim().toUpperCase();
-            let parsedLevel = "LV3";
-            if (progCode.includes("LV1")) parsedLevel = "LV1";
-            else if (progCode.includes("LV2")) parsedLevel = "LV2";
-            else if (progCode.includes("LV3")) parsedLevel = "LV3";
-
-            MASTER.push({
-              prog: progCode,
-              code: String(r[colCode]).trim(),
-              name: String(r[colName] || '').trim(),
-              sr: normalizeSR(r[colSr]),
-              level: parsedLevel,
-              tarHuda: parseFloat(r[colTarH]) || 0,
-              tarPre: parseFloat(r[colTarP]) || 0
-            });
-          }
-        }
-
-        const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
-        if (sLFName && wbTrack.Sheets[sLFName]) {
-          const wsLF = wbTrack.Sheets[sLFName];
-          const rawLF = XLSX.utils.sheet_to_json(wsLF, { header: 1, range: 0, defval: "" });
-          LISTING_FEE = [];
-
-          for (let r = 0; r < rawLF.length; r++) {
-            const row = rawLF[r];
-            if (!row || row.length === 0) continue;
-
-            let isHDL = false;
-            let dragonCode = "";
-            let rawSR = "";
-            let rawOutlet = "";
-            let onOff = "";
-            let kenhDesc = "";
-            let district = "";
-            let tarHL = 0;
-
-            for (let c = 0; c < row.length; c++) {
-              const cell = String(row[c] || '').trim();
-              if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) {
-                isHDL = true;
-              }
-              if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
-                dragonCode = cell;
-                rawSR = String(row[c + 1] || '').trim();
-                rawOutlet = String(row[c + 2] || '').trim();
-                onOff = String(row[c + 3] || row[c + 4] || '').trim().toUpperCase();
-                kenhDesc = String(row[c + 4] || row[c + 5] || '').trim();
-                district = String(row[c + 5] || row[c + 6] || '').trim();
-                tarHL = parseFloat(row[c + 6] || row[c + 7]) || 0;
-              }
+          // 1. ĐỌC SHEET TRƯNG BÀY
+          const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
+          if (wbTrack.Sheets[sTrack]) {
+            const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
+            let hIdx = 3;
+            for (let i = 0; i < Math.min(10, rawTrack.length); i++) {
+              const str = (rawTrack[i] || []).join(' ').toLowerCase();
+              if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
             }
 
-            if (isHDL && dragonCode) {
-              let channelType = "TONT";
-              if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
-                channelType = "TOFT";
-              } else {
-                channelType = "TONT";
-              }
+            const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
+            let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
+            h.forEach((val, i) => {
+              if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
+              if (val.includes('mã điểm bán')) colCode = i;
+              if (val.includes('tên điểm bán')) colName = i;
+              if (val.includes('sr')) colSr = i;
+              if (val.includes('tar') && val.includes('huda')) colTarH = i;
+              if (val.includes('tar') && val.includes('pre')) colTarP = i;
+            });
 
-              let tarCases = 15;
-              if (channelType === "TONT") {
-                tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
-                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
-              } else {
-                tarCases = Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
-                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
-              }
+            MASTER = [];
+            for (let i = hIdx + 1; i < rawTrack.length; i++) {
+              const r = rawTrack[i];
+              if (!r || !r[colCode]) continue;
 
-              LISTING_FEE.push({
-                code: dragonCode,
-                name: rawOutlet || dragonCode,
-                sr: normalizeSR(rawSR),
-                channelType: channelType,
-                channelDesc: kenhDesc || (channelType === "TONT" ? "Quán nhậu" : "Tạp hóa"),
-                district: district,
-                tarCases: tarCases,
-                tarHL: tarHL
+              const progCode = String(r[colProg] || '').trim().toUpperCase();
+              let parsedLevel = "LV3";
+              if (progCode.includes("LV1")) parsedLevel = "LV1";
+              else if (progCode.includes("LV2")) parsedLevel = "LV2";
+              else if (progCode.includes("LV3")) parsedLevel = "LV3";
+
+              MASTER.push({
+                prog: progCode,
+                code: String(r[colCode]).trim(),
+                name: String(r[colName] || '').trim(),
+                sr: normalizeSR(r[colSr]),
+                level: parsedLevel,
+                tarHuda: parseFloat(r[colTarH]) || 0,
+                tarPre: parseFloat(r[colTarP]) || 0
               });
             }
           }
+
+          // 2. ĐỌC SHEET LISTING FEE
+          const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
+          if (sLFName && wbTrack.Sheets[sLFName]) {
+            const wsLF = wbTrack.Sheets[sLFName];
+            const rawLF = XLSX.utils.sheet_to_json(wsLF, { header: 1, range: 0, defval: "" });
+            LISTING_FEE = [];
+
+            for (let r = 0; r < rawLF.length; r++) {
+              const row = rawLF[r];
+              if (!row || row.length === 0) continue;
+
+              let isHDL = false;
+              let dragonCode = "";
+              let rawSR = "";
+              let rawOutlet = "";
+              let onOff = "";
+              let kenhDesc = "";
+              let district = "";
+              let tarHL = 0;
+
+              for (let c = 0; c < row.length; c++) {
+                const cell = String(row[c] || '').trim();
+                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) {
+                  isHDL = true;
+                }
+                if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
+                  dragonCode = cell;
+                  rawSR = String(row[c + 1] || '').trim();
+                  rawOutlet = String(row[c + 2] || '').trim();
+                  onOff = String(row[c + 3] || row[c + 4] || '').trim().toUpperCase();
+                  kenhDesc = String(row[c + 4] || row[c + 5] || '').trim();
+                  district = String(row[c + 5] || row[c + 6] || '').trim();
+                  tarHL = parseFloat(row[c + 6] || row[c + 7]) || 0;
+                }
+              }
+
+              if (isHDL && dragonCode) {
+                let channelType = "TONT";
+                if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
+                  channelType = "TOFT";
+                } else {
+                  channelType = "TONT";
+                }
+
+                let tarCases = 15;
+                if (channelType === "TONT") {
+                  tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
+                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
+                } else {
+                  tarCases = Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
+                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
+                }
+
+                LISTING_FEE.push({
+                  code: dragonCode,
+                  name: rawOutlet || dragonCode,
+                  sr: normalizeSR(rawSR),
+                  channelType: channelType,
+                  channelDesc: kenhDesc || (channelType === "TONT" ? "Quán nhậu" : "Tạp hóa"),
+                  district: district,
+                  tarCases: tarCases,
+                  tarHL: tarHL
+                });
+              }
+            }
+          }
         }
-      }
 
-      if (fSec) {
-        const bSec = await fSec.arrayBuffer();
-        const wbSec = XLSX.read(bSec, { dense: false });
-        const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
-        const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
+        if (fSec) {
+          const bSec = await fSec.arrayBuffer();
+          const wbSec = XLSX.read(bSec, { dense: false });
+          const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
+          const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
 
-        SEC_ORDERS = [];
-        PROMOTIONS = [];
+          SEC_ORDERS = [];
+          PROMOTIONS = [];
 
-        rawSec.forEach(r => {
-          const prod = String(r['Product'] || '').trim();
-          const promoName = String(r['Promotion Name'] || '').trim();
-          const brand = String(r['Brand'] || '').trim();
-          const vol = parseFloat(r['VolumeHL']) || 0;
-          const qty = parseInt(r['Quantity']) || 0;
-          const price = parseFloat(r['Price']) || 0;
-          const rev = parseFloat(r['Revenue']) || 0;
-          const srName = normalizeSR(r['CVTCSR'] || r['Fullname']);
-          const ocode = String(r['OutletCode'] || '').trim();
-          const oname = String(r['OutletName'] || '').trim();
-          const dateStr = parseExcelDate(r['OrderedDate']);
+          rawSec.forEach(r => {
+            const prod = String(r['Product'] || '').trim();
+            const promoName = String(r['Promotion Name'] || '').trim();
+            const brand = String(r['Brand'] || '').trim();
+            const vol = parseFloat(r['VolumeHL']) || 0;
+            const qty = parseInt(r['Quantity']) || 0;
+            const price = parseFloat(r['Price']) || 0;
+            const rev = parseFloat(r['Revenue']) || 0;
+            const srName = normalizeSR(r['CVTCSR'] || r['Fullname']);
+            const ocode = String(r['OutletCode'] || '').trim();
+            const oname = String(r['OutletName'] || '').trim();
+            const dateStr = parseExcelDate(r['OrderedDate']);
 
-          const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
-          if (promoName && isReward) {
-            PROMOTIONS.push({
-              sr: srName,
+            const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
+            if (promoName && isReward) {
+              PROMOTIONS.push({
+                sr: srName,
+                date: dateStr,
+                outletCode: ocode,
+                outletName: oname,
+                promoName: promoName,
+                rewardItem: prod,
+                qty: qty
+              });
+            }
+
+            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
+
+            let cat = "Other";
+            const pLower = prod.toLowerCase();
+            if (pLower.includes("huda") || pLower.includes("halida")) {
+              cat = "Mainstream";
+            } else {
+              cat = "Premium";
+            }
+
+            SEC_ORDERS.push({
               date: dateStr,
-              outletCode: ocode,
-              outletName: oname,
-              promoName: promoName,
-              rewardItem: prod,
+              sr: srName,
+              code: ocode,
+              name: oname,
+              brand: detectBrand(brand, prod),
+              product: prod,
+              category: cat,
+              vol: vol,
               qty: qty
             });
-          }
-
-          if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
-
-          let cat = "Other";
-          const pLower = prod.toLowerCase();
-          if (pLower.includes("huda") || pLower.includes("halida")) {
-            cat = "Mainstream";
-          } else {
-            cat = "Premium";
-          }
-
-          SEC_ORDERS.push({
-            date: dateStr,
-            sr: srName,
-            code: ocode,
-            name: oname,
-            brand: detectBrand(brand, prod),
-            product: prod,
-            category: cat,
-            vol: vol,
-            qty: qty
           });
-        });
-      }
+        }
 
-      const nowStr = new Date().toLocaleString('vi-VN');
-      btnSave.textContent = "Đang gửi lên Cloud...";
+        const nowStr = new Date().toLocaleString('vi-VN');
+        btnSave.textContent = "Đang gửi lên Cloud...";
 
-      try {
         const payload = {
           id: 'CURRENT_DATA',
           master: {
@@ -776,25 +861,25 @@
           const errText = await res.text();
           throw new Error(errText);
         }
-      } catch (err) {
-        console.error("Lỗi Supabase:", err);
-        alert("Lỗi lưu lên Cloud: " + (err.message || err));
+
+        localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+        localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
+        localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+        localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+        localStorage.setItem('UPDATE_TIME', nowStr);
+
+        document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
+        toggleAdminModal();
         btnSave.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
-        return;
+        updateLatestOrderDateBanner();
+        populateDateFilter();
+        renderAll();
+        alert(`Đồng bộ thành công! Tìm thấy ${LISTING_FEE.length} điểm Listing Fee.`);
+      } catch (err) {
+        console.error("Lỗi cập nhật:", err);
+        alert("Lỗi khi xử lý file: " + (err.message || err));
+        btnSave.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       }
-
-      localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-      localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-      localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-      localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-      localStorage.setItem('UPDATE_TIME', nowStr);
-
-      document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
-      toggleAdminModal();
-      btnSave.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
-      populateDateFilter();
-      renderAll();
-      alert(`Đồng bộ thành công! Tìm thấy ${LISTING_FEE.length} điểm Listing Fee.`);
     }
 
     function switchTab(tab) {
@@ -821,25 +906,214 @@
       }
     }
 
+    function setTBStatusFilter(status) {
+      currentTBStatus = status;
+      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
+      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
+      document.getElementById('btnFilterTBAll').className = (status === 'ALL') ? act : inact;
+      document.getElementById('btnFilterTBFail').className = (status === 'FAIL') ? (act + " text-rose-600 font-bold") : inact;
+      document.getElementById('btnFilterTBPass').className = (status === 'PASS') ? (act + " text-emerald-600 font-bold") : inact;
+      renderAll();
+    }
+
+    function setLFStatusFilter(status) {
+      currentLFStatus = status;
+      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
+      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
+      document.getElementById('btnFilterLFAll').className = (status === 'ALL') ? act : inact;
+      document.getElementById('btnFilterLFFail').className = (status === 'FAIL') ? (act + " text-rose-600 font-bold") : inact;
+      document.getElementById('btnFilterLFPass').className = (status === 'PASS') ? (act + " text-emerald-600 font-bold") : inact;
+      renderAll();
+    }
+
     function filterLFChannel(type) {
       currentLFChannel = type;
       const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
       const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
-      document.getElementById('btnLFAll').className = (type === 'ALL') ? act : inact;
-      document.getElementById('btnLFTont').className = (type === 'TONT') ? act : inact;
-      document.getElementById('btnLFToft').className = (type === 'TOFT') ? act : inact;
+      document.getElementById('btnLFChannelAll').className = (type === 'ALL') ? act : inact;
+      document.getElementById('btnLFTont').className = (type === 'TONT') ? (act + " text-amber-700 font-bold") : inact;
+      document.getElementById('btnLFToft').className = (type === 'TOFT') ? (act + " text-emerald-700 font-bold") : inact;
       renderAll();
+    }
+
+    // SAO CHÉP BÁO CÁO GỬI ZALO THÔNG MINH (ĐỘ TRỄ T+1)
+    function copyZaloReport() {
+      const selectedSR = document.getElementById('srFilter').value;
+      const srSelectEl = document.getElementById('srFilter');
+      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
+      const latestDate = updateLatestOrderDateBanner() || "Gần nhất";
+      const updateTime = localStorage.getItem('UPDATE_TIME') || "";
+
+      let reportText = "";
+
+      if (selectedSR === "ALL") {
+        // MẪU BÁO CÁO TOÀN TEAM (DÀNH CHO QUẢN LÝ)
+        let totalMonthHL = 0;
+        let totalDayHL = 0;
+        const srDayMap = {};
+
+        SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
+          totalMonthHL += o.vol;
+          if (o.date === latestDate) {
+            totalDayHL += o.vol;
+            srDayMap[o.sr] = (srDayMap[o.sr] || 0) + o.vol;
+          }
+        });
+
+        const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
+        const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
+
+        // Đếm OLS Trưng bày toàn team
+        const salesByOutlet = {};
+        SEC_ORDERS.forEach(o => {
+          if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
+          if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+          if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+          salesByOutlet[o.code].total += o.vol;
+        });
+
+        let tbPass = 0;
+        MASTER.filter(m => TEAM_SRS.includes(m.sr)).forEach(m => {
+          const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
+          const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
+          const actTot = actH + actP;
+          const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
+          if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
+              (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+            tbPass++;
+          }
+        });
+
+        let lfPass = 0;
+        LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
+          if (l.channelType === "TONT") {
+            const preQty = SEC_ORDERS.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+            if (preQty >= l.tarCases) lfPass++;
+          } else {
+            const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+            if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
+          }
+        });
+
+        const tbTotal = MASTER.filter(m => TEAM_SRS.includes(m.sr)).length;
+        const lfTotal = LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).length;
+
+        // Top sản lượng ngày gần nhất
+        const topSRs = Object.entries(srDayMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
+        let topText = "";
+        topSRs.forEach(([srKey, vol], i) => {
+          const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
+          const name = opt ? opt.text : srKey;
+          topText += `\n  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
+        });
+
+        reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM
+📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})
+
+1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):
+• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)
+${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}
+
+2️⃣ LŨY KẾ THÁNG (MTD):
+• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)
+• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)
+• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)
+
+👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
+      } else {
+        // MẪU BÁO CÁO CÁ NHÂN (DÀNH CHO TỪNG BẠN SR)
+        let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
+        const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
+
+        listSRSec.forEach(o => {
+          monthHL += o.vol;
+          if (o.category === "Premium") monthPreHL += o.vol;
+          if (o.category === "Mainstream") monthHudaHL += o.vol;
+          if (o.date === latestDate) dayHL += o.vol;
+        });
+
+        const dayCases = Math.round(dayHL / CASE_VOLUME);
+        const monthCases = Math.round(monthHL / CASE_VOLUME);
+
+        // Đếm Trưng bày của SR
+        const salesByOutlet = {};
+        listSRSec.forEach(o => {
+          if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
+          if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+          if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+          salesByOutlet[o.code].total += o.vol;
+        });
+
+        const listSRMaster = MASTER.filter(m => m.sr === selectedSR);
+        let tbPass = 0;
+        listSRMaster.forEach(m => {
+          const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
+          const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
+          const actTot = actH + actP;
+          const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
+          if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
+              (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+            tbPass++;
+          }
+        });
+
+        const listSRLF = LISTING_FEE.filter(l => l.sr === selectedSR);
+        let lfPass = 0;
+        listSRLF.forEach(l => {
+          if (l.channelType === "TONT") {
+            const preQty = listSRSec.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+            if (preQty >= l.tarCases) lfPass++;
+          } else {
+            const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+            if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
+          }
+        });
+
+        const tbMiss = listSRMaster.length - tbPass;
+        const lfMiss = listSRLF.length - lfPass;
+
+        reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}
+📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})
+
+1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):
+• Sản lượng: ${dayHL.toFixed(2)} HL (${dayCases} thùng)
+
+2️⃣ LŨY KẾ THÁNG (MTD):
+• Tổng bán: ${monthHL.toFixed(2)} HL (${monthCases} thùng)
+  - Premium: ${monthPreHL.toFixed(2)} HL
+  - Huda: ${monthHudaHL.toFixed(2)} HL
+• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)
+  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}
+• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)
+  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}
+
+👉 Mục tiêu hôm nay: Tập trung chào hàng bổ sung các điểm chưa đạt!`;
+      }
+
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) vào nhóm chat.");
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
     }
 
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
       const selectedDate = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'ALL';
+      const searchKeyword = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').trim().toLowerCase();
+
+      if (document.getElementById('btnClearSearch')) {
+        if (searchKeyword) document.getElementById('btnClearSearch').classList.remove('hidden');
+        else document.getElementById('btnClearSearch').classList.add('hidden');
+      }
 
       if (document.getElementById('lblSelectedDate')) {
         document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
       }
 
+      // ==========================================
       // 1. RENDER TAB 1: SỐ BÁN TOTAL
+      // ==========================================
       let listDaily = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       if (selectedDate !== "ALL") {
         listDaily = listDaily.filter(o => o.date === selectedDate);
@@ -896,9 +1170,13 @@
         });
       }
 
+      let sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
+      if (searchKeyword) {
+        sortedOutlets = sortedOutlets.filter(ot => ot.name.toLowerCase().includes(searchKeyword) || ot.code.toLowerCase().includes(searchKeyword));
+      }
+
       const aggBox = document.getElementById('aggregatedOutletList');
       aggBox.innerHTML = '';
-      const sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
       document.getElementById('txtAggCount').textContent = `${sortedOutlets.length} điểm bán`;
 
       sortedOutlets.forEach(ot => {
@@ -923,7 +1201,7 @@
             </div>
             <div class="text-right">
               <div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div>
-              <div class="text-[10px] font-bold text-amber-700">${otCases} thùng QC ▼</div>
+              <div class="text-[10px] font-bold text-amber-700">${otCases} thùng ▼</div>
             </div>
           </summary>
           <div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">
@@ -971,7 +1249,9 @@
         });
       }
 
+      // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
+      // ==========================================
       const salesByOutlet = {};
       const salesPreQtyByOutlet = {};
       const salesHudaCan20ByOutlet = {};
@@ -993,7 +1273,7 @@
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
 
-      const preparedList = [];
+      let preparedList = [];
 
       listMaster.forEach(m => {
         if (m.level === "LV1") cLV1++;
@@ -1045,6 +1325,16 @@
           missingNotice: missingNotice
         });
       });
+
+      if (searchKeyword) {
+        preparedList = preparedList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
+      }
+
+      if (currentTBStatus === "FAIL") {
+        preparedList = preparedList.filter(p => !p.isPass);
+      } else if (currentTBStatus === "PASS") {
+        preparedList = preparedList.filter(p => p.isPass);
+      }
 
       preparedList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
@@ -1100,9 +1390,11 @@
 
       document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
       document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
-      document.getElementById('txtListCount').textContent = `${listMaster.length} điểm bán`;
+      document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
+      // ==========================================
       // 3. RENDER TAB 3: OLS LISTING FEE
+      // ==========================================
       let listLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
       if (currentLFChannel !== "ALL") {
@@ -1110,7 +1402,7 @@
       }
 
       let passLFCount = 0;
-      const preparedLFList = [];
+      let preparedLFList = [];
 
       listLF.forEach(l => {
         let isPassLF = false;
@@ -1158,6 +1450,16 @@
         });
       });
 
+      if (searchKeyword) {
+        preparedLFList = preparedLFList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
+      }
+
+      if (currentLFStatus === "FAIL") {
+        preparedLFList = preparedLFList.filter(p => !p.isPass);
+      } else if (currentLFStatus === "PASS") {
+        preparedLFList = preparedLFList.filter(p => p.isPass);
+      }
+
       preparedLFList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
         return a.isPass ? 1 : -1;
@@ -1167,7 +1469,7 @@
       lfBox.innerHTML = '';
 
       if (preparedLFList.length === 0) {
-        lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee cho nhân viên này.</div>`;
+        lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee phù hợp.</div>`;
       } else {
         preparedLFList.forEach(({ item: l, isPass, pct, statusDisplay, missingNotice }) => {
           const card = document.createElement('div');
@@ -1203,7 +1505,7 @@
       document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
       document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
       document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
-      document.getElementById('txtLFListCount').textContent = `${listLF.length} điểm bán`;
+      document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
     }
   </script>
 </body>
