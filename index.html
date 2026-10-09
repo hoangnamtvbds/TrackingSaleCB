@@ -20,7 +20,7 @@
 </head>
 <body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN Tinh Tế (Đã bỏ Team Hồ Đức Lợi ở Title) -->
+  <!-- Header & Chữ ký LHN Tinh Tế -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
@@ -54,7 +54,7 @@
     </select>
   </div>
 
-  <!-- THANH CHUYỂN 3 TAB CHUẨN MỚI -->
+  <!-- THANH CHUYỂN 3 TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold gap-1">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN TOTAL
@@ -602,47 +602,67 @@
           });
         }
 
-        // 2. ĐỌC SHEET LISTING FEE (Sheet Listing Free trong file)
+        // 2. ĐỌC SHEET LISTING FEE (QUÉT LINH HOẠT CHUẨN XÁC)
         const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
         if (sLFName) {
           const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1 });
-          let hLFIdx = 1;
-          for (let i = 0; i < Math.min(10, rawLF.length); i++) {
-            const str = (rawLF[i] || []).join(' ').toLowerCase();
-            if (str.includes('code dragon') || str.includes('dragon')) { hLFIdx = i; break; }
-          }
-
           LISTING_FEE = [];
-          for (let i = hLFIdx + 1; i < rawLF.length; i++) {
-            const r = rawLF[i];
-            if (!r) continue;
-            // Tìm cột code dragon
-            const dragonCode = String(r[2] || r[1] || '').trim();
-            if (!dragonCode || !dragonCode.startsWith('C')) continue;
 
-            const valCol3 = String(r[3] || '').trim();
-            const valCol4 = String(r[4] || '').trim();
+          for (let i = 0; i < rawLF.length; i++) {
+            const row = rawLF[i];
+            if (!row || row.length === 0) continue;
 
-            // Nhận diện cột SR và Tên điểm bán (tránh bị lệch cột)
-            let srName = normalizeSR(valCol3);
-            let outletName = valCol4;
-            if (!TEAM_SRS.includes(srName)) {
-              const testCol4 = normalizeSR(valCol4);
-              if (TEAM_SRS.includes(testCol4)) {
-                srName = testCol4;
-                outletName = valCol3;
+            // Tìm ô chứa Mã CODE DRAGON (bắt đầu bằng CB hoặc CD)
+            let dragonIdx = -1;
+            for (let c = 0; c < Math.min(6, row.length); c++) {
+              const cellStr = String(row[c] || '').trim().toUpperCase();
+              if (cellStr.startsWith('CB') || cellStr.startsWith('CD')) {
+                dragonIdx = c;
+                break;
               }
             }
 
-            const channel = String(r[5] || r[6] || '').trim();
-            const district = String(r[7] || '').trim();
-            const tarHL = parseFloat(r[8]) || 0;
-            // Chỉ tiêu tối thiểu là 15 thùng (hoặc quy đổi từ Tar Total nếu lớn hơn)
+            if (dragonIdx === -1) continue; // Bỏ qua nếu không phải dòng điểm bán
+
+            const dragonCode = String(row[dragonIdx]).trim();
+            const val1 = String(row[dragonIdx + 1] || '').trim();
+            const val2 = String(row[dragonIdx + 2] || '').trim();
+
+            let srName = "";
+            let outletName = "";
+
+            // Nhận diện chuẩn xác đâu là tên SR và đâu là Tên quán
+            const norm1 = normalizeSR(val1);
+            const norm2 = normalizeSR(val2);
+
+            if (TEAM_SRS.includes(norm1)) {
+              srName = norm1;
+              outletName = val2;
+            } else if (TEAM_SRS.includes(norm2)) {
+              srName = norm2;
+              outletName = val1;
+            } else {
+              srName = norm1 || val1;
+              outletName = val2;
+            }
+
+            const channel = String(row[dragonIdx + 4] || row[dragonIdx + 3] || 'LF').trim();
+            const district = String(row[dragonIdx + 5] || '').trim();
+
+            // Tìm chỉ tiêu sản lượng (Tar Total)
+            let tarHL = 0;
+            for (let c = dragonIdx + 5; c < Math.min(dragonIdx + 9, row.length); c++) {
+              const num = parseFloat(row[c]);
+              if (!isNaN(num) && num > 0.5) {
+                tarHL = num;
+                break;
+              }
+            }
             const tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
 
             LISTING_FEE.push({
               code: dragonCode,
-              name: outletName,
+              name: outletName || dragonCode,
               sr: srName,
               channel: channel,
               district: district,
@@ -744,7 +764,7 @@
       document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       populateDateFilter();
       renderAll();
-      alert("Đồng bộ đám mây thành công! Tất cả thiết bị đã cập nhật dữ liệu.");
+      alert(`Đồng bộ thành công! Tìm thấy ${LISTING_FEE.length} điểm Listing Fee.`);
     }
 
     function switchTab(tab) {
