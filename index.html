@@ -20,7 +20,7 @@
 </head>
 <body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN -->
+  <!-- Header & Chữ ký Hồ Đức Lợi -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
@@ -29,7 +29,7 @@
       <div class="flex items-center gap-2 mt-0.5">
         <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
-        <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
+        <span class="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-md tracking-wider">By LHN</span>
       </div>
     </div>
     <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
@@ -37,13 +37,13 @@
     </button>
   </div>
 
-  <!-- BỘ LỌC TÊN SR -->
+  <!-- BỘ LỌC TÊN SR (TEAM HỒ ĐỨC LỢI) -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (TEAM HỒ ĐỨC LỢI):</label>
     <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
       <option value="ALL">-- Toàn bộ Team --</option>
       <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
-      <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
+      <option value="Thuong Hoang Van">Hồ Văn Thương</option>
       <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
       <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
       <option value="Nam Le Hoang">Lê Hoàng Nam</option>
@@ -56,7 +56,7 @@
   <!-- THANH CHUYỂN TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
-      📅 SỐ BÁN HÀNG NGÀY
+      📅 SỐ BÁN TOTAL
     </button>
     <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       🎯 ĐIỂM BÁN TRƯNG BÀY BIA
@@ -247,6 +247,7 @@
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
+    // 8 SR THUỘC TEAM HỒ ĐỨC LỢI
     const TEAM_SRS = [
       "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
       "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi"
@@ -256,17 +257,16 @@
       if (!name) return "";
       const s = String(name).trim();
       if (s.includes("Tai") || s.includes("Tài")) return "Tai Nguyen Ngoc";
-      if (s.includes("Thuong") || s.includes("Thương")) return "Thuong Hoang Van";
+      if (s.includes("Thuong") || s.includes("Thương") || s.includes("Thưởng")) return "Thuong Hoang Van";
       if (s.includes("Luan") || s.includes("Luân")) return "Luan Nguyen Van";
       if (s.includes("Oanh")) return "Oanh Nguyen Kieu";
       if (s.includes("Nam") && !s.includes("Nam1")) return "Nam Le Hoang";
       if (s.includes("Phu") || s.includes("Phú")) return "Phu Tran Trong";
       if (s.includes("Huynh") || s.includes("Huỳnh")) return "Huynh Mai Trong";
-      if (s.includes("Lien") || s.includes("Liễn")) return "Lien Dinh Thi";
+      if (s.includes("Lien") || s.includes("Liễn") || s.includes("Liên")) return "Lien Dinh Thi";
       return s;
     }
 
-    // TỰ ĐỘNG PHÁT HIỆN BRAND CHUẨN XÁC
     function detectBrand(brand, product) {
       if (brand && String(brand).trim() && String(brand).toLowerCase() !== 'undefined') {
         const b = String(brand).trim();
@@ -594,7 +594,6 @@
         if (o.category === "Mainstream") sumHudaHL += o.vol;
         if (o.category === "Premium") {
           sumPreHL += o.vol;
-          // Nhận diện Brand an toàn chống lỗi undefined
           const br = detectBrand(o.brand, o.product);
           preBrandMap[br] = (preBrandMap[br] || 0) + o.vol;
         }
@@ -625,7 +624,7 @@
       document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} th)`;
       document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} th)`;
 
-      // Phân rã Brand Premium (Đã sửa lỗi hiển thị undefined)
+      // Phân rã Brand Premium
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
       if (Object.keys(preBrandMap).length === 0) {
@@ -743,28 +742,30 @@
         const actTot = actH + actP;
         const tarTot = m.tarHuda + m.tarPre;
 
-        // THUẬT TOÁN ĐẠT TARGET MỚI
-        const condition1 = (actH >= m.tarHuda) && (actP >= m.tarPre);
-        const condition2 = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) >= 0.5);
-        const isPass = condition1 || condition2;
+        // CÔNG THỨC ĐẠT CHUẨN XÁC:
+        // Đạt cả hai dòng HOẶC (Tổng đạt target tổng VÀ Premium chiếm > 50% tổng thực bán)
+        const condStandard = (actH >= m.tarHuda) && (actP >= m.tarPre);
+        const condPreDominant = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) > 0.5);
+        const isPass = condStandard || condPreDominant;
 
         if (isPass) passCount++;
 
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
+        // HIỂN THỊ SỐ THÙNG THIẾU CHUẨN XÁC THEO TARGET
         let missingNotice = '';
         if (isPass) {
           missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
         } else {
-          const gapTotHL = Math.max(0, tarTot - actTot);
+          const gapHudaHL = Math.max(0, m.tarHuda - actH);
           const gapPreHL = Math.max(0, m.tarPre - actP);
+          const gapHudaCases = Math.ceil(gapHudaHL / CASE_VOLUME);
           const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
-          const gapTotCases = Math.ceil(gapTotHL / CASE_VOLUME);
 
           let missingParts = [];
+          if (gapHudaCases > 0) missingParts.push(`Thiếu <b>${gapHudaCases}</b> th Huda`);
           if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
-          else if (gapTotCases > 0) missingParts.push(`Thiếu <b>${gapTotCases}</b> th`);
           missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')}</span>`;
         }
 
@@ -777,7 +778,7 @@
         });
       });
 
-      // Sắp xếp: Chưa Đạt lên trên, Đã Đạt xuống dưới
+      // SẮP XẾP: CHƯA ĐẠT LÊN TRÊN, ĐÃ ĐẠT XUỐNG DƯỚI
       preparedList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
         return a.isPass ? 1 : -1;
