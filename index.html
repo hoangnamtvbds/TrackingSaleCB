@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Thư viện đọc Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Thư viện kết nối Supabase Cloud -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F9FA; }
@@ -25,7 +27,7 @@
         🍺 Carlsberg Sale Tracking
       </h1>
       <div class="flex items-center gap-2 mt-0.5">
-        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Chưa nạp dữ liệu</p>
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang đồng bộ dữ liệu...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
         <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
@@ -84,7 +86,7 @@
       </div>
     </div>
 
-    <!-- KHỐI KHUYẾN MÃI THU GỌN CHUẨN XÁC SUẤT THƯỞNG -->
+    <!-- KHỐI KHUYẾN MÃI THU GỌN -->
     <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
       <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
         <div class="flex items-center gap-2">
@@ -186,7 +188,7 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking nạp 1 lần sẽ tự lưu vĩnh viễn. Hôm sau bạn chỉ cần nạp riêng file <b>SEC-06 hàng ngày</b> là xong!
+          ☁️ Dữ liệu sẽ lưu tự động lên Supabase Cloud, tất cả anh em Sale đều sẽ thấy ngay lập tức!
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
@@ -206,31 +208,54 @@
   <script>
     const ADMIN_PIN = "6868";
     const CASE_VOLUME = 0.0792;
+
+    // CẤU HÌNH SUPABASE TRỰC TIẾP
+    const SUPABASE_URL = "https://incbokfnoabjhvbwzkli.supabase.co";
+    const SUPABASE_KEY = "Sb_publishable_VQwy6zq_YDNeGPYf5cOJng_Flt2WUk-";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let MASTER = [];
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedMaster = localStorage.getItem('MASTER_DATA');
-      const savedSec = localStorage.getItem('SEC_DATA');
-      const savedPromo = localStorage.getItem('PROMO_DATA');
-      const savedTime = localStorage.getItem('UPDATE_TIME');
+    window.addEventListener('DOMContentLoaded', async () => {
+      // 1. Tải bộ nhớ đệm nếu có
+      const localMaster = localStorage.getItem('MASTER_DATA');
+      const localSec = localStorage.getItem('SEC_DATA');
+      const localPromo = localStorage.getItem('PROMO_DATA');
+      const localTime = localStorage.getItem('UPDATE_TIME');
 
-      if (savedMaster) {
-        MASTER = JSON.parse(savedMaster);
-        document.getElementById('trackStatusText').textContent = `(Đã lưu ${MASTER.length} điểm)`;
-        document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
-      } else {
-        document.getElementById('trackStatusText').textContent = "(Chưa có - Cần tải)";
-        document.getElementById('trackStatusText').className = "text-rose-500 font-bold";
-      }
-
-      if (savedSec) SEC_ORDERS = JSON.parse(savedSec);
-      if (savedPromo) PROMOTIONS = JSON.parse(savedPromo);
-      if (savedTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${savedTime}`;
-
+      if (localMaster) MASTER = JSON.parse(localMaster);
+      if (localSec) SEC_ORDERS = JSON.parse(localSec);
+      if (localPromo) PROMOTIONS = JSON.parse(localPromo);
+      if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
+      
       populateSRList();
       renderAll();
+
+      // 2. Kéo dữ liệu thời gian thực từ Supabase Cloud
+      try {
+        const { data, error } = await supabaseClient.from('sales_data').select('*').eq('id', 'CURRENT_DATA').single();
+        if (data && !error) {
+          MASTER = data.master || [];
+          SEC_ORDERS = data.sec || [];
+          PROMOTIONS = data.promo || [];
+
+          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+          localStorage.setItem('UPDATE_TIME', data.updated_at);
+
+          document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
+          document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm trên mây)`;
+          document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
+          
+          populateSRList();
+          renderAll();
+        }
+      } catch (err) {
+        console.error("Lỗi kết nối Cloud:", err);
+      }
     });
 
     function toggleAdminModal() {
@@ -265,7 +290,7 @@
       const fSec = document.getElementById('fileSec').files[0];
 
       if (!fTrack && (!MASTER || MASTER.length === 0)) {
-        alert("Chưa có dữ liệu Tracking Master! Vui lòng chọn file Tracking ít nhất 1 lần.");
+        alert("Chưa có danh sách Tracking Master! Vui lòng chọn file Tracking ít nhất 1 lần.");
         return;
       }
       if (!fSec && (!SEC_ORDERS || SEC_ORDERS.length === 0)) {
@@ -273,9 +298,9 @@
         return;
       }
 
-      document.getElementById('btnSaveData').textContent = "Đang xử lý...";
+      document.getElementById('btnSaveData').textContent = "Đang đồng bộ Cloud...";
 
-      // 1. Đọc file Tracking Master
+      // Đọc file Tracking
       if (fTrack) {
         const bTrack = await fTrack.arrayBuffer();
         const wbTrack = XLSX.read(bTrack);
@@ -320,10 +345,9 @@
             tarPre: parseFloat(r[colTarP]) || 0
           });
         }
-        localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
       }
 
-      // 2. Đọc file SEC-06 Hàng Ngày
+      // Đọc file SEC-06
       if (fSec) {
         const bSec = await fSec.arrayBuffer();
         const wbSec = XLSX.read(bSec);
@@ -346,7 +370,7 @@
           const oname = String(r['OutletName'] || '').trim();
           const dateStr = parseExcelDate(r['OrderedDate']);
 
-          // LỌC CHUẨN XÁC DÒNG THƯỞNG: Giá 0đ hoặc là Phiếu/POSM
+          // Chỉ tính dòng quà/phiếu giảm giá
           const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
           if (promoName && isReward) {
             PROMOTIONS.push({
@@ -380,20 +404,35 @@
             qty: qty
           });
         });
-
-        localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-        localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
       }
 
       const nowStr = new Date().toLocaleString('vi-VN');
-      localStorage.setItem('UPDATE_TIME', nowStr);
-      document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
 
+      // ĐỒNG BỘ LÊN SUPABASE
+      try {
+        const { error } = await supabaseClient.from('sales_data').upsert({
+          id: 'CURRENT_DATA',
+          master: MASTER,
+          sec: SEC_ORDERS,
+          promo: PROMOTIONS,
+          updated_at: nowStr
+        });
+        if (error) console.error("Lỗi ghi Supabase:", error);
+      } catch (err) {
+        console.error("Lỗi Supabase:", err);
+      }
+
+      localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+      localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+      localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+      localStorage.setItem('UPDATE_TIME', nowStr);
+
+      document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
       toggleAdminModal();
       document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       populateSRList();
       renderAll();
-      alert("Đã cập nhật và đồng bộ dữ liệu thành công!");
+      alert("Đồng bộ đám mây thành công! Tất cả anh em Sales đã có thể xem được dữ liệu.");
     }
 
     function populateSRList() {
@@ -505,7 +544,7 @@
         aggBox.appendChild(detailCard);
       });
 
-      // RENDER KHUYẾN MÃI (CHỈ TÍNH DÒNG THƯỞNG HỢP LỆ)
+      // RENDER KHUYẾN MÃI
       const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
