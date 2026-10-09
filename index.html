@@ -6,10 +6,8 @@
   <title>Carlsberg Sale Tracking</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Thu vien doc Excel -->
+  <!-- Thư viện đọc Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Thu vien Supabase Cloud -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F9FA; }
@@ -20,14 +18,14 @@
 </head>
 <body class="p-3 pb-24 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chu ky LHN -->
+  <!-- Header & Chữ ký LHN -->
   <div class="flex justify-between items-center my-3 px-1">
     <div>
       <h1 class="text-lg font-extrabold text-[#1F4E79] tracking-tight flex items-center gap-1.5">
         🍺 Carlsberg Sale Tracking
       </h1>
       <div class="flex items-center gap-2 mt-0.5">
-        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang đồng bộ dữ liệu...</p>
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
         <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
@@ -37,7 +35,7 @@
     </button>
   </div>
 
-  <!-- BO LOC TEN SR -->
+  <!-- BỘ LỌC TÊN SR -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
     <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
@@ -45,7 +43,7 @@
     </select>
   </div>
 
-  <!-- THANH CHUYEN TAB -->
+  <!-- THANH CHUYỂN TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📅 SỐ BÁN HÀNG NGÀY
@@ -55,9 +53,9 @@
     </button>
   </div>
 
-  <!-- ================= TAB 1: SO BAN HANG NGAY ================= -->
+  <!-- ================= TAB 1: SỐ BÁN HÀNG NGÀY ================= -->
   <div id="tab1Content" class="space-y-3">
-    <!-- Card Tong san luong & Quy doi -->
+    <!-- Card Tổng sản lượng & Quy đổi -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-2">
         <span class="text-xs font-bold text-gray-500">📦 TỔNG SẢN LƯỢNG BÁN RA</span>
@@ -86,7 +84,7 @@
       </div>
     </div>
 
-    <!-- KHOI KHUYEN MAI THU GON -->
+    <!-- KHỐI KHUYẾN MÃI THU GỌN -->
     <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
       <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
         <div class="flex items-center gap-2">
@@ -107,7 +105,7 @@
     <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- ================= TAB 2: DIEM BAN TRUNG BAY BIA ================= -->
+  <!-- ================= TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA ================= -->
   <div id="tab2Content" class="hidden space-y-3">
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
@@ -170,7 +168,7 @@
     <div id="outletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- MODAL ADMIN CAP NHAT (PIN: 6868) -->
+  <!-- MODAL ADMIN CẬP NHẬT -->
   <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
       <div class="flex justify-between items-center">
@@ -211,23 +209,50 @@
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwzkli.supabase.co";
     const SUPABASE_KEY = "Sb_publishable_VQwy6zq_YDNeGPYf5cOJng_Flt2WUk-";
-    
-    // Khoi tao Supabase Client
-    let supabaseClient = null;
-    try {
-      if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-    } catch (e) {
-      console.error("Supabase init error:", e);
-    }
 
     let MASTER = [];
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      // 1. Doc cache trinh duyet neu co
+    // Gọi API REST trực tiếp (Cực kỳ ổn định trên mọi thiết bị và mạng di động)
+    async function fetchCloudData() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data?id=eq.CURRENT_DATA&select=*`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const rows = await res.json();
+        if (rows && rows.length > 0) {
+          const data = rows[0];
+          MASTER = data.master || [];
+          SEC_ORDERS = data.sec || [];
+          PROMOTIONS = data.promo || [];
+
+          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+          localStorage.setItem('UPDATE_TIME', data.updated_at);
+
+          document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
+          document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm trên mây)`;
+          document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
+
+          populateSRList();
+          renderAll();
+        } else {
+          document.getElementById('lblLastUpdate').textContent = "Chưa có dữ liệu trên Cloud";
+        }
+      } catch (err) {
+        console.error("Lỗi fetch Cloud:", err);
+        document.getElementById('lblLastUpdate').textContent = "Không thể tải từ Cloud (Vui lòng tải lại)";
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Đọc cache nếu có
       const localMaster = localStorage.getItem('MASTER_DATA');
       const localSec = localStorage.getItem('SEC_DATA');
       const localPromo = localStorage.getItem('PROMO_DATA');
@@ -241,33 +266,8 @@
       populateSRList();
       renderAll();
 
-      // 2. Lay du lieu truc tiep tu Supabase Cloud
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.from('sales_data').select('*').eq('id', 'CURRENT_DATA').single();
-          if (data && !error) {
-            MASTER = data.master || [];
-            SEC_ORDERS = data.sec || [];
-            PROMOTIONS = data.promo || [];
-
-            localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-            localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-            localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-            localStorage.setItem('UPDATE_TIME', data.updated_at);
-
-            document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
-            document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm trên mây)`;
-            document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
-
-            populateSRList();
-            renderAll();
-          } else {
-            console.warn("Chua co du lieu tren Cloud:", error);
-          }
-        } catch (err) {
-          console.error("Loi ket noi Cloud:", err);
-        }
-      }
+      // 2. Kéo dữ liệu đám mây
+      fetchCloudData();
     });
 
     function toggleAdminModal() {
@@ -312,7 +312,7 @@
 
       document.getElementById('btnSaveData').textContent = "Đang đồng bộ Cloud...";
 
-      // Doc file Tracking
+      // Đọc file Tracking
       if (fTrack) {
         const bTrack = await fTrack.arrayBuffer();
         const wbTrack = XLSX.read(bTrack);
@@ -359,7 +359,7 @@
         }
       }
 
-      // Doc file SEC-06
+      // Đọc file SEC-06
       if (fSec) {
         const bSec = await fSec.arrayBuffer();
         const wbSec = XLSX.read(bSec);
@@ -382,7 +382,6 @@
           const oname = String(r['OutletName'] || '').trim();
           const dateStr = parseExcelDate(r['OrderedDate']);
 
-          // Chi dem dong qua tang / chiet khau
           const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
           if (promoName && isReward) {
             PROMOTIONS.push({
@@ -420,20 +419,36 @@
 
       const nowStr = new Date().toLocaleString('vi-VN');
 
-      // Dong bo len Supabase
-      if (supabaseClient) {
-        try {
-          const { error } = await supabaseClient.from('sales_data').upsert({
-            id: 'CURRENT_DATA',
-            master: MASTER,
-            sec: SEC_ORDERS,
-            promo: PROMOTIONS,
-            updated_at: nowStr
-          });
-          if (error) console.error("Loi ghi Supabase:", error);
-        } catch (err) {
-          console.error("Loi ket noi Supabase:", err);
+      // Gửi lên Supabase qua REST API chuẩn
+      try {
+        const payload = {
+          id: 'CURRENT_DATA',
+          master: MASTER,
+          sec: SEC_ORDERS,
+          promo: PROMOTIONS,
+          updated_at: nowStr
+        };
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Cloud Error: ${res.status} - ${errText}`);
         }
+      } catch (err) {
+        console.error("Lỗi gửi Supabase:", err);
+        alert("Lỗi lưu lên Cloud: " + err.message);
+        document.getElementById('btnSaveData').textContent = "⚡ XÁC NHẬN CẬP NHẬT";
+        return;
       }
 
       localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
@@ -486,7 +501,7 @@
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
 
-      // 1. RENDER TAB 1: SO BAN HANG NGAY
+      // 1. RENDER TAB 1: SỐ BÁN HÀNG NGÀY
       const listDaily = (selectedSR === "ALL") ? SEC_ORDERS : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let sumHudaHL = 0, sumPreHL = 0;
 
@@ -558,7 +573,7 @@
         aggBox.appendChild(detailCard);
       });
 
-      // RENDER KHUYEN MAI
+      // RENDER KHUYẾN MÃI
       const promoList = (selectedSR === "ALL") ? PROMOTIONS : PROMOTIONS.filter(p => p.sr === selectedSR);
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
@@ -594,7 +609,7 @@
         });
       }
 
-      // 2. RENDER TAB 2: DIEM BAN TRUNG BAY BIA
+      // 2. RENDER TAB 2: ĐIỂM BÁN TRƯNG BÀY BIA
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0 };
