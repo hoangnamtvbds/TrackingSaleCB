@@ -27,7 +27,7 @@
         🍺 Carlsberg Sale Tracking
       </h1>
       <div class="flex items-center gap-2 mt-0.5">
-        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang đồng bộ dữ liệu...</p>
+        <p class="text-[11px] text-gray-400 font-medium" id="lblLastUpdate">Đang tải dữ liệu...</p>
         <span class="text-[10px] font-bold text-gray-300">•</span>
         <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded tracking-wider">by LHN</span>
       </div>
@@ -37,7 +37,7 @@
     </button>
   </div>
 
-  <!-- BỘ LỌC TÊN SR (CHỈ LỌC 8 BẠN TRONG TEAM) -->
+  <!-- BỘ LỌC TÊN SR -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <label class="text-[11px] font-bold text-gray-500 block mb-1">NHÂN VIÊN PHỤ TRÁCH (TEAM LHN):</label>
     <select id="srFilter" onchange="renderAll()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
@@ -83,7 +83,7 @@
       </div>
     </details>
 
-    <!-- Card Tổng sản lượng to rõ -->
+    <!-- Card Tổng sản lượng -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
       <div class="flex justify-between items-center mb-1">
         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📦 Tổng Sản Lượng Bán Ra</span>
@@ -107,7 +107,7 @@
         </div>
         
         <!-- Premium bấm xem Brand -->
-        <details class="bg-amber-50/40 rounded-xl border border-amber-100/60 overflow-hidden">
+        <details class="bg-amber-50/40 rounded-xl border border-amber-100/60 overflow-hidden" open>
           <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none">
             <span class="text-amber-800 font-bold flex items-center gap-1">
               👑 Premium: <span id="txtPremiumSum" class="ml-1 text-sm font-black text-amber-600">0.00 HL</span>
@@ -247,25 +247,41 @@
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
-    // 8 SR THUỘC TEAM CỦA BẠN
     const TEAM_SRS = [
       "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
       "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi"
     ];
 
-    // Chuẩn hóa tên SR từ DMS về chuẩn Tracking
     function normalizeSR(name) {
       if (!name) return "";
       const s = String(name).trim();
       if (s.includes("Tai") || s.includes("Tài")) return "Tai Nguyen Ngoc";
-      if (s.includes("Thuong") || s.includes("Thưởng")) return "Thuong Hoang Van";
+      if (s.includes("Thuong") || s.includes("Thương")) return "Thuong Hoang Van";
       if (s.includes("Luan") || s.includes("Luân")) return "Luan Nguyen Van";
       if (s.includes("Oanh")) return "Oanh Nguyen Kieu";
       if (s.includes("Nam") && !s.includes("Nam1")) return "Nam Le Hoang";
       if (s.includes("Phu") || s.includes("Phú")) return "Phu Tran Trong";
       if (s.includes("Huynh") || s.includes("Huỳnh")) return "Huynh Mai Trong";
-      if (s.includes("Lien") || s.includes("Liên")) return "Lien Dinh Thi";
+      if (s.includes("Lien") || s.includes("Liễn")) return "Lien Dinh Thi";
       return s;
+    }
+
+    // TỰ ĐỘNG PHÁT HIỆN BRAND CHUẨN XÁC
+    function detectBrand(brand, product) {
+      if (brand && String(brand).trim() && String(brand).toLowerCase() !== 'undefined') {
+        const b = String(brand).trim();
+        if (b.toLowerCase().includes('tuborg')) return 'Tuborg';
+        if (b.toLowerCase().includes('1664') || b.toLowerCase().includes('k1664')) return '1664 Blanc';
+        return b;
+      }
+      const p = String(product || '').toLowerCase();
+      if (p.includes('tuborg')) return 'Tuborg';
+      if (p.includes('1664') || p.includes('blanc')) return '1664 Blanc';
+      if (p.includes('carlsberg')) return 'Carlsberg';
+      if (p.includes('somersby')) return 'Somersby';
+      if (p.includes('huda')) return 'Huda';
+      if (p.includes('halida')) return 'Halida';
+      return 'Premium Khác';
     }
 
     let supabaseClient = null;
@@ -274,7 +290,7 @@
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
     } catch (e) {
-      console.error("Lỗi khởi tạo Supabase:", e);
+      console.error("Lỗi Supabase:", e);
     }
 
     let MASTER = [];
@@ -291,7 +307,7 @@
           .maybeSingle();
 
         if (error) {
-          console.error("Lỗi lấy dữ liệu Cloud:", error);
+          console.error("Lỗi Cloud:", error);
           document.getElementById('lblLastUpdate').textContent = "Chưa kết nối Cloud";
           return;
         }
@@ -316,7 +332,7 @@
           document.getElementById('lblLastUpdate').textContent = "Chưa có dữ liệu trên Cloud";
         }
       } catch (err) {
-        console.error("Lỗi kết nối:", err);
+        console.error("Lỗi:", err);
       }
     }
 
@@ -498,7 +514,7 @@
             sr: srName,
             code: ocode,
             name: oname,
-            brand: brand,
+            brand: detectBrand(brand, prod),
             product: prod,
             category: cat,
             vol: vol,
@@ -578,7 +594,9 @@
         if (o.category === "Mainstream") sumHudaHL += o.vol;
         if (o.category === "Premium") {
           sumPreHL += o.vol;
-          preBrandMap[o.brand] = (preBrandMap[o.brand] || 0) + o.vol;
+          // Nhận diện Brand an toàn chống lỗi undefined
+          const br = detectBrand(o.brand, o.product);
+          preBrandMap[br] = (preBrandMap[br] || 0) + o.vol;
         }
 
         if (!outletGroup[o.code]) {
@@ -607,7 +625,7 @@
       document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} th)`;
       document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} th)`;
 
-      // Phân rã Brand Premium
+      // Phân rã Brand Premium (Đã sửa lỗi hiển thị undefined)
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
       if (Object.keys(preBrandMap).length === 0) {
@@ -725,8 +743,7 @@
         const actTot = actH + actP;
         const tarTot = m.tarHuda + m.tarPre;
 
-        // THUẬT TOÁN ĐẠT TARGET MỚI:
-        // Đạt chuẩn cả 2 dòng HOẶC (Tổng sản lượng đạt target tổng VÀ Premium chiếm >= 50%)
+        // THUẬT TOÁN ĐẠT TARGET MỚI
         const condition1 = (actH >= m.tarHuda) && (actP >= m.tarPre);
         const condition2 = (actTot >= tarTot) && (tarTot > 0) && ((actP / actTot) >= 0.5);
         const isPass = condition1 || condition2;
@@ -736,7 +753,6 @@
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
 
-        // Tính số thùng thiếu
         let missingNotice = '';
         if (isPass) {
           missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT</span>`;
@@ -761,10 +777,10 @@
         });
       });
 
-      // SẮP XẾP: ĐIỂM CHƯA ĐẠT NẰM TRÊN, ĐIỂM ĐÃ ĐẠT NẰM DƯỚI
+      // Sắp xếp: Chưa Đạt lên trên, Đã Đạt xuống dưới
       preparedList.sort((a, b) => {
         if (a.isPass === b.isPass) return 0;
-        return a.isPass ? 1 : -1; // false (Chưa Đạt) xếp trước, true (Đạt) xếp sau
+        return a.isPass ? 1 : -1;
       });
 
       const outletBox = document.getElementById('outletList');
