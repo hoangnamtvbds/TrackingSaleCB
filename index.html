@@ -290,46 +290,52 @@
   </div>
 
   <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) ================= -->
-  <div id="dailyOrdersModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 hidden backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4 card-shadow space-y-3 max-h-[90vh] flex flex-col">
+  <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5">
+          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
             📦 ĐƠN DUYỆT THEO NGÀY
           </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảng theo dõi nhanh tiến độ từng SR</p>
+          <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
         </div>
-        <button onclick="closeDailyOrdersModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg p-1">✕</button>
+        <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
       <!-- Chọn ngày muốn xem -->
-      <div class="flex items-center gap-2">
-        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap">Chọn ngày:</label>
-        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none">
-          <!-- Rendered by JS -->
+      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
+        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
+        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
         </select>
       </div>
 
-      <!-- Tóm tắt số lượng -->
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-blue-50 p-2 rounded-xl border border-blue-100">
-          <span class="text-[10px] font-bold text-blue-600 block">TỔNG SẢN LƯỢNG</span>
+      <!-- 3 Card tương tác: Bấm để lọc trực tiếp -->
+      <div class="grid grid-cols-3 gap-2 text-center select-none">
+        <div id="cardFilterAll" onclick="setModalFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50 border-blue-200 ring-2 ring-blue-500 shadow-sm">
+          <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG SẢN LƯỢNG</span>
           <span id="modalSummaryTotalHL" class="text-xs font-black text-blue-950 mt-0.5 block">0.00 HL</span>
           <span id="modalSummaryTotalCases" class="text-[9px] text-blue-700 font-semibold block">0 th</span>
         </div>
-        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-100">
-          <span class="text-[10px] font-bold text-emerald-600 block">CÓ ĐƠN</span>
+        <div id="cardFilterHasOrder" onclick="setModalFilter('HAS_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/70">
+          <span class="text-[9px] font-bold text-emerald-700 block uppercase">CÓ ĐƠN</span>
           <span id="modalSummaryHasOrder" class="text-xs font-black text-emerald-950 mt-0.5 block">0 SR</span>
+          <span class="text-[9px] text-emerald-700 font-semibold block">Chạm để lọc</span>
         </div>
-        <div class="bg-rose-50 p-2 rounded-xl border border-rose-100">
-          <span class="text-[10px] font-bold text-rose-600 block">CHƯA CÓ ĐƠN</span>
+        <div id="cardFilterNoOrder" onclick="setModalFilter('NO_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200 hover:bg-rose-100/70">
+          <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CÓ ĐƠN</span>
           <span id="modalSummaryNoOrder" class="text-xs font-black text-rose-950 mt-0.5 block">0 SR</span>
+          <span class="text-[9px] text-rose-700 font-semibold block">Chạm để lọc</span>
         </div>
       </div>
 
-      <!-- Danh sách 9 bạn SR -->
+      <!-- Header danh sách hiển thị trạng thái lọc -->
+      <div class="flex justify-between items-center px-1 pt-0.5">
+        <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
+        <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
+      </div>
+
+      <!-- Danh sách 9 bạn SR cuộn mượt -->
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
-        <!-- Rendered by JS -->
       </div>
     </div>
   </div>
@@ -624,10 +630,38 @@
       document.getElementById('dailyOrdersModal').classList.add('hidden');
     }
 
+    let currentModalFilter = 'ALL'; // 'ALL', 'HAS_ORDER', 'NO_ORDER'
+
+    function setModalFilter(filter) {
+      currentModalFilter = filter;
+      renderDailyOrdersModalContent();
+    }
+
     function renderDailyOrdersModalContent() {
       const selectedDate = document.getElementById('modalOrderDateSelect').value;
       const listContainer = document.getElementById('modalSRListContainer');
       listContainer.innerHTML = '';
+
+      // Cập nhật giao diện active ring cho 3 card bộ lọc
+      const cardAll = document.getElementById('cardFilterAll');
+      const cardHas = document.getElementById('cardFilterHasOrder');
+      const cardNo = document.getElementById('cardFilterNoOrder');
+
+      const inactiveBase = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
+      cardAll.className = inactiveBase + " bg-blue-50/60 border-blue-200 hover:bg-blue-100/70";
+      cardHas.className = inactiveBase + " bg-emerald-50/60 border-emerald-200 hover:bg-emerald-100/70";
+      cardNo.className = inactiveBase + " bg-rose-50/60 border-rose-200 hover:bg-rose-100/70";
+
+      if (currentModalFilter === 'ALL') {
+        cardAll.className = inactiveBase + " bg-blue-50 border-blue-300 ring-2 ring-blue-500 shadow-sm";
+        document.getElementById('modalFilterLabel').textContent = "Hiển thị: Tất cả SR";
+      } else if (currentModalFilter === 'HAS_ORDER') {
+        cardHas.className = inactiveBase + " bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500 shadow-sm";
+        document.getElementById('modalFilterLabel').textContent = "Hiển thị: SR ĐÃ CÓ ĐƠN";
+      } else if (currentModalFilter === 'NO_ORDER') {
+        cardNo.className = inactiveBase + " bg-rose-50 border-rose-300 ring-2 ring-rose-500 shadow-sm";
+        document.getElementById('modalFilterLabel').textContent = "Hiển thị: SR CHƯA CÓ ĐƠN";
+      }
 
       if (!selectedDate) {
         listContainer.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có dữ liệu đơn hàng.</p>';
@@ -661,7 +695,8 @@
         }
       });
 
-      // Render danh sách 9 bạn SR
+      // Lọc danh sách SR theo bộ lọc card được chọn
+      const renderedSRs = [];
       TEAM_SRS.forEach(k => {
         const name = TEAM_SR_MAP[k];
         const data = srSalesMap[k];
@@ -670,48 +705,64 @@
         if (hasOrder) hasOrderCount++;
         else noOrderCount++;
 
-        const card = document.createElement('div');
-        card.className = `p-2.5 rounded-2xl border text-xs ${hasOrder ? 'bg-emerald-50/50 border-emerald-200' : 'bg-gray-50/70 border-gray-200'}`;
+        if (currentModalFilter === 'HAS_ORDER' && !hasOrder) return;
+        if (currentModalFilter === 'NO_ORDER' && hasOrder) return;
 
-        let outletDetailsHtml = '';
-        if (hasOrder && data.outlets.size > 0) {
-          data.outlets.forEach((otData, otCode) => {
-            outletDetailsHtml += `
-              <div class="flex justify-between items-center py-0.5 text-[10px] text-gray-600">
-                <span class="truncate pr-1">• ${otData.name}</span>
-                <span class="font-bold text-gray-800 whitespace-nowrap">${otData.vol.toFixed(2)} HL</span>
-              </div>
-            `;
-          });
-        }
-
-        card.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="font-bold ${hasOrder ? 'text-gray-900' : 'text-gray-500'}">${name}</span>
-            <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${hasOrder ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
-              ${hasOrder ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}
-            </span>
-          </div>
-          <div class="mt-1 pt-1 border-t ${hasOrder ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-[11px]">
-            <span class="text-gray-500">Sản lượng:</span>
-            <span class="font-black ${hasOrder ? 'text-emerald-700' : 'text-gray-400'}">
-              ${data.vol.toFixed(2)} HL <span class="font-medium text-[10px]">(${data.cases} th)</span>
-            </span>
-          </div>
-          ${hasOrder ? `
-            <details class="mt-1.5 pt-1 border-t border-emerald-100">
-              <summary class="cursor-pointer text-[10px] font-bold text-emerald-800 flex justify-between items-center select-none">
-                <span>Xem ${data.outlets.size} điểm chốt đơn</span>
-                <span>▼</span>
-              </summary>
-              <div class="mt-1 space-y-0.5 bg-white/70 p-1.5 rounded-xl border border-emerald-100">
-                ${outletDetailsHtml}
-              </div>
-            </details>
-          ` : ''}
-        `;
-        listContainer.appendChild(card);
+        renderedSRs.push({ key: k, name, data, hasOrder });
       });
+
+      // Sắp xếp: Bạn có nhiều sản lượng lên trước
+      renderedSRs.sort((a, b) => b.data.vol - a.data.vol);
+
+      document.getElementById('modalCountBadge').textContent = `${renderedSRs.length} bạn`;
+
+      if (renderedSRs.length === 0) {
+        listContainer.innerHTML = `<div class="p-4 text-center text-gray-400 bg-gray-50 rounded-2xl border border-gray-100 text-xs">Không có SR nào thuộc nhóm này trong ngày ${selectedDate}.</div>`;
+      } else {
+        renderedSRs.forEach(({ name, data, hasOrder }) => {
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border text-xs shadow-sm transition-all ${hasOrder ? 'bg-emerald-50/60 border-emerald-200/90' : 'bg-gray-50/80 border-gray-200'}`;
+
+          let outletDetailsHtml = '';
+          if (hasOrder && data.outlets.size > 0) {
+            data.outlets.forEach((otData, otCode) => {
+              outletDetailsHtml += `
+                <div class="flex justify-between items-center py-1 border-b border-emerald-100/50 last:border-0 text-[10px] text-gray-700">
+                  <span class="truncate pr-1.5 font-medium">• ${otData.name}</span>
+                  <span class="font-extrabold text-emerald-800 whitespace-nowrap">${otData.vol.toFixed(2)} HL</span>
+                </div>
+              `;
+            });
+          }
+
+          card.innerHTML = `
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-[13px] ${hasOrder ? 'text-gray-900' : 'text-gray-500'}">${name}</span>
+              <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide ${hasOrder ? 'bg-emerald-500 text-white shadow-xs' : 'bg-rose-100 text-rose-700'}">
+                ${hasOrder ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}
+              </span>
+            </div>
+            <div class="mt-1.5 pt-1.5 border-t ${hasOrder ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-xs">
+              <span class="text-gray-500 font-medium">Sản lượng duyệt:</span>
+              <span class="font-black ${hasOrder ? 'text-emerald-700 text-sm' : 'text-gray-400'}">
+                ${data.vol.toFixed(2)} HL <span class="font-semibold text-[11px] text-gray-500">(${data.cases} th)</span>
+              </span>
+            </div>
+            ${hasOrder ? `
+              <details class="mt-1.5 pt-1 border-t border-emerald-100/70">
+                <summary class="cursor-pointer text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex justify-between items-center select-none py-0.5">
+                  <span>📍 Xem ${data.outlets.size} điểm chốt đơn</span>
+                  <span>▼</span>
+                </summary>
+                <div class="mt-1 space-y-0.5 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-xs">
+                  ${outletDetailsHtml}
+                </div>
+              </details>
+            ` : ''}
+          `;
+          listContainer.appendChild(card);
+        });
+      }
 
       // Cập nhật card tổng hợp
       document.getElementById('modalSummaryTotalHL').textContent = `${totalDayHL.toFixed(2)} HL`;
