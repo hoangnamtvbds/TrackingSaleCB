@@ -84,18 +84,18 @@
     </div>
   </div>
 
-  <!-- THANH CHUYỂN 4 TAB -->
+  <!-- THANH CHUYỂN 4 TAB (Có viền khung nổi bật) -->
   <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
     <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN
     </button>
-    <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-500 transition-all text-center">
+    <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
       🎯 TRƯNG BÀY
     </button>
-    <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-500 transition-all text-center">
+    <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
       💰 LISTING
     </button>
-    <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-500 transition-all text-center">
+    <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
       📸 CHỤP TB
     </button>
   </div>
@@ -457,7 +457,7 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master chỉ cần nạp đầu tháng. Hằng ngày chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong!
+          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng. Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong!
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
@@ -531,8 +531,8 @@
     let currentLFChannel = "ALL";
     let currentTBStatus = "ALL";
     let currentLFStatus = "ALL";
-    let currentTBLevel = "ALL"; // 'ALL', 'LV1', 'LV2', 'LV3'
-    let currentAuditStatus = "ALL"; // 'ALL', 'DONE', 'NEED_SECOND', 'NONE'
+    let currentTBLevel = "ALL";
+    let currentAuditStatus = "ALL";
     let isManagerVerified = false;
 
     function normalizeSR(name) {
@@ -590,7 +590,7 @@
     let SEC_ORDERS = [];
     let PROMOTIONS = [];
     let AUDIT_DATA = [];
-    let SALES_TARGETS = {}; // Lưu target theo SR: { srKey: { vol: X, pre: Y } }
+    let SALES_TARGETS = {};
 
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
@@ -726,7 +726,6 @@
       }
     }
 
-    // ================= XỬ LÝ LỌC CẤP ĐỘ LEVEL Ở TAB 2 =================
     function toggleTBLevel(lvl) {
       if (currentTBLevel === lvl && lvl !== 'ALL') {
         currentTBLevel = 'ALL';
@@ -736,7 +735,6 @@
       renderAll();
     }
 
-    // ================= XỬ LÝ LỌC KÊNH TONT / TOFT Ở TAB 3 =================
     function toggleLFChannel(chan) {
       if (currentLFChannel === chan) {
         currentLFChannel = 'ALL';
@@ -751,7 +749,6 @@
       renderAll();
     }
 
-    // ================= XỬ LÝ LỌC TRẠNG THÁI CHỤP TB Ở TAB 4 =================
     function setAuditStatusFilter(st) {
       if (currentAuditStatus === st && st !== 'ALL') {
         currentAuditStatus = 'ALL';
@@ -761,7 +758,6 @@
       renderAll();
     }
 
-    // ================= XỬ LÝ MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) =================
     function promptDailyOrdersModal() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
@@ -803,7 +799,7 @@
       document.getElementById('dailyOrdersModal').classList.add('hidden');
     }
 
-    let currentModalFilter = 'ALL'; // 'ALL', 'HAS_ORDER', 'NO_ORDER'
+    let currentModalFilter = 'ALL';
 
     function setModalFilter(filter) {
       currentModalFilter = filter;
@@ -999,7 +995,7 @@
         hasList.forEach((item, i) => {
           msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
         });
-        msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
+        msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nhé!`;
       } else {
         msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR ĐÃ CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
         hasList.forEach((item, i) => {
@@ -1018,13 +1014,12 @@
       }
 
       navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => {
         alert("Lỗi sao chép: " + err);
       });
     }
 
-    // ================= SAO CHÉP NHẮC NHỞ CHỤP TB GỬI ZALO (TAB 4) =================
     function copyAuditZaloReport() {
       const selectedSR = document.getElementById('srFilter').value;
       const srSelectEl = document.getElementById('srFilter');
@@ -1218,7 +1213,6 @@
       renderAll();
     }
 
-    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET FIT-10)
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1236,7 +1230,7 @@
 
       const btnSave = document.getElementById('btnSaveData');
       btnSave.textContent = "Đang xử lý dữ liệu...";
-      await new Password?.() || new Promise(r => setTimeout(r, 30));
+      await new Promise(r => setTimeout(r, 30));
 
       try {
         if (fTrack) {
@@ -1414,7 +1408,6 @@
           });
         }
 
-        // XỬ LÝ FILE 3: CHỤP TB DIP-01
         if (fAudit) {
           const bAudit = await fAudit.arrayBuffer();
           const wbAudit = XLSX.read(bAudit, { dense: false });
@@ -1459,7 +1452,6 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // XỬ LÝ FILE 4: SALES TARGET FIT-10
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1485,7 +1477,6 @@
               if (sVal.includes('cvtcsr') || sVal.includes('sr')) colSr = idx;
             });
 
-            // Tìm cột Sales Volume Target và Focused SKUs Target (Premium) từ row hTargetIdx hoặc hTargetIdx+1
             const subHeaderRow = rawTarget[hTargetIdx + 1] || [];
             subHeaderRow.forEach((val, idx) => {
               const sVal = String(val || '').trim().toLowerCase();
@@ -1571,7 +1562,7 @@
       document.getElementById('tab3Content').classList.add('hidden');
       document.getElementById('tab4Content').classList.add('hidden');
 
-      const inactiveClass = "py-2.5 rounded-xl text-gray-500 transition-all text-center";
+      const inactiveClass = "py-2.5 rounded-xl text-gray-600 transition-all text-center";
       const activeClass = "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center";
 
       document.getElementById('tabBtn1').className = inactiveClass;
@@ -1614,7 +1605,6 @@
       renderAll();
     }
 
-    // SAO CHÉP BÁO CÁO GỬI ZALO THÔNG MINH (ĐỘ TRỄ T+1)
     function copyZaloReport() {
       const selectedSR = document.getElementById('srFilter').value;
       const srSelectEl = document.getElementById('srFilter');
@@ -1737,7 +1727,7 @@
       }
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) vào nhóm chat.");
+        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => {
         alert("Lỗi sao chép: " + err);
       });
@@ -1757,9 +1747,6 @@
         document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
       }
 
-      // ==========================================
-      // 1. RENDER TAB 1: SỐ BÁN TOTAL
-      // ==========================================
       let listDaily = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       if (selectedDate !== "ALL") {
         listDaily = listDaily.filter(o => o.date === selectedDate);
@@ -1793,7 +1780,6 @@
         outletGroup[o.code].products[o.product].qty += o.qty;
       });
 
-      // Tính tổng thực bán tháng MTD (không bị giới hạn bởi dateFilter của tab 1)
       let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let monthHudaHL = 0, monthPreHL = 0;
       listMonth.forEach(o => {
@@ -1802,7 +1788,6 @@
       });
       const monthTotalHL = monthHudaHL + monthPreHL;
 
-      // Xử lý Target Sale Tháng
       let targetVol = 0;
       let targetPrem = 0;
       if (selectedSR === "ALL") {
@@ -1933,9 +1918,7 @@
         });
       }
 
-      // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
-      // ==========================================
       const salesByOutlet = {};
       const salesPreQtyByOutlet = {};
       const salesHudaCan20ByOutlet = {};
@@ -1947,7 +1930,6 @@
           salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
         }
         if (o.category === "Premium") {
-          salesByOutlet[o.code].pre += o.vol;
           salesPreQtyByOutlet[o.code] = (salesPreQtyByOutlet[o.code] || 0) + o.qty;
         }
         salesByOutlet[o.code].total += o.vol;
@@ -1976,7 +1958,6 @@
 
         if (isPass) passCount++;
 
-        // Đếm tổng số điểm và số điểm đạt của từng Level
         if (m.level === "LV1") { cLV1++; if (isPass) pLV1++; }
         else if (m.level === "LV2") { cLV2++; if (isPass) pLV2++; }
         else if (m.level === "LV3") { cLV3++; if (isPass) pLV3++; }
@@ -2012,7 +1993,6 @@
         });
       });
 
-      // Lọc danh sách theo Level được click chọn
       if (currentTBLevel !== 'ALL') {
         preparedList = preparedList.filter(p => p.item.level === currentTBLevel);
       }
@@ -2067,7 +2047,6 @@
         outletBox.appendChild(card);
       });
 
-      // Cập nhật số điểm tổng và tiến độ đạt của 3 Level
       document.getElementById('countLV1').textContent = cLV1;
       document.getElementById('passLV1').textContent = `Đạt ${pLV1}/${cLV1} điểm`;
 
@@ -2077,7 +2056,6 @@
       document.getElementById('countLV3').textContent = cLV3;
       document.getElementById('passLV3').textContent = `Đạt ${pLV3}/${cLV3} điểm`;
 
-      // Cập nhật viền active cho 3 card Level
       const cardLV1 = document.getElementById('cardLV1');
       const cardLV2 = document.getElementById('cardLV2');
       const cardLV3 = document.getElementById('cardLV3');
@@ -2113,12 +2091,9 @@
       document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
-      // ==========================================
       // 3. RENDER TAB 3: OLS LISTING FEE
-      // ==========================================
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
-      // Tính toán tiến độ Đạt/Tổng của TONT và TOFT
       let cTONT = 0, pTONT = 0;
       let cTOFT = 0, pTOFT = 0;
 
@@ -2137,7 +2112,6 @@
       document.getElementById('passLFTont').textContent = `Đạt ${pTONT}/${cTONT} điểm`;
       document.getElementById('passLFToft').textContent = `Đạt ${pTOFT}/${cTOFT} điểm`;
 
-      // Cập nhật giao diện nút và card kênh TONT / TOFT
       const cardLFTont = document.getElementById('cardLFTont');
       const cardLFToft = document.getElementById('cardLFToft');
       const baseLFCard = "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all";
@@ -2269,14 +2243,12 @@
       document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
       document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
 
-      // ==========================================
-      // 4. RENDER TAB 4: CHỤP TB (CHẤM TRƯNG BÀY)
-      // ==========================================
+      // 4. RENDER TAB 4: CHỤP TB
       const baseAuditList = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
 
-      let cntAuditDone = 0;       // Đã chấm đủ >= 2 lần
-      let cntAuditNeed2 = 0;      // Đã chấm 1 lần, thiếu lần 2
-      let cntAuditNone = 0;       // Chưa chấm lần nào (0 lần)
+      let cntAuditDone = 0;
+      let cntAuditNeed2 = 0;
+      let cntAuditNone = 0;
 
       baseAuditList.forEach(a => {
         if (a.count >= 2) cntAuditDone++;
@@ -2295,7 +2267,6 @@
       document.getElementById('txtAuditAchieved').textContent = `${cntAuditDone} / ${totalAuditOutlets}`;
       document.getElementById('barAudit').style.width = `${Math.min(100, pctAuditPass)}%`;
 
-      // Cập nhật viền active cho 3 card bộ lọc Tab 4
       const cardADone = document.getElementById('cardAuditDone');
       const cardANeed2 = document.getElementById('cardAuditNeed2');
       const cardANone = document.getElementById('cardAuditNone');
@@ -2319,7 +2290,6 @@
         btnResetAudit.classList.add('hidden');
       }
 
-      // Lọc danh sách điểm bán theo bộ lọc và từ khóa tìm kiếm
       let filteredAuditList = baseAuditList;
       if (currentAuditStatus === 'DONE') {
         filteredAuditList = filteredAuditList.filter(a => a.count >= 2);
@@ -2333,7 +2303,6 @@
         filteredAuditList = filteredAuditList.filter(a => a.name.toLowerCase().includes(searchKeyword) || a.code.toLowerCase().includes(searchKeyword));
       }
 
-      // Sắp xếp: Ưu tiên điểm chưa chấm (0 lần) lên đầu, tiếp theo là điểm thiếu lần 2 (1 lần), điểm đủ 2 lần ở dưới cùng
       filteredAuditList.sort((a, b) => a.count - b.count);
 
       const auditBox = document.getElementById('auditOutletList');
@@ -2363,7 +2332,7 @@
               const resColor = (aud.result === 'Đạt' || aud.result.includes('Đạt')) ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold';
               auditDetailsHtml += `
                 <div class="flex justify-between items-center text-[10px] py-0.5 border-b border-gray-50 last:border-0">
-                  <span class="text-gray-600">Lần ${idx + 1}: <b class="text-gray-800">${aud.date.substring(0, 16)}</b></span>
+                  <span class="text-gray-600">Lần ${idx + 1}: <b class="text-gray-800">${aud.date}</b></span>
                   <span class="${resColor}">${aud.result}</span>
                 </div>
               `;
