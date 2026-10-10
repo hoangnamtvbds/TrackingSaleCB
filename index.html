@@ -17,40 +17,39 @@
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
-    <!-- Header & Chữ ký LHN -->
-  <div class="mb-3 px-1">
-    <div class="flex justify-between items-center gap-2">
-      <div class="shrink-0">
+  <!-- Header & Chữ ký LHN (Bố cục chuẩn, thanh thoát) -->
+  <div class="my-2.5 px-1">
+    <div class="flex justify-between items-center">
+      <div>
         <h1 class="text-lg font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
-          🍺 TRACKING SALE
+          🍺 Carlsberg Sale Tracking
         </h1>
-        <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-400 font-medium">
-          <span id="lblLastUpdate">Đang tải...</span>
+        <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-400">
+          <span id="lblLastUpdate" class="font-medium">Đang tải dữ liệu...</span>
           <span class="text-gray-300">•</span>
-          <span class="font-bold text-gray-500 italic">by LHN</span>
+          <span class="font-semibold text-gray-400 tracking-wider opacity-80 italic">by LHN</span>
         </div>
       </div>
-      
-      <!-- Cụm 3 nút chức năng hiện đại, bo góc đẹp mắt -->
-      <div class="flex items-center gap-1.5">
-        <button onclick="promptDailyOrdersModal()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1" title="Soi đơn ngày gần nhất (Quản lý)">
-          <span>📦</span><span>Đơn</span>
-        </button>
-        <button onclick="copyZaloReport()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1" title="Sao chép báo cáo gửi Zalo">
-          <span>📋</span><span>BC</span>
-        </button>
-        <button onclick="toggleAdminModal()" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1" title="Cập nhật file">
-          <span>⚙️</span><span>Nạp</span>
-        </button>
-      </div>
+      <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+        ⚙️ Nạp file
+      </button>
     </div>
 
-    <!-- Dòng hiển thị ngày đơn gần nhất (Độ trễ duyệt T+1) -->
-    <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/90 border border-blue-100 rounded-2xl px-3 py-1.5 flex justify-between items-center text-[11px]">
-      <span class="text-blue-900 font-semibold flex items-center gap-1.5">
-        <span>📅</span> <span>Đơn duyệt gần nhất:</span> <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
-      </span>
-      <span class="text-[10px] text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded-lg border border-blue-200/70 shadow-xs">T+1</span>
+    <!-- Thanh tiện ích Quản lý & Báo cáo (Tập trung gọn gàng trong 1 dải thanh lịch) -->
+    <div id="latestOrderBanner" class="hidden mt-2.5 bg-white rounded-2xl p-2 px-3 card-shadow border border-gray-100 flex justify-between items-center gap-2">
+      <div class="flex items-center gap-1.5 text-[11px] min-w-0">
+        <span class="text-gray-500 font-medium whitespace-nowrap">📅 Đơn duyệt:</span>
+        <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79] truncate">--</b>
+        <span class="text-[9px] font-extrabold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded-md">T+1</span>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button onclick="promptDailyOrdersModal()" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-200 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1" title="Soi danh sách đơn ngày">
+          📦 Đơn ngày
+        </button>
+        <button onclick="copyZaloReport()" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-800 border border-blue-200 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1" title="Sao chép báo cáo gửi Zalo">
+          📋 Báo cáo
+        </button>
+      </div>
     </div>
   </div>
 
@@ -90,7 +89,7 @@
       📊 SỐ BÁN TOTAL
     </button>
     <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
-      🎯 DISPLAY BEER
+      🎯 OLS TRƯNG BÀY
     </button>
     <button id="tabBtn3" onclick="switchTab(3)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       💰 LISTING FEE
@@ -171,7 +170,7 @@
     <div id="aggregatedOutletList" class="space-y-2.5"></div>
   </div>
 
-  <!-- ================= TAB 2: DISPLAY BEER ================= -->
+  <!-- ================= TAB 2: OLS TRƯNG BÀY BIA ================= -->
   <div id="tab2Content" class="hidden space-y-3">
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
@@ -1360,7 +1359,7 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
 
 2️⃣ LŨY KẾ THÁNG (MTD):
 • Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)
-• Display Beer: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)
+• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)
 • Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)
 
 👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
@@ -1426,7 +1425,7 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
 • Tổng bán: ${monthHL.toFixed(2)} HL (${monthCases} thùng)
   - Premium: ${monthPreHL.toFixed(2)} HL
   - Huda: ${monthHudaHL.toFixed(2)} HL
-• Display Beer: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)
+• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)
   ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}
 • Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)
   ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}
@@ -1594,7 +1593,7 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
       }
 
       // ==========================================
-      // 2. RENDER TAB 2: DISPLAY BEER
+      // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
       // ==========================================
       const salesByOutlet = {};
       const salesPreQtyByOutlet = {};
