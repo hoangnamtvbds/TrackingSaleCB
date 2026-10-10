@@ -84,7 +84,7 @@
     </div>
   </div>
 
-  <!-- THANH CHUYỂN 4 TAB (Có viền khung nổi bật) -->
+  <!-- THANH CHUYỂN 4 TAB (Khung viền nổi bật, sắc nét) -->
   <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
     <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN
@@ -101,9 +101,8 @@
   </div>
 
   <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
-  <!-- ================= TAB 1: SỐ BÁN TOTAL (BỐ CỤC TINH GỌN MỚI) ================= -->
   <div id="tab1Content" class="space-y-3">
-    <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET (GỘP CHUNG MTD + TARGET) -->
+    <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET (MKT)</span>
@@ -115,7 +114,9 @@
       </div>
       <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
         <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
-      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
+      </div>
+
+      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI HOÀN HẢO -->
       <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
         <!-- Cột Mainstream -->
         <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
@@ -158,9 +159,9 @@
         </summary>
         <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
       </details>
-      </div>
+    </div>
 
-    <!-- 2. BỘ LỌC NGÀY (CHỈ HIỆN SẢN LƯỢNG NGÀY ĐÓ KHI CHỌN NGÀY CỤ THỂ) -->
+    <!-- 2. BỘ LỌC NGÀY (GỌN GÀNG, CHỈ HIỆN KHI CHỌN NGÀY CỤ THỂ) -->
     <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
       <div class="flex gap-2 items-center">
         <div class="flex-1">
@@ -514,8 +515,8 @@
   <script>
     const ADMIN_PIN = "6868";
     const EXPORT_PIN = "8888";
-    const CASE_VOLUME = 0.0792;       // 1 thùng tiêu chuẩn (24x330ml) = 0.0792 HL
-    const HUDA_CAN20_VOL = 0.066;      // 1 thùng Huda lon 20x330ml = 0.066 HL
+    const CASE_VOLUME = 0.0792;
+    const HUDA_CAN20_VOL = 0.066;
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
@@ -1001,7 +1002,7 @@
         hasList.forEach((item, i) => {
           msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
         });
-        msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nhé!`;
+        msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
       } else {
         msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR ĐÃ CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
         hasList.forEach((item, i) => {
@@ -1198,7 +1199,7 @@
       SEC_ORDERS.forEach(o => { if (o.date) dateSet.add(o.date); });
       const sel = document.getElementById('dateFilter');
       const cur = sel.value;
-      sel.innerHTML = '<option value="ALL">-- Tất cả các ngày (Tổng) --</option>';
+      sel.innerHTML = '<option value="ALL">🗓️ Xem cả tháng (Lũy kế MTD)</option>';
       Array.from(dateSet).sort().reverse().forEach(dt => {
         const opt = document.createElement('option');
         opt.value = dt;
@@ -1219,6 +1220,7 @@
       renderAll();
     }
 
+    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET FIT-10)
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1458,23 +1460,22 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-                 // XỬ LÝ FILE 4: SALES TARGET FIT-10 (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC)
+        // XỬ LÝ FILE 4: SALES TARGET FIT-10 (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
-          const sheetName = wbTarget.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wbTarget.SheetNames[0];
-          if (wbTarget.Sheets[sheetName]) {
-            const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetName], { header: 1 });
+          const sheetTargetName = wbTarget.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wbTarget.SheetNames[0];
+          if (wbTarget.Sheets[sheetTargetName]) {
+            const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
             SALES_TARGETS = {};
 
-            // Dò vị trí chính xác của Sales Volume và Focused SKUs (Premium) từ dòng tiêu đề
             let colVol = 12;
             let colPrem = 17;
             const row0 = rawTarget[0] || [];
             row0.forEach((val, idx) => {
               const str = String(val || '').trim().toLowerCase();
               if (str.includes('sales volume')) colVol = idx;
-              if (str.includes('focused skus')) colPrem = idx + 1; // Cột Target của Premium nằm ngay sau
+              if (str.includes('focused skus')) colPrem = idx + 1;
             });
 
             rawTarget.forEach(row => {
@@ -1494,7 +1495,6 @@
             });
           }
         }
-
 
         const nowStr = new Date().toLocaleString('vi-VN');
         btnSave.textContent = "Đang gửi lên Cloud...";
@@ -1599,6 +1599,7 @@
       renderAll();
     }
 
+    // SAO CHÉP BÁO CÁO GỬI ZALO THÔNG MINH (ĐỘ TRỄ T+1)
     function copyZaloReport() {
       const selectedSR = document.getElementById('srFilter').value;
       const srSelectEl = document.getElementById('srFilter');
@@ -1721,7 +1722,7 @@
       }
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) vào nhóm chat.");
       }).catch(err => {
         alert("Lỗi sao chép: " + err);
       });
@@ -1737,11 +1738,7 @@
         else document.getElementById('btnClearSearch').classList.add('hidden');
       }
 
-      if (document.getElementById('lblSelectedDate')) {
-        document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
-      }
-
-            // XỬ LÝ SẢN LƯỢNG LŨY KẾ CẢ THÁNG (MTD)
+      // XỬ LÝ SẢN LƯỢNG LŨY KẾ CẢ THÁNG (MTD)
       let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let monthHudaHL = 0, monthPreHL = 0;
       const preBrandMap = {};
@@ -1781,6 +1778,7 @@
       document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
       document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
       document.getElementById('barTargetVol').style.width = `${Math.min(100, pctTargetVol)}%`;
+
       // CẬP NHẬT 2 THẺ MAINSTREAM VÀ PREMIUM CÂN ĐỐI
       document.getElementById('badgeMainPct').textContent = `${pctTargetMain}%`;
       document.getElementById('valMainAct').innerHTML = `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
@@ -1919,7 +1917,9 @@
         });
       }
 
+      // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
+      // ==========================================
       const salesByOutlet = {};
       const salesPreQtyByOutlet = {};
       const salesHudaCan20ByOutlet = {};
@@ -2092,7 +2092,9 @@
       document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
+      // ==========================================
       // 3. RENDER TAB 3: OLS LISTING FEE
+      // ==========================================
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
       let cTONT = 0, pTONT = 0;
@@ -2244,7 +2246,9 @@
       document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
       document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
 
+      // ==========================================
       // 4. RENDER TAB 4: CHỤP TB
+      // ==========================================
       const baseAuditList = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
 
       let cntAuditDone = 0;
