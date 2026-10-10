@@ -17,39 +17,40 @@
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN (Bố cục chuẩn, thanh thoát) -->
-  <div class="my-2.5 px-1">
-    <div class="flex justify-between items-center">
+  <!-- Header & Chữ ký LHN (Cân đối 100%, không lệch) -->
+  <div class="mb-2.5 px-0.5">
+    <div class="flex justify-between items-center mb-2">
       <div>
-        <h1 class="text-lg font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
+        <h1 class="text-[17px] font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
           🍺 Carlsberg Sale Tracking
         </h1>
-        <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-400">
+        <div class="flex items-center gap-1 mt-0.5 text-[10px] text-gray-400">
           <span id="lblLastUpdate" class="font-medium">Đang tải dữ liệu...</span>
           <span class="text-gray-300">•</span>
-          <span class="font-semibold text-gray-400 tracking-wider opacity-80 italic">by LHN</span>
+          <span class="font-bold text-gray-500 italic">by LHN</span>
         </div>
       </div>
-      <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+    </div>
+
+    <!-- 3 Nút chức năng dàn đều 3 cột cực kỳ ngay ngắn -->
+    <div class="grid grid-cols-3 gap-2">
+      <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
+        📦 Đơn ngày
+      </button>
+      <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
+        📋 Báo cáo
+      </button>
+      <button onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
         ⚙️ Nạp file
       </button>
     </div>
 
-    <!-- Thanh tiện ích Quản lý & Báo cáo (Tập trung gọn gàng trong 1 dải thanh lịch) -->
-    <div id="latestOrderBanner" class="hidden mt-2.5 bg-white rounded-2xl p-2 px-3 card-shadow border border-gray-100 flex justify-between items-center gap-2">
-      <div class="flex items-center gap-1.5 text-[11px] min-w-0">
-        <span class="text-gray-500 font-medium whitespace-nowrap">📅 Đơn duyệt:</span>
-        <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79] truncate">--</b>
-        <span class="text-[9px] font-extrabold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded-md">T+1</span>
-      </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="promptDailyOrdersModal()" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-200 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1" title="Soi danh sách đơn ngày">
-          📦 Đơn ngày
-        </button>
-        <button onclick="copyZaloReport()" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-800 border border-blue-200 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1" title="Sao chép báo cáo gửi Zalo">
-          📋 Báo cáo
-        </button>
-      </div>
+    <!-- Dòng hiển thị ngày đơn gần nhất (Độ trễ duyệt T+1) -->
+    <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
+      <span class="text-blue-900 font-semibold flex items-center gap-1">
+        📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
+      </span>
+      <span class="text-[10px] text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded-lg border border-blue-200">T+1</span>
     </div>
   </div>
 
