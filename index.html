@@ -1452,91 +1452,31 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-                // XỬ LÝ FILE 4: SALES TARGET FIT-10 (ĐÃ FIX CHÍNH XÁC CỘT)
+         // XỬ LÝ FILE 4: SALES TARGET FIT-10 (QUÉT TRỰC TIẾP TỪNG BẠN SR)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
-          const sheetTargetName = wbTarget.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wbTarget.SheetNames[0];
-          if (wbTarget.Sheets[sheetTargetName]) {
-            const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
+          const sheetName = wbTarget.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wbTarget.SheetNames[0];
+          if (wbTarget.Sheets[sheetName]) {
+            const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetName], { header: 1 });
             SALES_TARGETS = {};
 
-            // Tìm vị trí cột Sales Volume Target và Premium Target từ dòng tiêu đề
-            let colSr = 5;
-            let colVol = 13;
-            let colPrem = 18;
-
-            for (let r = 0; r < Math.min(5, rawTarget.length); r++) {
-              const row = rawTarget[r] || [];
-              row.forEach((cell, idx) => {
-                const s = String(cell || '').trim().toLowerCase();
-                if (s === 'cvtcsr') colSr = idx;
-              });
-            }
-
-            // Quét dữ liệu từng dòng
-            for (let i = 2; i < rawTarget.length; i++) {
-              const row = rawTarget[i];
-              if (!row || row.length === 0) continue;
-
-              let srNameRaw = String(row[colSr] || '').trim();
-              if (!srNameRaw) {
-                // Quét dự phòng nếu cột bị xê dịch
-                for (let c = 1; c <= 8; c++) {
-                  const checkNorm = normalizeSR(row[c]);
-                  if (TEAM_SRS.includes(checkNorm)) {
-                    srNameRaw = String(row[c]).trim();
-                    break;
-                  }
+            rawTarget.forEach(row => {
+              if (!row || row.length < 14) return;
+              // Quét tìm ô chứa tên SR trong hàng
+              for (let c = 0; c < Math.min(8, row.length); c++) {
+                const norm = normalizeSR(row[c]);
+                if (TEAM_SRS.includes(norm)) {
+                  const vol = parseFloat(row[13]) || 0;  // Cột Sales Volume Target
+                  const prem = parseFloat(row[18]) || 0; // Cột Focused SKUs Premium Target
+                  SALES_TARGETS[norm] = {
+                    volume_target: vol,
+                    premium_target: prem
+                  };
+                  break;
                 }
               }
-
-              const norm = normalizeSR(srNameRaw);
-              if (TEAM_SRS.includes(norm)) {
-                const volTarget = parseFloat(row[colVol]) || 0;
-                const premTarget = parseFloat(row[colPrem]) || 0;
-                SALES_TARGETS[norm] = {
-                  volume_target: volTarget,
-                  premium_target: premTarget
-                };
-              }
-            }
-          }
-        }
-
-
-            const headerRow = rawTarget[hTargetIdx] || [];
-            let colSr = 5;
-            let colVolTarget = 13;
-            let colPremTarget = 18;
-
-            headerRow.forEach((val, idx) => {
-              const sVal = String(val || '').trim().toLowerCase();
-              if (sVal.includes('cvtcsr') || sVal.includes('sr')) colSr = idx;
             });
-
-            const subHeaderRow = rawTarget[hTargetIdx + 1] || [];
-            subHeaderRow.forEach((val, idx) => {
-              const sVal = String(val || '').trim().toLowerCase();
-              if (sVal === 'target' && idx >= 12 && idx <= 16) colVolTarget = idx;
-              if (sVal === 'target' && idx >= 17 && idx <= 22) colPremTarget = idx;
-            });
-
-            SALES_TARGETS = {};
-            for (let i = hTargetIdx + 2; i < rawTarget.length; i++) {
-              const r = rawTarget[i];
-              if (!r || !r[colSr]) continue;
-              const rawSrName = String(r[colSr]).trim();
-              const normSr = normalizeSR(rawSrName);
-              if (TEAM_SRS.includes(normSr)) {
-                const volT = parseFloat(r[colVolTarget]) || 0;
-                const premT = parseFloat(r[colPremTarget]) || 0;
-                SALES_TARGETS[normSr] = {
-                  volume_target: volT,
-                  premium_target: premT
-                };
-              }
-            }
           }
         }
 
