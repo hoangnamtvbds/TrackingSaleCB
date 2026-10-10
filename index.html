@@ -1199,7 +1199,7 @@
       SEC_ORDERS.forEach(o => { if (o.date) dateSet.add(o.date); });
       const sel = document.getElementById('dateFilter');
       const cur = sel.value;
-      sel.innerHTML = '<option value="ALL">🗓️ Xem cả tháng (Lũy kế MTD)</option>';
+      sel.innerHTML = '<option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng </option>';
       Array.from(dateSet).sort().reverse().forEach(dt => {
         const opt = document.createElement('option');
         opt.value = dt;
