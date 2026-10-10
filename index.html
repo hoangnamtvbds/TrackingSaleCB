@@ -115,21 +115,49 @@
       </div>
       <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
         <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
-      </div>
-      <div class="pt-2 border-t border-gray-100 space-y-2 text-xs">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500 font-semibold">🍺 Mainstream:</span>
-          <span id="txtMainstreamTarget" class="font-extrabold text-emerald-700">0.00 / 0.00 HL (0%)</span>
+      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
+      <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
+        <!-- Cột Mainstream -->
+        <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
+          <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800">
+            <span>🍺 MAINSTREAM</span>
+            <span id="badgeMainPct" class="bg-emerald-200/80 text-emerald-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
+          </div>
+          <div class="text-base font-black text-emerald-950" id="valMainAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+          <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
+            <span>Target:</span>
+            <b class="text-gray-700" id="valMainTar">0.00 HL</b>
+          </div>
+          <div class="w-full bg-emerald-100 h-1.5 rounded-full overflow-hidden mt-1">
+            <div id="barMainMini" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+          </div>
         </div>
-        <details class="bg-amber-50/40 rounded-xl border border-amber-100/60 overflow-hidden" open>
-          <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none">
-            <span class="text-amber-800 font-bold flex items-center gap-1">
-              👑 Premium: <span id="txtPremiumTarget" class="ml-1 text-sm font-black text-amber-600">0.00 / 0.00 HL (0%)</span>
-            </span>
-            <span class="text-[10px] text-amber-600 font-bold bg-amber-100 px-2 py-0.5 rounded-lg">Xem Brand ▼</span>
-          </summary>
-          <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
-        </details>
+
+        <!-- Cột Premium -->
+        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-100/90 space-y-1">
+          <div class="flex justify-between items-center text-[10px] font-bold text-amber-800">
+            <span>👑 PREMIUM</span>
+            <span id="badgePrePct" class="bg-amber-200/80 text-amber-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
+          </div>
+          <div class="text-base font-black text-amber-950" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+          <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
+            <span>Target:</span>
+            <b class="text-gray-700" id="valPreTar">0.00 HL</b>
+          </div>
+          <div class="w-full bg-amber-100 h-1.5 rounded-full overflow-hidden mt-1">
+            <div id="barPreMini" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu xem chi tiết Brand Premium -->
+      <details class="bg-amber-50/30 rounded-xl border border-amber-100/60 overflow-hidden text-xs">
+        <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none text-[11px] font-bold text-amber-900">
+          <span>🔍 Xem sản lượng theo Brand Premium</span>
+          <span class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-lg font-bold">Xem chi tiết ▼</span>
+        </summary>
+        <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
+      </details>
       </div>
     </div>
 
@@ -1754,9 +1782,16 @@
       document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
       document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
       document.getElementById('barTargetVol').style.width = `${Math.min(100, pctTargetVol)}%`;
+      // CẬP NHẬT 2 THẺ MAINSTREAM VÀ PREMIUM CÂN ĐỐI
+      document.getElementById('badgeMainPct').textContent = `${pctTargetMain}%`;
+      document.getElementById('valMainAct').innerHTML = `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
+      document.getElementById('valMainTar').textContent = `${targetMain.toFixed(2)} HL`;
+      document.getElementById('barMainMini').style.width = `${Math.min(100, pctTargetMain)}%`;
 
-      document.getElementById('txtMainstreamTarget').textContent = `${monthHudaHL.toFixed(2)} / ${targetMain.toFixed(2)} HL (${pctTargetMain}%)`;
-      document.getElementById('txtPremiumTarget').textContent = `${monthPreHL.toFixed(2)} / ${targetPrem.toFixed(2)} HL (${pctTargetPrem}%)`;
+      document.getElementById('badgePrePct').textContent = `${pctTargetPrem}%`;
+      document.getElementById('valPreAct').innerHTML = `${monthPreHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
+      document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
+      document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
       // ĐỔ DỮ LIỆU BRAND PREMIUM
       const preBox = document.getElementById('preBrandBreakdown');
