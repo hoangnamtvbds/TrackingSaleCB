@@ -87,10 +87,10 @@
   <!-- THANH CHUYỂN 3 TAB -->
   <div class="flex p-1 bg-gray-200 rounded-2xl mb-3 text-xs font-bold gap-1">
     <button id="tabBtn1" onclick="switchTab(1)" class="flex-1 py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
-      📊 VOLUME TOTAL
+      📊 SỐ BÁN TOTAL
     </button>
     <button id="tabBtn2" onclick="switchTab(2)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
-      🎯 DISPLAY BEER
+      🎯 OLS TRƯNG BÀY
     </button>
     <button id="tabBtn3" onclick="switchTab(3)" class="flex-1 py-2.5 rounded-xl text-gray-500 transition-all text-center">
       💰 LISTING FEE
@@ -195,20 +195,27 @@
         </div>
       </div>
 
-      <div class="pt-1 border-t border-gray-100">
-        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Phân bổ cấp độ điểm bán:</span>
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div class="bg-blue-50/70 p-2 rounded-xl border border-blue-100">
+      <!-- CARD LEVEL 1, 2, 3: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
+      <div class="pt-2 border-t border-gray-100">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ (Chạm để lọc):</span>
+          <button id="btnResetTBLevel" onclick="toggleTBLevel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Tất cả cấp độ</button>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center select-none">
+          <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
             <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
-            <span id="countLV1" class="text-sm font-extrabold text-blue-900">0</span>
+            <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
+            <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
           </div>
-          <div class="bg-emerald-50/70 p-2 rounded-xl border border-emerald-100">
+          <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
             <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
-            <span id="countLV2" class="text-sm font-extrabold text-emerald-900">0</span>
+            <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
+            <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
           </div>
-          <div class="bg-purple-50/70 p-2 rounded-xl border border-purple-100">
+          <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
             <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
-            <span id="countLV3" class="text-sm font-extrabold text-purple-900">0</span>
+            <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
+            <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
           </div>
         </div>
       </div>
@@ -273,14 +280,17 @@
         </div>
       </div>
 
-      <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs">
-        <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100">
+      <!-- CARD TONT & TOFT: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
+      <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
+        <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
           <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
           <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Premium</span>
+          <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
         </div>
-        <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
+        <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
           <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
           <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
+          <span id="passLFToft" class="text-[10px] text-emerald-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
         </div>
       </div>
     </div>
@@ -409,8 +419,8 @@
   <script>
     const ADMIN_PIN = "6868";
     const EXPORT_PIN = "8888";
-    const CASE_VOLUME = 0.0792;       // 1 thùng tiêu chuẩn (24x330ml) = 0.0792 HL
-    const HUDA_CAN20_VOL = 0.066;      // 1 thùng Huda lon 20x330ml = 0.066 HL
+    const CASE_VOLUME = 0.0792;
+    const HUDA_CAN20_VOL = 0.066;
 
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
@@ -432,6 +442,7 @@
     let currentLFChannel = "ALL";
     let currentTBStatus = "ALL";
     let currentLFStatus = "ALL";
+    let currentTBLevel = "ALL"; // 'ALL', 'LV1', 'LV2', 'LV3'
     let isManagerVerified = false;
 
     function normalizeSR(name) {
@@ -597,6 +608,31 @@
       }
     }
 
+    // ================= XỬ LÝ LỌC CẤP ĐỘ LEVEL Ở TAB 2 =================
+    function toggleTBLevel(lvl) {
+      if (currentTBLevel === lvl && lvl !== 'ALL') {
+        currentTBLevel = 'ALL';
+      } else {
+        currentTBLevel = lvl;
+      }
+      renderAll();
+    }
+
+    // ================= XỬ LÝ LỌC KÊNH TONT / TOFT Ở TAB 3 =================
+    function toggleLFChannel(chan) {
+      if (currentLFChannel === chan) {
+        currentLFChannel = 'ALL';
+      } else {
+        currentLFChannel = chan;
+      }
+      renderAll();
+    }
+
+    function filterLFChannel(chan) {
+      currentLFChannel = chan;
+      renderAll();
+    }
+
     // ================= XỬ LÝ MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) =================
     function promptDailyOrdersModal() {
       if (!isManagerVerified) {
@@ -615,6 +651,7 @@
     }
 
     function openDailyOrdersModal() {
+      currentModalFilter = 'ALL';
       const dateSelect = document.getElementById('modalOrderDateSelect');
       const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
       
@@ -650,7 +687,6 @@
       const listContainer = document.getElementById('modalSRListContainer');
       listContainer.innerHTML = '';
 
-      // Cập nhật giao diện active ring cho 3 card bộ lọc
       const cardAll = document.getElementById('cardFilterAll');
       const cardHas = document.getElementById('cardFilterHasOrder');
       const cardNo = document.getElementById('cardFilterNoOrder');
@@ -676,14 +712,12 @@
         return;
       }
 
-      // Lọc các đơn trong ngày đã chọn
       const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
       let totalDayHL = 0;
       let totalDayQty = 0;
       let hasOrderCount = 0;
       let noOrderCount = 0;
 
-      // Gom đơn theo từng SR trong ngày
       const srSalesMap = {};
       TEAM_SRS.forEach(k => {
         srSalesMap[k] = { vol: 0, cases: 0, outlets: new Map() };
@@ -703,7 +737,6 @@
         }
       });
 
-      // Lọc danh sách SR theo bộ lọc card được chọn
       const renderedSRs = [];
       TEAM_SRS.forEach(k => {
         const name = TEAM_SR_MAP[k];
@@ -719,7 +752,6 @@
         renderedSRs.push({ key: k, name, data, hasOrder });
       });
 
-      // Sắp xếp: Bạn có nhiều sản lượng lên trước
       renderedSRs.sort((a, b) => b.data.vol - a.data.vol);
 
       document.getElementById('modalCountBadge').textContent = `${renderedSRs.length} bạn`;
@@ -772,13 +804,11 @@
         });
       }
 
-      // Cập nhật card tổng hợp
       document.getElementById('modalSummaryTotalHL').textContent = `${totalDayHL.toFixed(2)} HL`;
       document.getElementById('modalSummaryTotalCases').textContent = `${Math.round(totalDayHL / CASE_VOLUME)} th`;
       document.getElementById('modalSummaryHasOrder').textContent = `${hasOrderCount}/9 SR`;
       document.getElementById('modalSummaryNoOrder').textContent = `${noOrderCount}/9 SR`;
 
-      // Cập nhật nút bấm sao chép theo bộ lọc
       const copyBtn = document.getElementById('btnCopyModalReport');
       if (copyBtn) {
         if (currentModalFilter === 'NO_ORDER') {
@@ -831,21 +861,18 @@
       let msg = "";
 
       if (currentModalFilter === 'NO_ORDER') {
-        // 1. Chỉ sao chép danh sách các bạn CHƯA CÓ ĐƠN để nhắc nhở
         msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - TEAM HỒ ĐỨC LỢI\n📅 Ngày duyệt: ${selectedDate}\n\n⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:\n`;
         noList.forEach((n, i) => {
           msg += `${i + 1}. ${n}\n`;
         });
         msg += `\n👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
       } else if (currentModalFilter === 'HAS_ORDER') {
-        // 2. Chỉ sao chép biểu dương các bạn ĐÃ CÓ ĐƠN
         msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY - TEAM HỒ ĐỨC LỢI\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:\n`;
         hasList.forEach((item, i) => {
           msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
         });
         msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
       } else {
-        // 3. TỔNG HỢP ĐẦY ĐỦ CẢ 2 NHÓM (Bản chuẩn cho Quản lý gửi nhóm)
         msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n🏢 Team: Hồ Đức Lợi\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR ĐÃ CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
         hasList.forEach((item, i) => {
           msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
@@ -982,7 +1009,6 @@
       renderAll();
     }
 
-    // XỬ LÝ FILE SIÊU NHẸ VÀ TỐI ƯU
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1270,16 +1296,6 @@
       renderAll();
     }
 
-    function filterLFChannel(type) {
-      currentLFChannel = type;
-      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
-      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
-      document.getElementById('btnLFChannelAll').className = (type === 'ALL') ? act : inact;
-      document.getElementById('btnLFTont').className = (type === 'TONT') ? (act + " text-amber-700 font-bold") : inact;
-      document.getElementById('btnLFToft').className = (type === 'TOFT') ? (act + " text-emerald-700 font-bold") : inact;
-      renderAll();
-    }
-
     // SAO CHÉP BÁO CÁO GỬI ZALO THÔNG MINH (ĐỘ TRỄ T+1)
     function copyZaloReport() {
       const selectedSR = document.getElementById('srFilter').value;
@@ -1291,7 +1307,6 @@
       let reportText = "";
 
       if (selectedSR === "ALL") {
-        // MẪU BÁO CÁO TOÀN TEAM (DÀNH CHO QUẢN LÝ)
         let totalMonthHL = 0;
         let totalDayHL = 0;
         const srDayMap = {};
@@ -1307,7 +1322,6 @@
         const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
         const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
 
-        // Đếm OLS Trưng bày toàn team
         const salesByOutlet = {};
         SEC_ORDERS.forEach(o => {
           if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -1342,7 +1356,6 @@
         const tbTotal = MASTER.filter(m => TEAM_SRS.includes(m.sr)).length;
         const lfTotal = LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).length;
 
-        // Top sản lượng ngày gần nhất
         const topSRs = Object.entries(srDayMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
         let topText = "";
         topSRs.forEach(([srKey, vol], i) => {
@@ -1365,7 +1378,6 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
 
 👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
       } else {
-        // MẪU BÁO CÁO CÁ NHÂN (DÀNH CHO TỪNG BẠN SR)
         let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
         const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
 
@@ -1379,7 +1391,6 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
         const dayCases = Math.round(dayHL / CASE_VOLUME);
         const monthCases = Math.round(monthHL / CASE_VOLUME);
 
-        // Đếm Trưng bày của SR
         const salesByOutlet = {};
         listSRSec.forEach(o => {
           if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -1616,14 +1627,11 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
+      let pLV1 = 0, pLV2 = 0, pLV3 = 0;
 
       let preparedList = [];
 
       listMaster.forEach(m => {
-        if (m.level === "LV1") cLV1++;
-        else if (m.level === "LV2") cLV2++;
-        else if (m.level === "LV3") cLV3++;
-
         const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
         const actTot = actH + actP;
@@ -1638,6 +1646,11 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
         const isPass = condStandard || condPreDominant;
 
         if (isPass) passCount++;
+
+        // Đếm tổng số điểm và số điểm đạt của từng Level
+        if (m.level === "LV1") { cLV1++; if (isPass) pLV1++; }
+        else if (m.level === "LV2") { cLV2++; if (isPass) pLV2++; }
+        else if (m.level === "LV3") { cLV3++; if (isPass) pLV3++; }
 
         totTarH += m.tarHuda; totActH += actH;
         totTarP += m.tarPre; totActP += actP;
@@ -1669,6 +1682,11 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
           missingNotice: missingNotice
         });
       });
+
+      // Lọc danh sách theo Level được click chọn
+      if (currentTBLevel !== 'ALL') {
+        preparedList = preparedList.filter(p => p.item.level === currentTBLevel);
+      }
 
       if (searchKeyword) {
         preparedList = preparedList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
@@ -1720,9 +1738,39 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
         outletBox.appendChild(card);
       });
 
+      // Cập nhật số điểm tổng và tiến độ đạt của 3 Level
       document.getElementById('countLV1').textContent = cLV1;
+      document.getElementById('passLV1').textContent = `Đạt ${pLV1}/${cLV1} điểm`;
+
       document.getElementById('countLV2').textContent = cLV2;
+      document.getElementById('passLV2').textContent = `Đạt ${pLV2}/${cLV2} điểm`;
+
       document.getElementById('countLV3').textContent = cLV3;
+      document.getElementById('passLV3').textContent = `Đạt ${pLV3}/${cLV3} điểm`;
+
+      // Cập nhật viền active cho 3 card Level
+      const cardLV1 = document.getElementById('cardLV1');
+      const cardLV2 = document.getElementById('cardLV2');
+      const cardLV3 = document.getElementById('cardLV3');
+      const btnResetLV = document.getElementById('btnResetTBLevel');
+
+      const baseLvlCard = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
+      cardLV1.className = baseLvlCard + " bg-blue-50/70 border-blue-200";
+      cardLV2.className = baseLvlCard + " bg-emerald-50/70 border-emerald-200";
+      cardLV3.className = baseLvlCard + " bg-purple-50/70 border-purple-200";
+
+      if (currentTBLevel === 'LV1') {
+        cardLV1.className = baseLvlCard + " bg-blue-100/90 border-blue-300 ring-2 ring-blue-500 shadow-xs";
+        btnResetLV.classList.remove('hidden');
+      } else if (currentTBLevel === 'LV2') {
+        cardLV2.className = baseLvlCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
+        btnResetLV.classList.remove('hidden');
+      } else if (currentTBLevel === 'LV3') {
+        cardLV3.className = baseLvlCard + " bg-purple-100/90 border-purple-300 ring-2 ring-purple-500 shadow-xs";
+        btnResetLV.classList.remove('hidden');
+      } else {
+        btnResetLV.classList.add('hidden');
+      }
 
       const pctPass = listMaster.length ? Math.round((passCount / listMaster.length) * 100) : 0;
       document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
@@ -1739,8 +1787,49 @@ ${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn 
       // ==========================================
       // 3. RENDER TAB 3: OLS LISTING FEE
       // ==========================================
-      let listLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
+      const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
+      // Tính toán tiến độ Đạt/Tổng của TONT và TOFT
+      let cTONT = 0, pTONT = 0;
+      let cTOFT = 0, pTOFT = 0;
+
+      baseListLF.forEach(l => {
+        if (l.channelType === "TONT") {
+          cTONT++;
+          const preQty = salesPreQtyByOutlet[l.code] || 0;
+          if (preQty >= l.tarCases) pTONT++;
+        } else {
+          cTOFT++;
+          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+          if (hudaHL >= (l.tarHL - 0.001)) pTOFT++;
+        }
+      });
+
+      document.getElementById('passLFTont').textContent = `Đạt ${pTONT}/${cTONT} điểm`;
+      document.getElementById('passLFToft').textContent = `Đạt ${pTOFT}/${cTOFT} điểm`;
+
+      // Cập nhật giao diện nút và card kênh TONT / TOFT
+      const cardLFTont = document.getElementById('cardLFTont');
+      const cardLFToft = document.getElementById('cardLFToft');
+      const baseLFCard = "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all";
+
+      cardLFTont.className = baseLFCard + " bg-amber-50/70 border-amber-200";
+      cardLFToft.className = baseLFCard + " bg-emerald-50/70 border-emerald-200";
+
+      const actBtn = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
+      const inactBtn = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
+
+      document.getElementById('btnLFChannelAll').className = (currentLFChannel === 'ALL') ? actBtn : inactBtn;
+      document.getElementById('btnLFTont').className = (currentLFChannel === 'TONT') ? (actBtn + " text-amber-700") : inactBtn;
+      document.getElementById('btnLFToft').className = (currentLFChannel === 'TOFT') ? (actBtn + " text-emerald-700") : inactBtn;
+
+      if (currentLFChannel === 'TONT') {
+        cardLFTont.className = baseLFCard + " bg-amber-100/90 border-amber-300 ring-2 ring-amber-500 shadow-xs";
+      } else if (currentLFChannel === 'TOFT') {
+        cardLFToft.className = baseLFCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
+      }
+
+      let listLF = baseListLF;
       if (currentLFChannel !== "ALL") {
         listLF = listLF.filter(l => l.channelType === currentLFChannel);
       }
