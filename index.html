@@ -84,18 +84,18 @@
     </div>
   </div>
 
-    <!-- THANH CHUYỂN 4 TAB (Màu xanh dịu mắt, sang trọng) -->
-  <div class="grid grid-cols-4 p-1 bg-blue-50 border border-blue-100 rounded-2xl mb-3 text-[11px] font-bold gap-1 shadow-xs">
-    <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center font-extrabold">
+  <!-- THANH CHUYỂN 4 TAB (Có khung nền sang trọng, nổi bật, cân đối) -->
+  <div class="grid grid-cols-4 p-1.5 bg-white rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 card-shadow border border-gray-100 select-none">
+    <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-blue-600 text-white shadow-sm transition-all text-center">
       📊 SỐ BÁN
     </button>
-    <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-blue-900/60 hover:text-[#1F4E79] transition-all text-center">
-      🎯 DISPLAY
+    <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all text-center">
+      🎯 TRƯNG BÀY
     </button>
-    <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-blue-900/60 hover:text-[#1F4E79] transition-all text-center">
+    <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all text-center">
       💰 LF
     </button>
-    <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-blue-900/60 hover:text-[#1F4E79] transition-all text-center">
+    <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all text-center">
       📸 CHỤP TB
     </button>
   </div>
@@ -1485,14 +1485,14 @@
       }
     }
 
-    function switchTab(tab) {
+        function switchTab(tab) {
       document.getElementById('tab1Content').classList.add('hidden');
       document.getElementById('tab2Content').classList.add('hidden');
       document.getElementById('tab3Content').classList.add('hidden');
       document.getElementById('tab4Content').classList.add('hidden');
 
-      const inactiveClass = "py-2.5 rounded-xl text-gray-500 transition-all text-center";
-      const activeClass = "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center";
+      const inactiveClass = "py-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all text-center";
+      const activeClass = "py-2.5 rounded-xl bg-blue-600 text-white shadow-sm transition-all text-center";
 
       document.getElementById('tabBtn1').className = inactiveClass;
       document.getElementById('tabBtn2').className = inactiveClass;
