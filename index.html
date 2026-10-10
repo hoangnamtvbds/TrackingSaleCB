@@ -328,11 +328,16 @@
         </div>
       </div>
 
-      <!-- Header danh sách hiển thị trạng thái lọc -->
+      <!-- Header danh sách hiển thị trạng thái lọc & Nút sao chép nhắc nhở -->
       <div class="flex justify-between items-center px-1 pt-0.5">
         <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
         <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
       </div>
+
+      <!-- Nút sao chép tin nhắn gửi nhóm Zalo linh hoạt theo bộ lọc -->
+      <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
+        📢 Sao chép nhắc nhở các bạn chưa có đơn
+      </button>
 
       <!-- Danh sách 9 bạn SR cuộn mượt -->
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
@@ -769,6 +774,109 @@
       document.getElementById('modalSummaryTotalCases').textContent = `${Math.round(totalDayHL / CASE_VOLUME)} th`;
       document.getElementById('modalSummaryHasOrder').textContent = `${hasOrderCount}/9 SR`;
       document.getElementById('modalSummaryNoOrder').textContent = `${noOrderCount}/9 SR`;
+
+      // Cập nhật nút bấm sao chép theo bộ lọc
+      const copyBtn = document.getElementById('btnCopyModalReport');
+      if (copyBtn) {
+        if (currentModalFilter === 'NO_ORDER') {
+          copyBtn.className = "w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
+          copyBtn.innerHTML = `📢 Sao chép nhắc nhở ${noOrderCount} bạn chưa có đơn`;
+        } else if (currentModalFilter === 'HAS_ORDER') {
+          copyBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
+          copyBtn.innerHTML = `👏 Sao chép biểu dương ${hasOrderCount} bạn có đơn`;
+        } else {
+          copyBtn.className = "w-full py-2 bg-[#1F4E79] hover:bg-blue-900 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
+          copyBtn.innerHTML = `📋 Sao chép tổng hợp đơn ngày (${hasOrderCount} có / ${noOrderCount} chưa)`;
+        }
+      }
+    }
+
+    function copyManagerReminderReport() {
+      const selectedDate = document.getElementById('modalOrderDateSelect').value;
+      if (!selectedDate) {
+        alert("Chưa có ngày đơn để sao chép!");
+        return;
+      }
+
+      const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
+      const srSalesMap = {};
+      TEAM_SRS.forEach(k => { srSalesMap[k] = 0; });
+      dayOrders.forEach(o => {
+        if (srSalesMap[o.sr] !== undefined) {
+          srSalesMap[o.sr] += o.vol;
+        }
+      });
+
+      const hasList = [];
+      const noList = [];
+
+      TEAM_SRS.forEach(k => {
+        const name = TEAM_SR_MAP[k];
+        const vol = srSalesMap[k];
+        if (vol > 0.001) {
+          hasList.push({ name, vol, cases: Math.round(vol / CASE_VOLUME) });
+        } else {
+          noList.push(name);
+        }
+      });
+
+      hasList.sort((a,b) => b.vol - a.vol);
+
+      let msg = "";
+
+      if (currentModalFilter === 'NO_ORDER' || (currentModalFilter === 'ALL' && noList.length > 0)) {
+        msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - TEAM HỒ ĐỨC LỢI
+📅 Ngày duyệt: ${selectedDate}
+
+⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:
+`;
+        noList.forEach((n, i) => {
+          msg += `${i + 1}. ${n}
+`;
+        });
+        msg += `
+👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
+      } else if (currentModalFilter === 'HAS_ORDER') {
+        msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY - TEAM HỒ ĐỨC LỢI
+📅 Ngày duyệt: ${selectedDate}
+
+🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:
+`;
+        hasList.forEach((item, i) => {
+          msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)
+`;
+        });
+        msg += `
+👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
+      } else {
+        msg = `📊 TỔNG HỢP TIẾN ĐỘ ĐƠN HÀNG - TEAM HỒ ĐỨC LỢI
+📅 Ngày duyệt: ${selectedDate}
+
+✓ Có đơn (${hasList.length} bạn):
+`;
+        hasList.forEach((item, i) => {
+          msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)
+`;
+        });
+        if (noList.length > 0) {
+          msg += `
+⚠️ Chưa có đơn (${noList.length} bạn):
+`;
+          noList.forEach((n, i) => {
+            msg += `  ${i + 1}. ${n}
+`;
+          });
+          msg += `
+👉 Các bạn chưa có đơn kiểm tra lại tuyến hôm qua có khó khăn gì báo SS hỗ trợ nhé!`;
+        }
+      }
+
+      navigator.clipboard.writeText(msg).then(() => {
+        alert("Đã sao chép tin nhắn nhắc nhở vào bộ nhớ tạm!
+Bạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
     }
 
     function promptExportFiles() {
