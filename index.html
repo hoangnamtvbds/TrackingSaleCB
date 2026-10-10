@@ -581,14 +581,18 @@
           if (Array.isArray(data.master)) {
             MASTER = data.master;
             LISTING_FEE = data.listing || [];
+            AUDIT_DATA = data.audit || [];
           } else if (data.master && typeof data.master === 'object') {
             MASTER = data.master.toft || [];
             LISTING_FEE = data.master.listing || [];
+            AUDIT_DATA = data.master.audit || data.audit || [];
           }
 
           SEC_ORDERS = data.sec || [];
           PROMOTIONS = data.promo || [];
-          AUDIT_DATA = data.audit || [];
+          if (!AUDIT_DATA || AUDIT_DATA.length === 0) {
+            AUDIT_DATA = data.audit || [];
+          }
 
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
           localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
@@ -1414,11 +1418,11 @@
           id: 'CURRENT_DATA',
           master: {
             toft: MASTER,
-            listing: LISTING_FEE
+            listing: LISTING_FEE,
+            audit: AUDIT_DATA
           },
           sec: SEC_ORDERS,
           promo: PROMOTIONS,
-          audit: AUDIT_DATA,
           updated_at: nowStr
         };
 
@@ -1534,6 +1538,7 @@
         const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
         const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
 
+        // Đếm OLS Trưng bày toàn team
         const salesByOutlet = {};
         SEC_ORDERS.forEach(o => {
           if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -1578,6 +1583,7 @@
 
         reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)\n${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)\n• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)\n• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)\n\n👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
       } else {
+        // MẪU BÁO CÁO CÁ NHÂN (DÀNH CHO TỪNG BẠN SR)
         let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
         const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
 
@@ -1591,6 +1597,7 @@
         const dayCases = Math.round(dayHL / CASE_VOLUME);
         const monthCases = Math.round(monthHL / CASE_VOLUME);
 
+        // Đếm Trưng bày của SR
         const salesByOutlet = {};
         listSRSec.forEach(o => {
           if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
