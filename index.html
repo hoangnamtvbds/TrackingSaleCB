@@ -29,12 +29,16 @@
         <span class="text-[10px] font-semibold text-gray-400 tracking-wider opacity-80 italic">by LHN</span>
       </div>
     </div>
-    <div class="flex items-center gap-1.5">
-      <button onclick="copyZaloReport()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1" title="Sao chép báo cáo gửi Zalo">
-        📋 Báo cáo
+    <div class="flex items-center gap-1">
+      <!-- Icon Đơn Hàng Mới (Quản Lý - PIN 6868) -->
+      <button onclick="promptDailyOrdersModal()" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-0.5" title="Soi đơn ngày gần nhất (Quản lý)">
+        📦 Đơn
       </button>
-      <button onclick="toggleAdminModal()" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1">
-        ⚙️ Nạp file
+      <button onclick="copyZaloReport()" class="px-2 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-0.5" title="Sao chép báo cáo gửi Zalo">
+        📋 BC
+      </button>
+      <button onclick="toggleAdminModal()" class="px-2 py-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-0.5">
+        ⚙️ File
       </button>
     </div>
   </div>
@@ -251,7 +255,7 @@
         <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- BỘ LỌC TRẠNG THÁI LF: TẤT CẢ / CHƯA ĐẠT / ĐÃ ĐẠT -->
+      <!-- BỘ LỌC TRẠNG THÁI LF -->
       <div class="pt-2 border-t border-gray-100">
         <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1 mb-2">
           <button id="btnFilterLFAll" onclick="setLFStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
@@ -259,7 +263,6 @@
           <button id="btnFilterLFPass" onclick="setLFStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
         </div>
 
-        <!-- Lọc Kênh TONT / TOFT -->
         <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
           <button id="btnLFChannelAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
           <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán nhậu)</button>
@@ -284,6 +287,51 @@
       <span id="txtLFListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
     <div id="lfOutletList" class="space-y-2.5"></div>
+  </div>
+
+  <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) ================= -->
+  <div id="dailyOrdersModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 hidden backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4 card-shadow space-y-3 max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5">
+            📦 ĐƠN DUYỆT THEO NGÀY
+          </h3>
+          <p class="text-[10px] text-gray-400 font-medium">Bảng theo dõi nhanh tiến độ từng SR</p>
+        </div>
+        <button onclick="closeDailyOrdersModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg p-1">✕</button>
+      </div>
+
+      <!-- Chọn ngày muốn xem -->
+      <div class="flex items-center gap-2">
+        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap">Chọn ngày:</label>
+        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none">
+          <!-- Rendered by JS -->
+        </select>
+      </div>
+
+      <!-- Tóm tắt số lượng -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-blue-50 p-2 rounded-xl border border-blue-100">
+          <span class="text-[10px] font-bold text-blue-600 block">TỔNG SẢN LƯỢNG</span>
+          <span id="modalSummaryTotalHL" class="text-xs font-black text-blue-950 mt-0.5 block">0.00 HL</span>
+          <span id="modalSummaryTotalCases" class="text-[9px] text-blue-700 font-semibold block">0 th</span>
+        </div>
+        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-100">
+          <span class="text-[10px] font-bold text-emerald-600 block">CÓ ĐƠN</span>
+          <span id="modalSummaryHasOrder" class="text-xs font-black text-emerald-950 mt-0.5 block">0 SR</span>
+        </div>
+        <div class="bg-rose-50 p-2 rounded-xl border border-rose-100">
+          <span class="text-[10px] font-bold text-rose-600 block">CHƯA CÓ ĐƠN</span>
+          <span id="modalSummaryNoOrder" class="text-xs font-black text-rose-950 mt-0.5 block">0 SR</span>
+        </div>
+      </div>
+
+      <!-- Danh sách 9 bạn SR -->
+      <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
   </div>
 
   <!-- MODAL ADMIN CẬP NHẬT -->
@@ -353,14 +401,24 @@
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
-    const TEAM_SRS = [
-      "Tai Nguyen Ngoc", "Thuong Hoang Van", "Luan Nguyen Van", "Oanh Nguyen Kieu",
-      "Nam Le Hoang", "Phu Tran Trong", "Huynh Mai Trong", "Lien Dinh Thi", "Tuan Nguyen Hoang"
-    ];
+    const TEAM_SR_MAP = {
+      "Tai Nguyen Ngoc": "Nguyễn Ngọc Tài",
+      "Thuong Hoang Van": "Hoàng Văn Thương",
+      "Luan Nguyen Van": "Nguyễn Văn Luân",
+      "Oanh Nguyen Kieu": "Nguyễn Kiều Oanh",
+      "Nam Le Hoang": "Lê Hoàng Nam",
+      "Phu Tran Trong": "Trần Trọng Phú",
+      "Huynh Mai Trong": "Mai Trọng Huỳnh",
+      "Lien Dinh Thi": "Đinh Thị Liễn",
+      "Tuan Nguyen Hoang": "Nguyễn Hoàng Tuấn"
+    };
+
+    const TEAM_SRS = Object.keys(TEAM_SR_MAP);
 
     let currentLFChannel = "ALL";
     let currentTBStatus = "ALL";
     let currentLFStatus = "ALL";
+    let isManagerVerified = false;
 
     function normalizeSR(name) {
       if (!name) return "";
@@ -491,7 +549,6 @@
       if (localPromo) PROMOTIONS = JSON.parse(localPromo);
       if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
-      // GHI NHỚ TÊN SR LẦN TRƯỚC ĐÃ CHỌN
       const savedSR = localStorage.getItem('SAVED_SR');
       if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
         document.getElementById('srFilter').value = savedSR;
@@ -517,12 +574,150 @@
     function verifyPin() {
       const pin = document.getElementById('inputPin').value;
       if (pin === ADMIN_PIN) {
+        isManagerVerified = true;
         document.getElementById('pinBox').classList.add('hidden');
         document.getElementById('uploadBox').classList.remove('hidden');
       } else {
         alert("Mã PIN không đúng!");
         document.getElementById('inputPin').value = '';
       }
+    }
+
+    // ================= XỬ LÝ MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) =================
+    function promptDailyOrdersModal() {
+      if (!isManagerVerified) {
+        const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
+        if (pin === ADMIN_PIN) {
+          isManagerVerified = true;
+        } else if (pin !== null) {
+          alert("Mã PIN không chính xác!");
+          return;
+        } else {
+          return;
+        }
+      }
+
+      openDailyOrdersModal();
+    }
+
+    function openDailyOrdersModal() {
+      const dateSelect = document.getElementById('modalOrderDateSelect');
+      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
+      
+      dateSelect.innerHTML = '';
+      if (dates.length === 0) {
+        dateSelect.innerHTML = '<option value="">Chưa có đơn hàng nào</option>';
+      } else {
+        dates.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = `Ngày ${d}`;
+          dateSelect.appendChild(opt);
+        });
+      }
+
+      renderDailyOrdersModalContent();
+      document.getElementById('dailyOrdersModal').classList.remove('hidden');
+    }
+
+    function closeDailyOrdersModal() {
+      document.getElementById('dailyOrdersModal').classList.add('hidden');
+    }
+
+    function renderDailyOrdersModalContent() {
+      const selectedDate = document.getElementById('modalOrderDateSelect').value;
+      const listContainer = document.getElementById('modalSRListContainer');
+      listContainer.innerHTML = '';
+
+      if (!selectedDate) {
+        listContainer.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có dữ liệu đơn hàng.</p>';
+        return;
+      }
+
+      // Lọc các đơn trong ngày đã chọn
+      const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
+      let totalDayHL = 0;
+      let totalDayQty = 0;
+      let hasOrderCount = 0;
+      let noOrderCount = 0;
+
+      // Gom đơn theo từng SR trong ngày
+      const srSalesMap = {};
+      TEAM_SRS.forEach(k => {
+        srSalesMap[k] = { vol: 0, cases: 0, outlets: new Map() };
+      });
+
+      dayOrders.forEach(o => {
+        if (srSalesMap[o.sr]) {
+          srSalesMap[o.sr].vol += o.vol;
+          srSalesMap[o.sr].cases += Math.round(o.vol / CASE_VOLUME);
+          totalDayHL += o.vol;
+          totalDayQty += o.qty;
+
+          if (!srSalesMap[o.sr].outlets.has(o.code)) {
+            srSalesMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
+          }
+          srSalesMap[o.sr].outlets.get(o.code).vol += o.vol;
+        }
+      });
+
+      // Render danh sách 9 bạn SR
+      TEAM_SRS.forEach(k => {
+        const name = TEAM_SR_MAP[k];
+        const data = srSalesMap[k];
+        const hasOrder = data.vol > 0.001;
+
+        if (hasOrder) hasOrderCount++;
+        else noOrderCount++;
+
+        const card = document.createElement('div');
+        card.className = `p-2.5 rounded-2xl border text-xs ${hasOrder ? 'bg-emerald-50/50 border-emerald-200' : 'bg-gray-50/70 border-gray-200'}`;
+
+        let outletDetailsHtml = '';
+        if (hasOrder && data.outlets.size > 0) {
+          data.outlets.forEach((otData, otCode) => {
+            outletDetailsHtml += `
+              <div class="flex justify-between items-center py-0.5 text-[10px] text-gray-600">
+                <span class="truncate pr-1">• ${otData.name}</span>
+                <span class="font-bold text-gray-800 whitespace-nowrap">${otData.vol.toFixed(2)} HL</span>
+              </div>
+            `;
+          });
+        }
+
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold ${hasOrder ? 'text-gray-900' : 'text-gray-500'}">${name}</span>
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${hasOrder ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
+              ${hasOrder ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}
+            </span>
+          </div>
+          <div class="mt-1 pt-1 border-t ${hasOrder ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-[11px]">
+            <span class="text-gray-500">Sản lượng:</span>
+            <span class="font-black ${hasOrder ? 'text-emerald-700' : 'text-gray-400'}">
+              ${data.vol.toFixed(2)} HL <span class="font-medium text-[10px]">(${data.cases} th)</span>
+            </span>
+          </div>
+          ${hasOrder ? `
+            <details class="mt-1.5 pt-1 border-t border-emerald-100">
+              <summary class="cursor-pointer text-[10px] font-bold text-emerald-800 flex justify-between items-center select-none">
+                <span>Xem ${data.outlets.size} điểm chốt đơn</span>
+                <span>▼</span>
+              </summary>
+              <div class="mt-1 space-y-0.5 bg-white/70 p-1.5 rounded-xl border border-emerald-100">
+                ${outletDetailsHtml}
+              </div>
+            </details>
+          ` : ''}
+        `;
+        listContainer.appendChild(card);
+      });
+
+      // Cập nhật card tổng hợp
+      document.getElementById('modalSummaryTotalHL').textContent = `${totalDayHL.toFixed(2)} HL`;
+      document.getElementById('modalSummaryTotalCases').textContent = `${Math.round(totalDayHL / CASE_VOLUME)} th`;
+      document.getElementById('modalSummaryHasOrder').textContent = `${hasOrderCount}/9 SR`;
+      document.getElementById('modalSummaryNoOrder').textContent = `${noOrderCount}/9 SR`;
     }
 
     function promptExportFiles() {
