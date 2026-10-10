@@ -1452,7 +1452,7 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-         // XỬ LÝ FILE 4: SALES TARGET FIT-10 (QUÉT TRỰC TIẾP TỪNG BẠN SR)
+                 // XỬ LÝ FILE 4: SALES TARGET FIT-10 (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1461,14 +1461,23 @@
             const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetName], { header: 1 });
             SALES_TARGETS = {};
 
+            // Dò vị trí chính xác của Sales Volume và Focused SKUs (Premium) từ dòng tiêu đề
+            let colVol = 12;
+            let colPrem = 17;
+            const row0 = rawTarget[0] || [];
+            row0.forEach((val, idx) => {
+              const str = String(val || '').trim().toLowerCase();
+              if (str.includes('sales volume')) colVol = idx;
+              if (str.includes('focused skus')) colPrem = idx + 1; // Cột Target của Premium nằm ngay sau
+            });
+
             rawTarget.forEach(row => {
-              if (!row || row.length < 14) return;
-              // Quét tìm ô chứa tên SR trong hàng
+              if (!row || row.length < 10) return;
               for (let c = 0; c < Math.min(8, row.length); c++) {
                 const norm = normalizeSR(row[c]);
                 if (TEAM_SRS.includes(norm)) {
-                  const vol = parseFloat(row[13]) || 0;  // Cột Sales Volume Target
-                  const prem = parseFloat(row[18]) || 0; // Cột Focused SKUs Premium Target
+                  const vol = parseFloat(row[colVol]) || 0;
+                  const prem = parseFloat(row[colPrem]) || 0;
                   SALES_TARGETS[norm] = {
                     volume_target: vol,
                     premium_target: prem
@@ -1479,6 +1488,7 @@
             });
           }
         }
+
 
         const nowStr = new Date().toLocaleString('vi-VN');
         btnSave.textContent = "Đang gửi lên Cloud...";
