@@ -377,10 +377,7 @@
         </div>
       </div>
 
-      <!-- Nút sao chép tin nhắn nhắc nhở chụp ảnh Zalo -->
-      <button id="btnCopyAuditReport" onclick="copyAuditZaloReport()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all mt-1">
-        📢 Sao chép nhắc nhở chụp ảnh gửi Zalo
-      </button>
+
     </div>
 
     <div class="flex justify-between items-center mb-1 px-1">
@@ -388,6 +385,56 @@
       <span id="txtAuditListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
     <div id="auditOutletList" class="space-y-2.5"></div>
+  </div>
+
+    <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
+  <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
+            📋 TRUNG TÂM BÁO CÁO (SS)
+          </h3>
+          <p class="text-[10px] text-gray-400 font-medium">Bảo mật quản lý • Chọn loại báo cáo cần gửi Zalo</p>
+        </div>
+        <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
+      </div>
+
+      <!-- Danh sách 4 tùy chọn báo cáo chuyên nghiệp -->
+      <div class="space-y-2">
+        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-3 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
+            <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
+          </div>
+          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
+        </button>
+
+        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-3 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
+            <span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
+          </div>
+          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, tiến độ Target tháng (Volume & Premium), điểm thiếu cần bù</p>
+        </button>
+
+        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-3 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
+            <span class="text-[10px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
+          </div>
+          <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
+        </button>
+
+        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-3 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
+            <span class="text-[10px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
+          </div>
+          <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) ================= -->
@@ -1027,66 +1074,6 @@
       });
     }
 
-    function copyAuditZaloReport() {
-      const selectedSR = document.getElementById('srFilter').value;
-      const srSelectEl = document.getElementById('srFilter');
-      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
-      const nowStr = new Date().toLocaleDateString('vi-VN');
-
-      let list = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
-
-      const need2List = list.filter(a => a.count === 1);
-      const noneList = list.filter(a => a.count === 0);
-      const doneList = list.filter(a => a.count >= 2);
-
-      let msg = "";
-
-      if (selectedSR === "ALL") {
-        msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
-
-        if (noneList.length > 0) {
-          const srNoneMap = {};
-          noneList.forEach(a => { srNoneMap[a.sr] = (srNoneMap[a.sr] || 0) + 1; });
-          msg += `\n⚠️ CÁC BẠN CÒN ĐIỂM CHƯA CHỤP LẦN NÀO:\n`;
-          Object.entries(srNoneMap).sort((a,b) => b[1] - a[1]).forEach(([srKey, cnt], i) => {
-            const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
-            const name = opt ? opt.text : srKey;
-            msg += `  ${i + 1}. ${name}: Còn ${cnt} điểm\n`;
-          });
-        }
-
-        if (need2List.length > 0) {
-          msg += `\n💡 LƯU Ý: Còn ${need2List.length} điểm đã chấm lần 1, anh em nhớ sắp xếp lịch đi chụp bổ sung lần 2 đúng tiến độ nhé!`;
-        }
-      } else {
-        msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY - ${srNameText.toUpperCase()}\n📅 Tính đến ngày: ${nowStr}\n\n• Đã xong (2/2 lần): ${doneList.length}/${list.length} điểm\n• Thiếu lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp (0/2 lần): ${noneList.length} điểm\n`;
-
-        if (noneList.length > 0) {
-          msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
-          noneList.slice(0, 10).forEach((a, i) => {
-            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
-          });
-          if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
-        }
-
-        if (need2List.length > 0) {
-          msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
-          need2List.slice(0, 5).forEach((a, i) => {
-            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
-          });
-          if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
-        }
-
-        msg += `\n👉 Nhớ mở app DMS chụp hình đầy đủ trước hạn để đảm bảo tiền thưởng cho quán nhé!`;
-      }
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
-    }
-
     function promptExportFiles() {
       const pin = prompt("Nhập mật khẩu mở khóa tải file:");
       if (pin === EXPORT_PIN) {
@@ -1599,130 +1586,248 @@
       renderAll();
     }
 
-    // SAO CHÉP BÁO CÁO GỬI ZALO THÔNG MINH (ĐỘ TRỄ T+1)
+        // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
     function copyZaloReport() {
+      if (!isManagerVerified) {
+        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
+        if (pin === ADMIN_PIN) {
+          isManagerVerified = true;
+        } else if (pin !== null) {
+          alert("Mã PIN không chính xác!");
+          return;
+        } else {
+          return;
+        }
+      }
+      document.getElementById('reportHubModal').classList.remove('hidden');
+    }
+
+    function closeReportHubModal() {
+      document.getElementById('reportHubModal').classList.add('hidden');
+    }
+
+    function triggerCopyReport(type) {
+      closeReportHubModal();
+      if (type === 'TEAM_SUMMARY') {
+        executeCopyTeamReport();
+      } else if (type === 'INDIVIDUAL_SR') {
+        const curSR = document.getElementById('srFilter').value;
+        if (curSR === 'ALL') {
+          alert("Bạn đang chọn '-- Toàn bộ Team --'.\nVui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang trước khi lấy báo cáo riêng nhé!");
+          return;
+        }
+        executeCopyIndividualReport();
+      } else if (type === 'AUDIT_TB') {
+        executeCopyAuditReport();
+      } else if (type === 'NO_ORDER_REMIND') {
+        openDailyOrdersModal();
+        setModalFilter('NO_ORDER');
+        copyManagerReminderReport();
+      }
+    }
+
+    function executeCopyTeamReport() {
+      const latestDate = updateLatestOrderDateBanner() || "Gần nhất";
+      const updateTime = localStorage.getItem('UPDATE_TIME') || "";
+      const srSelectEl = document.getElementById('srFilter');
+
+      let totalMonthHL = 0;
+      let totalDayHL = 0;
+      const srDayMap = {};
+
+      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
+        totalMonthHL += o.vol;
+        if (o.date === latestDate) {
+          totalDayHL += o.vol;
+          srDayMap[o.sr] = (srDayMap[o.sr] || 0) + o.vol;
+        }
+      });
+
+      const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
+      const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
+
+      const salesByOutlet = {};
+      SEC_ORDERS.forEach(o => {
+        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
+        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+        salesByOutlet[o.code].total += o.vol;
+      });
+
+      let tbPass = 0;
+      MASTER.filter(m => TEAM_SRS.includes(m.sr)).forEach(m => {
+        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
+        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
+        const actTot = actH + actP;
+        const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
+        if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+          tbPass++;
+        }
+      });
+
+      let lfPass = 0;
+      LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
+        if (l.channelType === "TONT") {
+          const preQty = SEC_ORDERS.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+          if (preQty >= l.tarCases) lfPass++;
+        } else {
+          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+          if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
+        }
+      });
+
+      const tbTotal = MASTER.filter(m => TEAM_SRS.includes(m.sr)).length;
+      const lfTotal = LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).length;
+
+      const topSRs = Object.entries(srDayMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
+      let topText = "";
+      topSRs.forEach(([srKey, vol], i) => {
+        const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
+        const name = opt ? opt.text : srKey;
+        topText += `\n  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
+      });
+
+      const reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)\n${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)\n• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)\n• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)\n\n👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
+
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
+    }
+
+    function executeCopyIndividualReport() {
       const selectedSR = document.getElementById('srFilter').value;
       const srSelectEl = document.getElementById('srFilter');
       const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
       const latestDate = updateLatestOrderDateBanner() || "Gần nhất";
       const updateTime = localStorage.getItem('UPDATE_TIME') || "";
 
-      let reportText = "";
+      let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
+      const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
 
-      if (selectedSR === "ALL") {
-        let totalMonthHL = 0;
-        let totalDayHL = 0;
-        const srDayMap = {};
+      listSRSec.forEach(o => {
+        monthHL += o.vol;
+        if (o.category === "Premium") monthPreHL += o.vol;
+        if (o.category === "Mainstream") monthHudaHL += o.vol;
+        if (o.date === latestDate) dayHL += o.vol;
+      });
 
-        SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
-          totalMonthHL += o.vol;
-          if (o.date === latestDate) {
-            totalDayHL += o.vol;
-            srDayMap[o.sr] = (srDayMap[o.sr] || 0) + o.vol;
-          }
-        });
+      const dayCases = Math.round(dayHL / CASE_VOLUME);
+      const monthCases = Math.round(monthHL / CASE_VOLUME);
 
-        const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
-        const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
-
-        const salesByOutlet = {};
-        SEC_ORDERS.forEach(o => {
-          if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-          if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
-          if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
-          salesByOutlet[o.code].total += o.vol;
-        });
-
-        let tbPass = 0;
-        MASTER.filter(m => TEAM_SRS.includes(m.sr)).forEach(m => {
-          const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-          const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-          const actTot = actH + actP;
-          const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
-          if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-              (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
-            tbPass++;
-          }
-        });
-
-        let lfPass = 0;
-        LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
-          if (l.channelType === "TONT") {
-            const preQty = SEC_ORDERS.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
-            if (preQty >= l.tarCases) lfPass++;
-          } else {
-            const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-            if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
-          }
-        });
-
-        const tbTotal = MASTER.filter(m => TEAM_SRS.includes(m.sr)).length;
-        const lfTotal = LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).length;
-
-        const topSRs = Object.entries(srDayMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
-        let topText = "";
-        topSRs.forEach(([srKey, vol], i) => {
-          const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
-          const name = opt ? opt.text : srKey;
-          topText += `\n  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
-        });
-
-        reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)\n${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)\n• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)\n• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)\n\n👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
-      } else {
-        let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
-        const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
-
-        listSRSec.forEach(o => {
-          monthHL += o.vol;
-          if (o.category === "Premium") monthPreHL += o.vol;
-          if (o.category === "Mainstream") monthHudaHL += o.vol;
-          if (o.date === latestDate) dayHL += o.vol;
-        });
-
-        const dayCases = Math.round(dayHL / CASE_VOLUME);
-        const monthCases = Math.round(monthHL / CASE_VOLUME);
-
-        const salesByOutlet = {};
-        listSRSec.forEach(o => {
-          if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-          if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
-          if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
-          salesByOutlet[o.code].total += o.vol;
-        });
-
-        const listSRMaster = MASTER.filter(m => m.sr === selectedSR);
-        let tbPass = 0;
-        listSRMaster.forEach(m => {
-          const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-          const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-          const actTot = actH + actP;
-          const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
-          if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-              (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
-            tbPass++;
-          }
-        });
-
-        const listSRLF = LISTING_FEE.filter(l => l.sr === selectedSR);
-        let lfPass = 0;
-        listSRLF.forEach(l => {
-          if (l.channelType === "TONT") {
-            const preQty = listSRSec.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
-            if (preQty >= l.tarCases) lfPass++;
-          } else {
-            const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-            if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
-          }
-        });
-
-        const tbMiss = listSRMaster.length - tbPass;
-        const lfMiss = listSRLF.length - lfPass;
-
-        reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${monthHL.toFixed(2)} HL (${monthCases} thùng)\n  - Premium: ${monthPreHL.toFixed(2)} HL\n  - Huda: ${monthHudaHL.toFixed(2)} HL\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Đã hoàn thành 100%'}\n\n👉 Mục tiêu hôm nay: Tập trung chào hàng bổ sung các điểm chưa đạt!`;
+      // Lấy Target từ file FIT-10 (chuẩn xác)
+      let tarVol = 0, tarPre = 0;
+      if (SALES_TARGETS && SALES_TARGETS[selectedSR]) {
+        tarVol = SALES_TARGETS[selectedSR].volume_target || 0;
+        tarPre = SALES_TARGETS[selectedSR].premium_target || 0;
       }
+      const tarMain = Math.max(0, tarVol - tarPre);
+      const pctVol = tarVol > 0 ? Math.round((monthHL / tarVol) * 100) : 0;
+      const pctPre = tarPre > 0 ? Math.round((monthPreHL / tarPre) * 100) : 0;
+      const pctMain = tarMain > 0 ? Math.round((monthHudaHL / tarMain) * 100) : 0;
+
+      const salesByOutlet = {};
+      listSRSec.forEach(o => {
+        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
+        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
+        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
+        salesByOutlet[o.code].total += o.vol;
+      });
+
+      const listSRMaster = MASTER.filter(m => m.sr === selectedSR);
+      let tbPass = 0;
+      listSRMaster.forEach(m => {
+        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
+        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
+        const actTot = actH + actP;
+        const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
+        if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+          tbPass++;
+        }
+      });
+
+      const listSRLF = LISTING_FEE.filter(l => l.sr === selectedSR);
+      let lfPass = 0;
+      listSRLF.forEach(l => {
+        if (l.channelType === "TONT") {
+          const preQty = listSRSec.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+          if (preQty >= l.tarCases) lfPass++;
+        } else {
+          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
+          if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
+        }
+      });
+
+      const tbMiss = listSRMaster.length - tbPass;
+      const lfMiss = listSRLF.length - lfPass;
+
+      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) vào nhóm chat.");
+        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste) để gửi.`);
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
+    }
+
+    function executeCopyAuditReport() {
+      const selectedSR = document.getElementById('srFilter').value;
+      const srSelectEl = document.getElementById('srFilter');
+      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
+      const nowStr = new Date().toLocaleDateString('vi-VN');
+
+      let list = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
+
+      const need2List = list.filter(a => a.count === 1);
+      const noneList = list.filter(a => a.count === 0);
+      const doneList = list.filter(a => a.count >= 2);
+
+      let msg = "";
+
+      if (selectedSR === "ALL") {
+        msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
+
+        if (noneList.length > 0) {
+          const srNoneMap = {};
+          noneList.forEach(a => { srNoneMap[a.sr] = (srNoneMap[a.sr] || 0) + 1; });
+          msg += `\n⚠️ CÁC BẠN CÒN ĐIỂM CHƯA CHỤP LẦN NÀO:\n`;
+          Object.entries(srNoneMap).sort((a,b) => b[1] - a[1]).forEach(([srKey, cnt], i) => {
+            const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
+            const name = opt ? opt.text : srKey;
+            msg += `  ${i + 1}. ${name}: Còn ${cnt} điểm\n`;
+          });
+        }
+
+        if (need2List.length > 0) {
+          msg += `\n💡 LƯU Ý: Còn ${need2List.length} điểm đã chấm lần 1, anh em nhớ sắp xếp lịch đi chụp bổ sung lần 2 đúng tiến độ nhé!`;
+        }
+      } else {
+        msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY - ${srNameText.toUpperCase()}\n📅 Tính đến ngày: ${nowStr}\n\n• Đã xong (2/2 lần): ${doneList.length}/${list.length} điểm\n• Thiếu lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp (0/2 lần): ${noneList.length} điểm\n`;
+
+        if (noneList.length > 0) {
+          msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
+          noneList.slice(0, 10).forEach((a, i) => {
+            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
+          });
+          if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
+        }
+
+        if (need2List.length > 0) {
+          msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
+          need2List.slice(0, 5).forEach((a, i) => {
+            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
+          });
+          if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
+        }
+
+        msg += `\n👉 Nhớ mở app DMS chụp hình đầy đủ trước hạn để đảm bảo tiền thưởng cho quán nhé!`;
+      }
+
+      navigator.clipboard.writeText(msg).then(() => {
+        alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => {
         alert("Lỗi sao chép: " + err);
       });
