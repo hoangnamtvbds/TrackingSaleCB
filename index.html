@@ -101,80 +101,59 @@
   </div>
 
   <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
+  <!-- ================= TAB 1: SỐ BÁN TOTAL (BỐ CỤC TINH GỌN MỚI) ================= -->
   <div id="tab1Content" class="space-y-3">
-    <!-- KHỐI TARGET SALES (SẢN LƯỢNG MỤC TIÊU THÁNG) -->
+    <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET (GỘP CHUNG MTD + TARGET) -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🎯 TIẾN ĐỘ SẢN LƯỢNG THÁNG (MKT)</span>
-        <span id="txtTargetPercent" class="text-xs font-extrabold text-blue-600">0%</span>
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET (MKT)</span>
+        <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
       </div>
       <div class="flex items-baseline justify-between">
         <span id="txtTargetAchieved" class="text-2xl font-black text-[#1F4E79]">0.00 / 0.00 HL</span>
-        <span id="txtTargetCases" class="text-xs font-semibold text-amber-700">0 / 0 th</span>
+        <span id="txtTargetCases" class="text-xs font-bold text-amber-700">0 / 0 th</span>
       </div>
       <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
         <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
       </div>
       <div class="pt-2 border-t border-gray-100 space-y-2 text-xs">
         <div class="flex justify-between items-center">
-          <span class="text-gray-500 font-semibold">● Mainstream Target:</span>
+          <span class="text-gray-500 font-semibold">🍺 Mainstream:</span>
           <span id="txtMainstreamTarget" class="font-extrabold text-emerald-700">0.00 / 0.00 HL (0%)</span>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500 font-semibold">● Premium Target:</span>
-          <span id="txtPremiumTarget" class="font-extrabold text-amber-700">0.00 / 0.00 HL (0%)</span>
-        </div>
-      </div>
-    </div>
-
-    <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
-      <summary class="p-3 flex justify-between items-center cursor-pointer select-none bg-blue-50/50">
-        <span class="text-xs font-bold text-[#1F4E79] flex items-center gap-1.5">
-          🗓️ <span id="lblSelectedDate">Lọc theo ngày: Tất cả</span>
-        </span>
-        <span class="text-xs text-blue-600 font-bold">Tùy chọn ▼</span>
-      </summary>
-      <div class="p-3 border-t border-gray-100 bg-white">
-        <div class="flex gap-2 items-center">
-          <select id="dateFilter" onchange="renderAll()" class="flex-1 p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
-            <option value="ALL">-- Tất cả các ngày (Tổng) --</option>
-          </select>
-          <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold">Reset</button>
-        </div>
-      </div>
-    </details>
-
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100">
-      <div class="flex justify-between items-center mb-1">
-        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📦 Tổng Sản Lượng Bán Ra</span>
-        <span class="text-[10px] font-bold text-gray-400">1 Thùng = 0.0792 HL</span>
-      </div>
-      <div class="grid grid-cols-2 gap-3 pt-2">
-        <div class="bg-blue-50/90 p-3.5 rounded-2xl border border-blue-100">
-          <p class="text-[11px] font-bold text-blue-700 uppercase">Sản Lượng (HL)</p>
-          <p id="totalDailyHL" class="text-2xl font-black text-[#1F4E79] mt-0.5 tracking-tight">0.00</p>
-        </div>
-        <div class="bg-amber-50/90 p-3.5 rounded-2xl border border-amber-100">
-          <p class="text-[11px] font-bold text-amber-800 uppercase">Két / Thùng</p>
-          <p id="totalDailyCases" class="text-2xl font-black text-amber-700 mt-0.5 tracking-tight">0</p>
-        </div>
-      </div>
-
-      <div class="mt-3 pt-3 border-t border-gray-100 space-y-2 text-xs">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500 font-semibold">🍺 Mainstream:</span>
-          <span id="txtMainstreamSum" class="font-extrabold text-emerald-700 text-sm">0.00 HL (0 th)</span>
-        </div>
-        
         <details class="bg-amber-50/40 rounded-xl border border-amber-100/60 overflow-hidden" open>
           <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none">
             <span class="text-amber-800 font-bold flex items-center gap-1">
-              👑 Premium: <span id="txtPremiumSum" class="ml-1 text-sm font-black text-amber-600">0.00 HL</span>
+              👑 Premium: <span id="txtPremiumTarget" class="ml-1 text-sm font-black text-amber-600">0.00 / 0.00 HL (0%)</span>
             </span>
             <span class="text-[10px] text-amber-600 font-bold bg-amber-100 px-2 py-0.5 rounded-lg">Xem Brand ▼</span>
           </summary>
           <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
         </details>
+      </div>
+    </div>
+
+    <!-- 2. BỘ LỌC NGÀY (CHỈ HIỆN SẢN LƯỢNG NGÀY ĐÓ KHI CHỌN NGÀY CỤ THỂ) -->
+    <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
+      <div class="flex gap-2 items-center">
+        <div class="flex-1">
+          <select id="dateFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
+            <option value="ALL">🗓️ Xem cả tháng (Lũy kế MTD)</option>
+          </select>
+        </div>
+        <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 rounded-xl text-xs font-bold transition-all">Reset</button>
+      </div>
+      <div id="boxSpecificDateSales" class="hidden mt-2.5 pt-2.5 border-t border-gray-100">
+        <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
+          <div>
+            <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
+            <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
+          </div>
+          <div class="text-right text-[11px] space-y-0.5">
+            <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
+            <div class="text-amber-700 font-bold">Pre: <span id="lblSpecificDatePre">0.00 HL</span></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1735,49 +1714,23 @@
         document.getElementById('lblSelectedDate').textContent = (selectedDate === 'ALL') ? "Lọc theo ngày: Tất cả" : `Lọc ngày: ${selectedDate}`;
       }
 
-      let listDaily = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
-      if (selectedDate !== "ALL") {
-        listDaily = listDaily.filter(o => o.date === selectedDate);
-      }
-
-      let sumHudaHL = 0, sumPreHL = 0;
+            // XỬ LÝ SẢN LƯỢNG LŨY KẾ CẢ THÁNG (MTD)
+      let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
+      let monthHudaHL = 0, monthPreHL = 0;
       const preBrandMap = {};
 
-      const outletGroup = {};
-      listDaily.forEach(o => {
-        if (o.category === "Mainstream") sumHudaHL += o.vol;
+      listMonth.forEach(o => {
+        if (o.category === "Mainstream") monthHudaHL += o.vol;
         if (o.category === "Premium") {
-          sumPreHL += o.vol;
+          monthPreHL += o.vol;
           const br = detectBrand(o.brand, o.product);
           preBrandMap[br] = (preBrandMap[br] || 0) + o.vol;
         }
-
-        if (!outletGroup[o.code]) {
-          outletGroup[o.code] = {
-            code: o.code,
-            name: o.name,
-            totalVol: 0,
-            products: {}
-          };
-        }
-        outletGroup[o.code].totalVol += o.vol;
-        if (!outletGroup[o.code].products[o.product]) {
-          outletGroup[o.code].products[o.product] = { vol: 0, qty: 0 };
-        }
-        outletGroup[o.code].products[o.product].vol += o.vol;
-        outletGroup[o.code].products[o.product].qty += o.qty;
-      });
-
-      let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
-      let monthHudaHL = 0, monthPreHL = 0;
-      listMonth.forEach(o => {
-        if (o.category === "Mainstream") monthHudaHL += o.vol;
-        if (o.category === "Premium") monthPreHL += o.vol;
       });
       const monthTotalHL = monthHudaHL + monthPreHL;
 
-      let targetVol = 0;
-      let targetPrem = 0;
+      // XỬ LÝ TARGET THÁNG
+      let targetVol = 0, targetPrem = 0;
       if (selectedSR === "ALL") {
         TEAM_SRS.forEach(srKey => {
           if (SALES_TARGETS[srKey]) {
@@ -1796,6 +1749,7 @@
       const pctTargetMain = targetMain > 0 ? Math.round((monthHudaHL / targetMain) * 100) : 0;
       const pctTargetPrem = targetPrem > 0 ? Math.round((monthPreHL / targetPrem) * 100) : 0;
 
+      // HIỂN THỊ KHỐI TIẾN ĐỘ THÁNG & TARGET DUY NHẤT
       document.getElementById('txtTargetPercent').textContent = `${pctTargetVol}%`;
       document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
       document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
@@ -1804,16 +1758,7 @@
       document.getElementById('txtMainstreamTarget').textContent = `${monthHudaHL.toFixed(2)} / ${targetMain.toFixed(2)} HL (${pctTargetMain}%)`;
       document.getElementById('txtPremiumTarget').textContent = `${monthPreHL.toFixed(2)} / ${targetPrem.toFixed(2)} HL (${pctTargetPrem}%)`;
 
-      const totalHL = sumHudaHL + sumPreHL;
-      const totalCases = Math.round(totalHL / CASE_VOLUME);
-      const hudaCases = Math.round(sumHudaHL / CASE_VOLUME);
-      const preCases = Math.round(sumPreHL / CASE_VOLUME);
-
-      document.getElementById('totalDailyHL').textContent = totalHL.toFixed(2);
-      document.getElementById('totalDailyCases').textContent = totalCases.toLocaleString('vi-VN');
-      document.getElementById('txtMainstreamSum').textContent = `${sumHudaHL.toFixed(2)} HL (${hudaCases} th)`;
-      document.getElementById('txtPremiumSum').textContent = `${sumPreHL.toFixed(2)} HL (${preCases} th)`;
-
+      // ĐỔ DỮ LIỆU BRAND PREMIUM
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
       if (Object.keys(preBrandMap).length === 0) {
@@ -1826,6 +1771,40 @@
           preBox.appendChild(div);
         });
       }
+
+      // XỬ LÝ BỘ LỌC NGÀY LẺ (CHỈ HIỆN CARD KHI CHỌN NGÀY CỤ THỂ)
+      const boxDate = document.getElementById('boxSpecificDateSales');
+      let listFiltered = listMonth;
+      if (selectedDate !== "ALL") {
+        listFiltered = listMonth.filter(o => o.date === selectedDate);
+        let dayHuda = 0, dayPre = 0;
+        listFiltered.forEach(o => {
+          if (o.category === "Mainstream") dayHuda += o.vol;
+          if (o.category === "Premium") dayPre += o.vol;
+        });
+        const dayTot = dayHuda + dayPre;
+        boxDate.classList.remove('hidden');
+        document.getElementById('lblSpecificDateTitle').textContent = `Đơn ngày ${selectedDate}:`;
+        document.getElementById('lblSpecificDateVol').innerHTML = `${dayTot.toFixed(2)} HL <span class="text-xs font-bold text-amber-700">(${Math.round(dayTot / CASE_VOLUME)} th)</span>`;
+        document.getElementById('lblSpecificDateMain').textContent = `${dayHuda.toFixed(2)} HL`;
+        document.getElementById('lblSpecificDatePre').textContent = `${dayPre.toFixed(2)} HL`;
+      } else {
+        boxDate.classList.add('hidden');
+      }
+
+      // GOM NHÓM ĐIỂM BÁN THEO BỘ LỌC ĐÃ CHỌN
+      const outletGroup = {};
+      listFiltered.forEach(o => {
+        if (!outletGroup[o.code]) {
+          outletGroup[o.code] = { code: o.code, name: o.name, totalVol: 0, products: {} };
+        }
+        outletGroup[o.code].totalVol += o.vol;
+        if (!outletGroup[o.code].products[o.product]) {
+          outletGroup[o.code].products[o.product] = { vol: 0, qty: 0 };
+        }
+        outletGroup[o.code].products[o.product].vol += o.vol;
+        outletGroup[o.code].products[o.product].qty += o.qty;
+      });
 
       let sortedOutlets = Object.values(outletGroup).sort((a,b) => b.totalVol - a.totalVol);
       if (searchKeyword) {
