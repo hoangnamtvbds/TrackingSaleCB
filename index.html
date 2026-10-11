@@ -105,7 +105,7 @@
     <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET -->
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET </span>
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
         <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
       </div>
       <div class="flex items-baseline justify-between">
@@ -161,12 +161,69 @@
       </details>
     </div>
 
+    <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE (TỔNG TIỀN VÀ BẢNG BUNG 4 TIÊU CHÍ) -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
+      <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">💵</span>
+          <div>
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide block">TẠM TÍNH THƯỞNG (INCENTIVE)</span>
+            <span id="txtTotalIncentiveDisplay" class="text-base font-black text-amber-900 leading-tight">0 đ</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 bg-white/90 border border-amber-200 px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-amber-800 shadow-xs">
+          <span id="lblIncentiveToggleText">Chi tiết</span>
+          <span id="iconIncentiveToggle" class="text-[9px]">▼</span>
+        </div>
+      </div>
+
+      <!-- Khối bung chi tiết tỷ lệ % và số tiền 4 tiêu chí -->
+      <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-1.5 text-xs">
+        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
+          <span class="text-gray-600 font-medium">📦 1. Sản Lượng (Volume):</span>
+          <div class="text-right">
+            <span id="incVolAch" class="font-extrabold text-blue-700">0%</span>
+            <span class="text-gray-300 mx-1">•</span>
+            <b id="incVolVal" class="text-gray-900 font-black">0 đ</b>
+          </div>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
+          <span class="text-gray-600 font-medium">👑 2. Bia Trọng Tâm (Focused):</span>
+          <div class="text-right">
+            <span id="incSkuAch" class="font-extrabold text-amber-700">0%</span>
+            <span class="text-gray-300 mx-1">•</span>
+            <b id="incSkuVal" class="text-gray-900 font-black">0 đ</b>
+          </div>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
+          <span class="text-gray-600 font-medium">🎯 3. Ưu Tiên Tháng (MEP):</span>
+          <div class="text-right">
+            <span id="incMepAch" class="font-extrabold text-emerald-700">0%</span>
+            <span class="text-gray-300 mx-1">•</span>
+            <b id="incMepVal" class="text-gray-900 font-black">0 đ</b>
+          </div>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
+          <span class="text-gray-600 font-medium">📸 4. Điểm Đánh Giá FIT:</span>
+          <div class="text-right">
+            <span id="incFitAch" class="font-extrabold text-purple-700">0%</span>
+            <span class="text-gray-300 mx-1">•</span>
+            <b id="incFitVal" class="text-gray-900 font-black">0 đ</b>
+          </div>
+        </div>
+        <div class="pt-1.5 flex justify-between items-center text-xs font-bold bg-amber-100/60 p-2 rounded-xl">
+          <span class="text-amber-950 uppercase text-[10px]">💰 Tổng tiền thực nhận (Total):</span>
+          <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
+        </div>
+      </div>
+    </div>
+
     <!-- 2. BỘ LỌC NGÀY (GỌN GÀNG, CHỈ HIỆN KHI CHỌN NGÀY CỤ THỂ) -->
     <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
       <div class="flex gap-2 items-center">
         <div class="flex-1">
           <select id="dateFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
-            <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng </option>
+            <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>
           </select>
         </div>
         <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 rounded-xl text-xs font-bold transition-all">Reset</button>
@@ -376,8 +433,6 @@
           </div>
         </div>
       </div>
-
-
     </div>
 
     <div class="flex justify-between items-center mb-1 px-1">
@@ -387,7 +442,7 @@
     <div id="auditOutletList" class="space-y-2.5"></div>
   </div>
 
-    <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
+  <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
   <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
@@ -400,36 +455,44 @@
         <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
-      <!-- Danh sách 4 tùy chọn báo cáo chuyên nghiệp -->
-      <div class="space-y-2">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-3 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
+      <!-- Danh sách 5 tùy chọn báo cáo chuyên nghiệp -->
+      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
+        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
+            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
         </button>
 
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-3 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
+        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
+            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
           </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, tiến độ Target tháng (Volume & Premium), điểm thiếu cần bù</p>
+          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
         </button>
 
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-3 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
+        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
+            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
+          </div>
+          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
+        </button>
+
+        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[10px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
+            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
         </button>
 
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-3 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
+        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[10px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
+            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
         </button>
@@ -1186,7 +1249,7 @@
       SEC_ORDERS.forEach(o => { if (o.date) dateSet.add(o.date); });
       const sel = document.getElementById('dateFilter');
       const cur = sel.value;
-      sel.innerHTML = '<option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng </option>';
+      sel.innerHTML = '<option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>';
       Array.from(dateSet).sort().reverse().forEach(dt => {
         const opt = document.createElement('option');
         opt.value = dt;
@@ -1207,7 +1270,22 @@
       renderAll();
     }
 
-    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET FIT-10)
+    function toggleIncentiveDetail() {
+      const box = document.getElementById('boxIncentiveDetail');
+      const icon = document.getElementById('iconIncentiveToggle');
+      const lbl = document.getElementById('lblIncentiveToggleText');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        icon.textContent = '▲';
+        lbl.textContent = 'Thu gọn';
+      } else {
+        box.classList.add('hidden');
+        icon.textContent = '▼';
+        lbl.textContent = 'Chi tiết';
+      }
+    }
+
+    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET & INCENTIVE FIT-10)
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1447,7 +1525,7 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // XỬ LÝ FILE 4: SALES TARGET FIT-10 (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC)
+        // XỬ LÝ FILE 4: SALES TARGET & INCENTIVE FIT-10 (ĐẦY ĐỦ 4 TIÊU CHÍ VÀ TỔNG THƯỞNG)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1456,25 +1534,76 @@
             const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
             SALES_TARGETS = {};
 
-            let colVol = 12;
-            let colPrem = 17;
             const row0 = rawTarget[0] || [];
+            const row1 = rawTarget[1] || [];
+
+            let pVol = -1, pSku = -1, pMep = -1, pFit = -1, pTot = -1;
             row0.forEach((val, idx) => {
               const str = String(val || '').trim().toLowerCase();
-              if (str.includes('sales volume')) colVol = idx;
-              if (str.includes('focused skus')) colPrem = idx + 1;
+              if (str.includes('sales volume')) pVol = idx;
+              if (str.includes('focused skus')) pSku = idx;
+              if (str.includes('monthly execution') || str.includes('priority')) pMep = idx;
+              if (str.includes('fit score')) pFit = idx;
+              if (str.includes('total') && !str.includes('incentive') && !str.includes('sat')) pTot = idx;
             });
+
+            let colVol = -1, colVolAch = -1, colVolInc = -1;
+            let colSku = -1, colSkuAch = -1, colSkuInc = -1;
+            let colMepAch = -1, colMepInc = -1;
+            let colFitAch = -1, colFitInc = -1;
+            let colTotInc = -1;
+
+            row1.forEach((val, c) => {
+              const s = String(val || '').trim().toLowerCase();
+              if (pVol !== -1 && c >= pVol && (pSku === -1 || c < pSku)) {
+                if (s === 'target' && colVol === -1) colVol = c;
+                if (s === 'achieved') colVolAch = c;
+                if (s === 'incentive') colVolInc = c;
+              } else if (pSku !== -1 && c >= pSku && (pMep === -1 || c < pMep)) {
+                if (s === 'target' && colSku === -1) colSku = c;
+                if (s === 'achieved') colSkuAch = c;
+                if (s === 'incentive') colSkuInc = c;
+              } else if (pMep !== -1 && c >= pMep && (pFit === -1 || c < pFit)) {
+                if (s === 'achieved') colMepAch = c;
+                if (s === 'incentive') colMepInc = c;
+              } else if (pFit !== -1 && c >= pFit && (pTot === -1 || c < pTot)) {
+                if (s === 'achieved') colFitAch = c;
+                if (s === 'incentive') colFitInc = c;
+              } else if (pTot !== -1 && c >= pTot) {
+                if (s === 'incentive') colTotInc = c;
+              }
+            });
+
+            // Dự phòng mặc định
+            if (colVol === -1) colVol = (pVol !== -1 ? pVol : 12);
+            if (colSku === -1) colSku = (pSku !== -1 ? pSku + 1 : 17);
+            if (colVolAch === -1) colVolAch = colVol + 2;
+            if (colVolInc === -1) colVolInc = colVol + 3;
+            if (colSkuAch === -1) colSkuAch = colSku + 2;
+            if (colSkuInc === -1) colSkuInc = colSku + 3;
+            if (colMepAch === -1) colMepAch = (pMep !== -1 ? pMep + 27 : 48);
+            if (colMepInc === -1) colMepInc = colMepAch + 1;
+            if (colFitAch === -1) colFitAch = (pFit !== -1 ? pFit + 2 : 62);
+            if (colFitInc === -1) colFitInc = colFitAch + 1;
+            if (colTotInc === -1) colTotInc = (pTot !== -1 ? pTot + 2 : 66);
 
             rawTarget.forEach(row => {
               if (!row || row.length < 10) return;
               for (let c = 0; c < Math.min(8, row.length); c++) {
                 const norm = normalizeSR(row[c]);
                 if (TEAM_SRS.includes(norm)) {
-                  const vol = parseFloat(row[colVol]) || 0;
-                  const prem = parseFloat(row[colPrem]) || 0;
                   SALES_TARGETS[norm] = {
-                    volume_target: vol,
-                    premium_target: prem
+                    volume_target: parseFloat(row[colVol]) || 0,
+                    premium_target: parseFloat(row[colSku]) || 0,
+                    vol_ach: parseFloat(row[colVolAch]) || 0,
+                    vol_inc: parseFloat(row[colVolInc]) || 0,
+                    sku_ach: parseFloat(row[colSkuAch]) || 0,
+                    sku_inc: parseFloat(row[colSkuInc]) || 0,
+                    mep_ach: parseFloat(row[colMepAch]) || 0,
+                    mep_inc: parseFloat(row[colMepInc]) || 0,
+                    fit_ach: parseFloat(row[colFitAch]) || 0,
+                    fit_inc: parseFloat(row[colFitInc]) || 0,
+                    total_inc: parseFloat(row[colTotInc]) || 0
                   };
                   break;
                 }
@@ -1529,7 +1658,7 @@
         updateLatestOrderDateBanner();
         populateDateFilter();
         renderAll();
-        alert(`Đồng bộ thành công! Tìm thấy ${Object.keys(SALES_TARGETS).length} SR Target.`);
+        alert(`Đồng bộ thành công! Tìm thấy ${Object.keys(SALES_TARGETS).length} SR Target & Incentive.`);
       } catch (err) {
         console.error("Lỗi cập nhật:", err);
         alert("Lỗi khi xử lý file: " + (err.message || err));
@@ -1586,7 +1715,7 @@
       renderAll();
     }
 
-        // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
+    // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
     function copyZaloReport() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
@@ -1617,6 +1746,8 @@
           return;
         }
         executeCopyIndividualReport();
+      } else if (type === 'INCENTIVE_TEAM') {
+        executeCopyIncentiveTeamReport();
       } else if (type === 'AUDIT_TB') {
         executeCopyAuditReport();
       } else if (type === 'NO_ORDER_REMIND') {
@@ -1715,13 +1846,13 @@
       });
 
       const dayCases = Math.round(dayHL / CASE_VOLUME);
-      const monthCases = Math.round(monthHL / CASE_VOLUME);
 
-      // Lấy Target từ file FIT-10 (chuẩn xác)
-      let tarVol = 0, tarPre = 0;
+      // Lấy Target & Incentive từ file FIT-10
+      let tarVol = 0, tarPre = 0, totalInc = 0;
       if (SALES_TARGETS && SALES_TARGETS[selectedSR]) {
         tarVol = SALES_TARGETS[selectedSR].volume_target || 0;
         tarPre = SALES_TARGETS[selectedSR].premium_target || 0;
+        totalInc = SALES_TARGETS[selectedSR].total_inc || 0;
       }
       const tarMain = Math.max(0, tarVol - tarPre);
       const pctVol = tarVol > 0 ? Math.round((monthHL / tarVol) * 100) : 0;
@@ -1764,10 +1895,54 @@
       const tbMiss = listSRMaster.length - tbPass;
       const lfMiss = listSRLF.length - lfPass;
 
-      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
+      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n💵 TẠM TÍNH THƯỞNG INCENTIVE: ${totalInc.toLocaleString('vi-VN')} đ\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste) để gửi.`);
+        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
+    }
+
+    function executeCopyIncentiveTeamReport() {
+      const nowStr = new Date().toLocaleDateString('vi-VN');
+      const srSelectEl = document.getElementById('srFilter');
+
+      const incList = [];
+      let totalTeamInc = 0;
+
+      TEAM_SRS.forEach(k => {
+        const opt = Array.from(srSelectEl.options).find(o => o.value === k);
+        const name = opt ? opt.text : k;
+        const incData = SALES_TARGETS[k] || {};
+        const total = incData.total_inc || 0;
+        totalTeamInc += total;
+        incList.push({ name, total, data: incData });
+      });
+
+      incList.sort((a, b) => b.total - a.total);
+
+      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE TOÀN ĐỘI (FIT-10)\n📅 Ngày cập nhật: ${nowStr}\n💰 Tổng quỹ thưởng tạm tính: ${totalTeamInc.toLocaleString('vi-VN')} đ\n\n`;
+
+      incList.forEach((item, i) => {
+        const d = item.data;
+        msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ\n`;
+        if (item.total > 0) {
+          const parts = [];
+          if (d.mep_inc > 0) parts.push(`MEP: ${(d.mep_inc/1000).toFixed(0)}k`);
+          if (d.fit_inc > 0) parts.push(`FIT: ${(d.fit_inc/1000).toFixed(0)}k`);
+          if (d.vol_inc > 0) parts.push(`Vol: ${(d.vol_inc/1000).toFixed(0)}k`);
+          if (d.sku_inc > 0) parts.push(`Pre: ${(d.sku_inc/1000).toFixed(0)}k`);
+          if (parts.length > 0) msg += `   └ (${parts.join(', ')})\n`;
+        } else {
+          msg += `   └ (Chưa đạt mốc thưởng chặn)\n`;
+        }
+      });
+
+      msg += `\n👉 Lưu ý: Tiền thưởng tạm tính dựa trên tiến độ file FIT-10. Anh em bám sát điều kiện Volume & Tiêu chuẩn để nhận trọn thưởng tháng!`;
+
+      navigator.clipboard.writeText(msg).then(() => {
+        alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!\nBạn có thể mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => {
         alert("Lỗi sao chép: " + err);
       });
@@ -1858,21 +2033,37 @@
       });
       const monthTotalHL = monthHudaHL + monthPreHL;
 
-      // XỬ LÝ TARGET THÁNG
-      let targetVol = 0, targetPrem = 0;
+      // XỬ LÝ TARGET & INCENTIVE THÁNG
+      let targetVol = 0, targetPrem = 0, totalTeamInc = 0;
+      let incVolAch = 0, incVolVal = 0, incSkuAch = 0, incSkuVal = 0;
+      let incMepAch = 0, incMepVal = 0, incFitAch = 0, incFitVal = 0, incTotVal = 0;
+
       if (selectedSR === "ALL") {
         TEAM_SRS.forEach(srKey => {
           if (SALES_TARGETS[srKey]) {
             targetVol += SALES_TARGETS[srKey].volume_target || 0;
             targetPrem += SALES_TARGETS[srKey].premium_target || 0;
+            totalTeamInc += SALES_TARGETS[srKey].total_inc || 0;
           }
         });
+        incTotVal = totalTeamInc;
       } else {
         if (SALES_TARGETS[selectedSR]) {
-          targetVol = SALES_TARGETS[selectedSR].volume_target || 0;
-          targetPrem = SALES_TARGETS[selectedSR].premium_target || 0;
+          const d = SALES_TARGETS[selectedSR];
+          targetVol = d.volume_target || 0;
+          targetPrem = d.premium_target || 0;
+          incVolAch = d.vol_ach || 0;
+          incVolVal = d.vol_inc || 0;
+          incSkuAch = d.sku_ach || 0;
+          incSkuVal = d.sku_inc || 0;
+          incMepAch = d.mep_ach || 0;
+          incMepVal = d.mep_inc || 0;
+          incFitAch = d.fit_ach || 0;
+          incFitVal = d.fit_inc || 0;
+          incTotVal = d.total_inc || 0;
         }
       }
+
       const targetMain = Math.max(0, targetVol - targetPrem);
       const pctTargetVol = targetVol > 0 ? Math.round((monthTotalHL / targetVol) * 100) : 0;
       const pctTargetMain = targetMain > 0 ? Math.round((monthHudaHL / targetMain) * 100) : 0;
@@ -1894,6 +2085,30 @@
       document.getElementById('valPreAct').innerHTML = `${monthPreHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
+
+      // CẬP NHẬT KHỐI THƯỞNG INCENTIVE
+      document.getElementById('txtTotalIncentiveDisplay').textContent = `${incTotVal.toLocaleString('vi-VN')} đ`;
+      if (selectedSR === "ALL") {
+        document.getElementById('incVolAch').textContent = "--";
+        document.getElementById('incVolVal').textContent = "--";
+        document.getElementById('incSkuAch').textContent = "--";
+        document.getElementById('incSkuVal').textContent = "--";
+        document.getElementById('incMepAch').textContent = "--";
+        document.getElementById('incMepVal').textContent = "--";
+        document.getElementById('incFitAch').textContent = "--";
+        document.getElementById('incFitVal').textContent = "--";
+        document.getElementById('incTotalVal').textContent = `${incTotVal.toLocaleString('vi-VN')} đ (Toàn team)`;
+      } else {
+        document.getElementById('incVolAch').textContent = `${Math.round(incVolAch * 100)}%`;
+        document.getElementById('incVolVal').textContent = `${incVolVal.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incSkuAch').textContent = `${Math.round(incSkuAch * 100)}%`;
+        document.getElementById('incSkuVal').textContent = `${incSkuVal.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incMepAch').textContent = `${Math.round(incMepAch * 100)}%`;
+        document.getElementById('incMepVal').textContent = `${incMepVal.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incFitAch').textContent = `${Math.round(incFitAch * 100)}%`;
+        document.getElementById('incFitVal').textContent = `${incFitVal.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incTotalVal').textContent = `${incTotVal.toLocaleString('vi-VN')} đ`;
+      }
 
       // ĐỔ DỮ LIỆU BRAND PREMIUM
       const preBox = document.getElementById('preBrandBreakdown');
