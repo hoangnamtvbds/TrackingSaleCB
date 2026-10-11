@@ -161,7 +161,7 @@
       </details>
     </div>
 
-    <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE (TỔNG TIỀN VÀ BẢNG BUNG 4 TIÊU CHÍ) -->
+    <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE (ĐẦY ĐỦ ACT / TARGET / % VÀ TIỀN THƯỞNG) -->
     <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
       <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
         <div class="flex items-center gap-2">
@@ -177,42 +177,59 @@
         </div>
       </div>
 
-      <!-- Khối bung chi tiết tỷ lệ % và số tiền 4 tiêu chí -->
-      <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-1.5 text-xs">
-        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
-          <span class="text-gray-600 font-medium">📦 1. Sản Lượng (Volume):</span>
+      <!-- Khối chi tiết bung ra: Đầy đủ 4 mục Act/Target + % + Số tiền -->
+      <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
+        <!-- 1. Sản Lượng Total -->
+        <div class="bg-white/80 p-2 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
+          <div>
+            <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
+            <span id="incVolRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
+          </div>
           <div class="text-right">
-            <span id="incVolAch" class="font-extrabold text-blue-700">0%</span>
-            <span class="text-gray-300 mx-1">•</span>
-            <b id="incVolVal" class="text-gray-900 font-black">0 đ</b>
+            <span id="incVolVal" class="text-blue-900 font-black block">0 đ</span>
+            <span id="incVolAch" class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">0%</span>
           </div>
         </div>
-        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
-          <span class="text-gray-600 font-medium">👑 2. Bia Trọng Tâm (Focused):</span>
+
+        <!-- 2. Sản Lượng Premium -->
+        <div class="bg-white/80 p-2 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
+          <div>
+            <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
+            <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
+          </div>
           <div class="text-right">
-            <span id="incSkuAch" class="font-extrabold text-amber-700">0%</span>
-            <span class="text-gray-300 mx-1">•</span>
-            <b id="incSkuVal" class="text-gray-900 font-black">0 đ</b>
+            <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
+            <span id="incSkuAch" class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">0%</span>
           </div>
         </div>
-        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
-          <span class="text-gray-600 font-medium">🎯 3. Ưu Tiên Tháng (MEP):</span>
+
+        <!-- 3. Chỉ Tiêu MP -->
+        <div class="bg-white/80 p-2 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
+          <div>
+            <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
+            <span id="incMepRatio" class="text-[10px] text-gray-400 font-medium">0 / 0 điểm</span>
+          </div>
           <div class="text-right">
-            <span id="incMepAch" class="font-extrabold text-emerald-700">0%</span>
-            <span class="text-gray-300 mx-1">•</span>
-            <b id="incMepVal" class="text-gray-900 font-black">0 đ</b>
+            <span id="incMepVal" class="text-emerald-900 font-black block">0 đ</span>
+            <span id="incMepAch" class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">0%</span>
           </div>
         </div>
-        <div class="flex justify-between items-center py-1 border-b border-gray-100/80 text-[11px]">
-          <span class="text-gray-600 font-medium">📸 4. Điểm Đánh Giá FIT:</span>
+
+        <!-- 4. Điểm FIT -->
+        <div class="bg-white/80 p-2 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
+          <div>
+            <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
+            <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00</span>
+          </div>
           <div class="text-right">
-            <span id="incFitAch" class="font-extrabold text-purple-700">0%</span>
-            <span class="text-gray-300 mx-1">•</span>
-            <b id="incFitVal" class="text-gray-900 font-black">0 đ</b>
+            <span id="incFitVal" class="text-purple-900 font-black block">0 đ</span>
+            <span id="incFitAch" class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
           </div>
         </div>
-        <div class="pt-1.5 flex justify-between items-center text-xs font-bold bg-amber-100/60 p-2 rounded-xl">
-          <span class="text-amber-950 uppercase text-[10px]">💰 Tổng tiền thực nhận (Total):</span>
+
+        <!-- Tổng kết tiền thực nhận -->
+        <div class="pt-1 flex justify-between items-center text-xs font-bold bg-amber-100/70 p-2.5 rounded-xl border border-amber-200">
+          <span class="text-amber-950 uppercase text-[10px] font-black">💰 Tổng Tiền Thực Nhận (Total):</span>
           <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
         </div>
       </div>
@@ -1525,7 +1542,7 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // XỬ LÝ FILE 4: SALES TARGET & INCENTIVE FIT-10 (ĐẦY ĐỦ 4 TIÊU CHÍ VÀ TỔNG THƯỞNG)
+        // XỬ LÝ FILE 4: SALES TARGET & INCENTIVE FIT-10 (ĐỌC CHUẨN XÁC CẢ THỰC TẾ, CHỈ TIÊU & TIỀN THƯỞNG)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1534,58 +1551,14 @@
             const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
             SALES_TARGETS = {};
 
-            const row0 = rawTarget[0] || [];
-            const row1 = rawTarget[1] || [];
-
-            let pVol = -1, pSku = -1, pMep = -1, pFit = -1, pTot = -1;
-            row0.forEach((val, idx) => {
-              const str = String(val || '').trim().toLowerCase();
-              if (str.includes('sales volume')) pVol = idx;
-              if (str.includes('focused skus')) pSku = idx;
-              if (str.includes('monthly execution') || str.includes('priority')) pMep = idx;
-              if (str.includes('fit score')) pFit = idx;
-              if (str.includes('total') && !str.includes('incentive') && !str.includes('sat')) pTot = idx;
-            });
-
-            let colVol = -1, colVolAch = -1, colVolInc = -1;
-            let colSku = -1, colSkuAch = -1, colSkuInc = -1;
-            let colMepAch = -1, colMepInc = -1;
-            let colFitAch = -1, colFitInc = -1;
-            let colTotInc = -1;
-
-            row1.forEach((val, c) => {
-              const s = String(val || '').trim().toLowerCase();
-              if (pVol !== -1 && c >= pVol && (pSku === -1 || c < pSku)) {
-                if (s === 'target' && colVol === -1) colVol = c;
-                if (s === 'achieved') colVolAch = c;
-                if (s === 'incentive') colVolInc = c;
-              } else if (pSku !== -1 && c >= pSku && (pMep === -1 || c < pMep)) {
-                if (s === 'target' && colSku === -1) colSku = c;
-                if (s === 'achieved') colSkuAch = c;
-                if (s === 'incentive') colSkuInc = c;
-              } else if (pMep !== -1 && c >= pMep && (pFit === -1 || c < pFit)) {
-                if (s === 'achieved') colMepAch = c;
-                if (s === 'incentive') colMepInc = c;
-              } else if (pFit !== -1 && c >= pFit && (pTot === -1 || c < pTot)) {
-                if (s === 'achieved') colFitAch = c;
-                if (s === 'incentive') colFitInc = c;
-              } else if (pTot !== -1 && c >= pTot) {
-                if (s === 'incentive') colTotInc = c;
+            // Xác định độ lệch cột do ô A1 trống
+            let offset = 0;
+            const r1 = rawTarget[1] || [];
+            r1.forEach((val, idx) => {
+              if (String(val || '').trim().toLowerCase() === 'cvtcsr') {
+                offset = (idx === 4) ? -1 : 0;
               }
             });
-
-            // Dự phòng mặc định
-            if (colVol === -1) colVol = (pVol !== -1 ? pVol : 12);
-            if (colSku === -1) colSku = (pSku !== -1 ? pSku + 1 : 17);
-            if (colVolAch === -1) colVolAch = colVol + 2;
-            if (colVolInc === -1) colVolInc = colVol + 3;
-            if (colSkuAch === -1) colSkuAch = colSku + 2;
-            if (colSkuInc === -1) colSkuInc = colSku + 3;
-            if (colMepAch === -1) colMepAch = (pMep !== -1 ? pMep + 27 : 48);
-            if (colMepInc === -1) colMepInc = colMepAch + 1;
-            if (colFitAch === -1) colFitAch = (pFit !== -1 ? pFit + 2 : 62);
-            if (colFitInc === -1) colFitInc = colFitAch + 1;
-            if (colTotInc === -1) colTotInc = (pTot !== -1 ? pTot + 2 : 66);
 
             rawTarget.forEach(row => {
               if (!row || row.length < 10) return;
@@ -1593,17 +1566,27 @@
                 const norm = normalizeSR(row[c]);
                 if (TEAM_SRS.includes(norm)) {
                   SALES_TARGETS[norm] = {
-                    volume_target: parseFloat(row[colVol]) || 0,
-                    premium_target: parseFloat(row[colSku]) || 0,
-                    vol_ach: parseFloat(row[colVolAch]) || 0,
-                    vol_inc: parseFloat(row[colVolInc]) || 0,
-                    sku_ach: parseFloat(row[colSkuAch]) || 0,
-                    sku_inc: parseFloat(row[colSkuInc]) || 0,
-                    mep_ach: parseFloat(row[colMepAch]) || 0,
-                    mep_inc: parseFloat(row[colMepInc]) || 0,
-                    fit_ach: parseFloat(row[colFitAch]) || 0,
-                    fit_inc: parseFloat(row[colFitInc]) || 0,
-                    total_inc: parseFloat(row[colTotInc]) || 0
+                    volume_target: parseFloat(row[13 + offset]) || 0,
+                    volume_actual: parseFloat(row[14 + offset]) || 0,
+                    vol_ach: parseFloat(row[15 + offset]) || 0,
+                    vol_inc: parseFloat(row[16 + offset]) || 0,
+
+                    premium_target: parseFloat(row[18 + offset]) || 0,
+                    premium_actual: parseFloat(row[19 + offset]) || 0,
+                    sku_ach: parseFloat(row[20 + offset]) || 0,
+                    sku_inc: parseFloat(row[21 + offset]) || 0,
+
+                    mep_tar: parseFloat(row[23 + offset]) || 0,
+                    mep_act: parseFloat(row[36 + offset]) || 0,
+                    mep_ach: parseFloat(row[49 + offset]) || 0,
+                    mep_inc: parseFloat(row[50 + offset]) || 0,
+
+                    fit_tar: parseFloat(row[61 + offset]) || 0,
+                    fit_act: parseFloat(row[62 + offset]) || 0,
+                    fit_ach: parseFloat(row[63 + offset]) || 0,
+                    fit_inc: parseFloat(row[64 + offset]) || 0,
+
+                    total_inc: parseFloat(row[67 + offset]) || 0
                   };
                   break;
                 }
@@ -1929,7 +1912,7 @@
         msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ\n`;
         if (item.total > 0) {
           const parts = [];
-          if (d.mep_inc > 0) parts.push(`MEP: ${(d.mep_inc/1000).toFixed(0)}k`);
+          if (d.mep_inc > 0) parts.push(`MP: ${(d.mep_inc/1000).toFixed(0)}k`);
           if (d.fit_inc > 0) parts.push(`FIT: ${(d.fit_inc/1000).toFixed(0)}k`);
           if (d.vol_inc > 0) parts.push(`Vol: ${(d.vol_inc/1000).toFixed(0)}k`);
           if (d.sku_inc > 0) parts.push(`Pre: ${(d.sku_inc/1000).toFixed(0)}k`);
@@ -2034,33 +2017,18 @@
       const monthTotalHL = monthHudaHL + monthPreHL;
 
       // XỬ LÝ TARGET & INCENTIVE THÁNG
-      let targetVol = 0, targetPrem = 0, totalTeamInc = 0;
-      let incVolAch = 0, incVolVal = 0, incSkuAch = 0, incSkuVal = 0;
-      let incMepAch = 0, incMepVal = 0, incFitAch = 0, incFitVal = 0, incTotVal = 0;
-
+      let targetVol = 0, targetPrem = 0;
       if (selectedSR === "ALL") {
         TEAM_SRS.forEach(srKey => {
           if (SALES_TARGETS[srKey]) {
             targetVol += SALES_TARGETS[srKey].volume_target || 0;
             targetPrem += SALES_TARGETS[srKey].premium_target || 0;
-            totalTeamInc += SALES_TARGETS[srKey].total_inc || 0;
           }
         });
-        incTotVal = totalTeamInc;
       } else {
         if (SALES_TARGETS[selectedSR]) {
-          const d = SALES_TARGETS[selectedSR];
-          targetVol = d.volume_target || 0;
-          targetPrem = d.premium_target || 0;
-          incVolAch = d.vol_ach || 0;
-          incVolVal = d.vol_inc || 0;
-          incSkuAch = d.sku_ach || 0;
-          incSkuVal = d.sku_inc || 0;
-          incMepAch = d.mep_ach || 0;
-          incMepVal = d.mep_inc || 0;
-          incFitAch = d.fit_ach || 0;
-          incFitVal = d.fit_inc || 0;
-          incTotVal = d.total_inc || 0;
+          targetVol = SALES_TARGETS[selectedSR].volume_target || 0;
+          targetPrem = SALES_TARGETS[selectedSR].premium_target || 0;
         }
       }
 
@@ -2086,28 +2054,72 @@
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT KHỐI THƯỞNG INCENTIVE
-      document.getElementById('txtTotalIncentiveDisplay').textContent = `${incTotVal.toLocaleString('vi-VN')} đ`;
+      // CẬP NHẬT KHỐI THƯỞNG INCENTIVE (HIỂN THỊ CHI TIẾT ACT / TARGET / % VÀ TIỀN THƯỞNG)
       if (selectedSR === "ALL") {
-        document.getElementById('incVolAch').textContent = "--";
-        document.getElementById('incVolVal').textContent = "--";
-        document.getElementById('incSkuAch').textContent = "--";
-        document.getElementById('incSkuVal').textContent = "--";
-        document.getElementById('incMepAch').textContent = "--";
-        document.getElementById('incMepVal').textContent = "--";
-        document.getElementById('incFitAch').textContent = "--";
-        document.getElementById('incFitVal').textContent = "--";
-        document.getElementById('incTotalVal').textContent = `${incTotVal.toLocaleString('vi-VN')} đ (Toàn team)`;
+        let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
+        let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
+        let sumMepTar = 0, sumMepAct = 0;
+
+        TEAM_SRS.forEach(k => {
+          const d = SALES_TARGETS[k] || {};
+          sumVolTar += (d.volume_target || 0); sumVolAct += (d.volume_actual || 0);
+          sumPreTar += (d.premium_target || 0); sumPreAct += (d.premium_actual || 0);
+          sumMepTar += (d.mep_tar || 0); sumMepAct += (d.mep_act || 0);
+          sumVolInc += (d.vol_inc || 0);
+          sumSkuInc += (d.sku_inc || 0);
+          sumMepInc += (d.mep_inc || 0);
+          sumFitInc += (d.fit_inc || 0);
+          sumTotInc += (d.total_inc || 0);
+        });
+
+        const pctAllVol = sumVolTar > 0 ? Math.round((sumVolAct / sumVolTar) * 100) : 0;
+        const pctAllPre = sumPreTar > 0 ? Math.round((sumPreAct / sumPreTar) * 100) : 0;
+        const pctAllMep = sumMepTar > 0 ? Math.round((sumMepAct / sumMepTar) * 100) : 0;
+
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
+        document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
+        document.getElementById('incVolVal').textContent = `${sumVolInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pctAllPre}%`;
+        document.getElementById('incSkuVal').textContent = `${sumSkuInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incMepRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('incMepAch').textContent = `${pctAllMep}%`;
+        document.getElementById('incMepVal').textContent = `${sumMepInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incFitRatio').textContent = `Đánh giá toàn đội`;
+        document.getElementById('incFitAch').textContent = `--`;
+        document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
       } else {
-        document.getElementById('incVolAch').textContent = `${Math.round(incVolAch * 100)}%`;
-        document.getElementById('incVolVal').textContent = `${incVolVal.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incSkuAch').textContent = `${Math.round(incSkuAch * 100)}%`;
-        document.getElementById('incSkuVal').textContent = `${incSkuVal.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incMepAch').textContent = `${Math.round(incMepAch * 100)}%`;
-        document.getElementById('incMepVal').textContent = `${incMepVal.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incFitAch').textContent = `${Math.round(incFitAch * 100)}%`;
-        document.getElementById('incFitVal').textContent = `${incFitVal.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incTotalVal').textContent = `${incTotVal.toLocaleString('vi-VN')} đ`;
+        const d = SALES_TARGETS[selectedSR] || {};
+        const vTar = d.volume_target || 0, vAct = d.volume_actual || 0, vAch = Math.round((d.vol_ach || 0) * 100);
+        const pTar = d.premium_target || 0, pAct = d.premium_actual || 0, pAch = Math.round((d.sku_ach || 0) * 100);
+        const mTar = d.mep_tar || 0, mAct = d.mep_act || 0, mAch = Math.round((d.mep_ach || 0) * 100);
+        const fTar = (d.fit_tar || 0).toFixed(2), fAct = (d.fit_act || 0).toFixed(2), fAch = Math.round((d.fit_ach || 0) * 100);
+        const tot = d.total_inc || 0;
+
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
+        document.getElementById('incVolAch').textContent = `${vAch}%`;
+        document.getElementById('incVolVal').textContent = `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pAch}%`;
+        document.getElementById('incSkuVal').textContent = `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incMepRatio').textContent = `${mAct.toLocaleString('vi-VN')} / ${mTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('incMepAch').textContent = `${mAch}%`;
+        document.getElementById('incMepVal').textContent = `${(d.mep_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incFitRatio').textContent = `${fAct} / ${fTar} điểm`;
+        document.getElementById('incFitAch').textContent = `${fAch}%`;
+        document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
       }
 
       // ĐỔ DỮ LIỆU BRAND PREMIUM
