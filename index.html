@@ -217,13 +217,12 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 5 TAB -->
-    <div class="grid grid-cols-5 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[10px] sm:text-[11px] font-extrabold gap-1 shadow-sm">
+    <!-- THANH CHUYỂN 4 TAB -->
+    <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
       <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">📊 SỐ BÁN</button>
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">🎯 DISPLAY</button>
       <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">💰 LF</button>
       <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📸 CHỤP TB</button>
-      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📍 COVERAGE</button>
     </div>
 
     <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
@@ -369,7 +368,7 @@
           <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
             <div>
               <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
-              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
+              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700">(0 th)</span></div>
             </div>
             <div class="text-right text-[11px] space-y-0.5">
               <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
@@ -536,7 +535,7 @@
         </div>
         <div class="flex items-baseline justify-between">
           <span id="txtAuditAchieved" class="text-2xl font-black text-gray-900">0 / 0</span>
-          <span class="text-xs font-semibold text-emerald-600">Điểm Đủ 2/2 Lần</span>
+          <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
         </div>
         <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
           <div id="barAudit" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
@@ -573,67 +572,13 @@
       </div>
       <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
-
-    <!-- ================= TAB 5: COVERAGE (L28D) ================= -->
-    <div id="tab5Content" class="hidden space-y-3">
-      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-        <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📍 TỶ LỆ GIỮ ĐỘ PHỦ (L28D)</span>
-          <span id="txtCovPercent" class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">0%</span>
-        </div>
-        <div class="flex items-baseline justify-between">
-          <span id="txtCovAchieved" class="text-2xl font-black text-[#1F4E79]">0 / 0 Điểm</span>
-          <span id="txtCovLapsedRate" class="text-xs font-bold text-rose-600">Rớt: 0%</span>
-        </div>
-        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div id="barCoverage" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2 pt-1 text-center select-none">
-          <div class="p-2 rounded-2xl bg-blue-50/70 border border-blue-200/80">
-            <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG ACTIVE</span>
-            <span id="covActiveCount" class="text-sm font-black text-blue-950 mt-0.5 block">0</span>
-            <span id="covChannelBreakdown" class="text-[9px] text-blue-700 font-semibold block">0 TONT • 0 TOFT</span>
-          </div>
-          <div class="p-2 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
-            <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐANG PHỦ</span>
-            <span id="covCoveredCount" class="text-sm font-black text-emerald-950 mt-0.5 block">0</span>
-            <span class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
-          </div>
-          <div class="p-2 rounded-2xl bg-rose-50/70 border border-rose-200/80">
-            <span class="text-[9px] font-bold text-rose-700 block uppercase">BỊ LAPSED</span>
-            <span id="covLapsedCount" class="text-sm font-black text-rose-950 mt-0.5 block">0</span>
-            <span class="text-[9px] text-rose-700 font-semibold block">>28 ngày chưa đi</span>
-          </div>
-        </div>
-
-        <!-- Bộ lọc trạng thái Coverage với touch feedback rõ ràng -->
-        <div class="pt-2 border-t border-gray-100 space-y-1.5">
-          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-            <button id="btnCovStatusAll" onclick="setCovStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center transition-all">Tất cả</button>
-            <button id="btnCovStatusLapsed" onclick="setCovStatusFilter('LAPSED')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">⚠️ Bị Lapsed</button>
-            <button id="btnCovStatusCovered" onclick="setCovStatusFilter('COVERED')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">✓ Đang phủ</button>
-          </div>
-          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-            <button id="btnCovChannelAll" onclick="setCovChannelFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center transition-all">Tất cả kênh</button>
-            <button id="btnCovChannelTont" onclick="setCovChannelFilter('TONT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">TONT (Quán)</button>
-            <button id="btnCovChannelToft" onclick="setCovChannelFilter('TOFT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">TOFT (Tạp hóa)</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center mb-1 px-1">
-        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán Coverage</span>
-        <span id="txtCovListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-      </div>
-      <div id="covOutletList" class="space-y-2.5"></div>
-    </div>
   </div>
 
   <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       
+      <!-- Header -->
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
@@ -646,6 +591,8 @@
       </div>
 
       <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
+        
+        <!-- KHỐI 1: CHẤT LƯỢNG HÌNH ẢNH IR & TỦ LẠNH SAT -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
           
@@ -682,6 +629,7 @@
           </div>
         </div>
 
+        <!-- KHỐI 2: ĐỘ PHỦ & THỰC THI THÁNG (MEP) -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
           
@@ -710,6 +658,7 @@
           </div>
         </div>
 
+        <!-- KHỐI 3: KỶ LUẬT ĐI TUYẾN MCP -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
           
@@ -1027,10 +976,9 @@
       btn.textContent = "Đang kiểm tra...";
 
       if (u === 'admin' && (p === '123456' || p === '6868')) {
-        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Quản Trị Viên', role: 'ADMIN', is_first_login: (p === '123456') };
+        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Quản Trị Viên', role: 'ADMIN', is_first_login: false };
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
-        if (currentUser.is_first_login) document.getElementById('changePasswordModal').classList.remove('hidden');
-        else applyUserPermissions();
+        applyUserPermissions();
         btn.textContent = "Đăng Nhập";
         return;
       }
@@ -1047,8 +995,11 @@
 
         currentUser = user;
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(user));
-        if (user.is_first_login || p === '123456') document.getElementById('changePasswordModal').classList.remove('hidden');
-        else applyUserPermissions();
+        if (user.is_first_login) {
+          document.getElementById('changePasswordModal').classList.remove('hidden');
+        } else {
+          applyUserPermissions();
+        }
       } catch (err) {
         alert("Lỗi đăng nhập: " + err.message);
       } finally {
@@ -1400,7 +1351,7 @@
             if (hd === 'brand' || hd.includes('nhãn hiệu')) colBrand = idx;
             if (hd.includes('volume')) colVol = idx;
             if (hd === 'quantity' || hd === 'qty' || hd.includes('số lượng')) colQty = idx;
-            if (hd === 'price' || hd === 'đơn giá')) colPrice = idx;
+            if (hd === 'price' || hd.includes('đơn giá')) colPrice = idx;
             if (hd === 'revenue' || hd.includes('doanh thu')) colRev = idx;
             if (hd.includes('cvtcsr') || hd.includes('fullname') || hd === 'sr') colSr = idx;
             if (hd.includes('outletcode')) colOCode = idx;
@@ -1746,63 +1697,6 @@
         setText('kpiVorRatio', `${vorA} / ${vorT} lượt`); setText('kpiVorPct', `${vorAch}%`);
       }
 
-      // Brand Premium
-      const preBox = document.getElementById('preBrandBreakdown');
-      preBox.innerHTML = '';
-      if (Object.keys(preBrandMap).length === 0) preBox.innerHTML = '<span class="text-gray-400">Chưa có sản lượng Premium</span>';
-      else Object.entries(preBrandMap).sort((a,b) => b[1] - a[1]).forEach(([br, vol]) => {
-        preBox.innerHTML += `<div class="flex justify-between items-center text-gray-700 font-semibold"><span>● ${br}</span> <span class="font-black text-amber-700">${vol.toFixed(2)} HL</span></div>`;
-      });
-
-      // Lọc ngày lẻ
-      const boxDate = document.getElementById('boxSpecificDateSales');
-      let listFiltered = listMonth;
-      if (selectedDate !== "ALL") {
-        listFiltered = listMonth.filter(o => o.date === selectedDate);
-        let dH = 0, dP = 0; listFiltered.forEach(o => { if (o.category === "Mainstream") dH += o.vol; if (o.category === "Premium") dP += o.vol; });
-        boxDate.classList.remove('hidden');
-        setText('lblSpecificDateTitle', `Đơn ngày ${selectedDate}:`);
-        setHTML('lblSpecificDateVol', `${(dH + dP).toFixed(2)} HL <span class="text-xs font-bold text-amber-700">(${Math.round((dH + dP) / CASE_VOLUME)} th)</span>`);
-        setText('lblSpecificDateMain', `${dH.toFixed(2)} HL`); setText('lblSpecificDatePre', `${dP.toFixed(2)} HL`);
-      } else boxDate.classList.add('hidden');
-
-      // Điểm bán Tab 1
-      const otMap = {};
-      listFiltered.forEach(o => {
-        if (!otMap[o.code]) otMap[o.code] = { code: o.code, name: o.name, totalVol: 0, products: {} };
-        otMap[o.code].totalVol += o.vol;
-        if (!otMap[o.code].products[o.product]) otMap[o.code].products[o.product] = { vol: 0, qty: 0 };
-        otMap[o.code].products[o.product].vol += o.vol; otMap[o.code].products[o.product].qty += o.qty;
-      });
-      let sortedOt = Object.values(otMap).sort((a,b) => b.totalVol - a.totalVol);
-      if (searchKeyword) sortedOt = sortedOt.filter(ot => ot.name.toLowerCase().includes(searchKeyword) || ot.code.toLowerCase().includes(searchKeyword));
-
-      const aggBox = document.getElementById('aggregatedOutletList');
-      aggBox.innerHTML = '';
-      setText('txtAggCount', `${sortedOt.length} điểm bán`);
-      sortedOt.forEach(ot => {
-        let pHTML = '';
-        Object.entries(ot.products).forEach(([pName, pData]) => {
-          pHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium">${pName}</span><span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
-        });
-        aggBox.innerHTML += `<details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden"><summary class="p-3.5 flex justify-between items-center cursor-pointer select-none"><div class="pr-2"><div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div><div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div></div><div class="text-right"><div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div><div class="text-[10px] font-bold text-amber-700">${(ot.totalVol / CASE_VOLUME).toFixed(1)} thùng ▼</div></div></summary><div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">${pHTML}</div></details>`;
-      });
-
-      // Khuyến mãi
-      let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
-      if (selectedDate !== "ALL") promoList = promoList.filter(p => p.date === selectedDate);
-      const prMap = {};
-      promoList.forEach(p => {
-        if (!prMap[p.promoName]) prMap[p.promoName] = { count: 0, reward: p.rewardItem, outlets: new Set() };
-        prMap[p.promoName].count += p.qty; prMap[p.promoName].outlets.add(p.outletName);
-      });
-      setText('badgePromoCount', Object.keys(prMap).length);
-      const prBox = document.getElementById('promoListContent'); prBox.innerHTML = '';
-      if (Object.keys(prMap).length === 0) prBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào trong đợt này.</p>`;
-      else Object.entries(prMap).forEach(([k, item]) => {
-        prBox.innerHTML += `<div class="p-2.5 bg-white rounded-xl border border-gray-100 flex justify-between items-center"><div class="pr-2"><div class="font-bold text-gray-800 text-[11px]">${k}</div><div class="text-[10px] text-gray-400 mt-0.5">${item.reward} • Áp dụng ${item.outlets.size} điểm</div></div><span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span></div>`;
-      });
-
       // 4. TAB 2: DISPLAY (CHUẨN 5/3/2 THÙNG)
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passC = 0, totTH = 0, totAH = 0, totTP = 0, totAP = 0;
@@ -1914,7 +1808,7 @@
 
       const aBox = document.getElementById('auditOutletList'); aBox.innerHTML = '';
       fAudit.forEach(a => {
-        let detHTML = a.count === 0 ? `<div class="text-[11px] font-semibold text-rose-500 italic">Chưa ghi nhận lượt chấm nào trong tháng</div>` : '';
+        let detHTML = a.count === 0 ? `<div class="text-[11px] text-rose-500 font-semibold italic">Chưa ghi nhận lượt chấm nào trong tháng</div>` : '';
         if (a.count > 0) {
           a.audits.forEach((aud, i) => {
             detHTML += `<div class="flex justify-between items-center text-[10px] py-0.5 border-b border-gray-50 last:border-0"><span class="text-gray-600">Lần ${i + 1}: <b class="text-gray-800">${aud.date}</b></span><span class="${aud.result.includes('Đạt') ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold'}">${aud.result}</span></div>`;
@@ -1925,7 +1819,7 @@
       });
       setText('txtAuditListCount', `${fAudit.length} điểm bán`);
 
-      // 7. TAB 5: COVERAGE (ĐÃ TỐI ƯU TRẠNG THÁNG CHẠM ĐỂ LỌC TRỰC QUAN & CHUẨN BASE 3)
+      // 7. TAB 5: COVERAGE (ĐÃ TỐI ƯU CHẠM ĐỂ LỌC TRỰC QUAN)
       const baseCov = (selectedSR === "ALL") ? COVERAGE_DATA.filter(c => TEAM_SRS.includes(c.sr)) : COVERAGE_DATA.filter(c => c.sr === selectedSR);
       let covActive = baseCov.length;
       let covTont = 0, covToft = 0, covExisted = 0, covNew = 0, covLapsed = 0;
@@ -1951,7 +1845,6 @@
       setText('covCoveredCount', covCovered);
       setText('covLapsedCount', covLapsed);
 
-      // Cập nhật giao diện trạng thái nút bấm lọc (Touch Feedback cực rõ)
       const actBtnSt = "flex-1 py-1.5 rounded-lg bg-blue-600 text-white font-black shadow-sm text-center transition-all";
       const inactBtnSt = "flex-1 py-1.5 rounded-lg bg-gray-50 text-gray-600 font-bold text-center transition-all hover:bg-gray-100";
 
@@ -2040,3 +1933,150 @@
       }
       setText('txtCovListCount', `${fCovList.length} điểm bán`);
     }
+
+    // ================= BÁO CÁO ZALO & SOI ĐƠN =================
+    function copyZaloReport() {
+      if (!isManagerVerified) {
+        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
+        if (pin === ADMIN_PIN) isManagerVerified = true;
+        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
+      }
+      document.getElementById('reportHubModal').classList.remove('hidden');
+    }
+    function closeReportHubModal() { document.getElementById('reportHubModal').classList.add('hidden'); }
+
+    function triggerCopyReport(type) {
+      closeReportHubModal();
+      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
+      else if (type === 'INDIVIDUAL_SR') {
+        if (document.getElementById('srFilter').value === 'ALL') { alert("Vui lòng chọn 1 SR cụ thể!"); return; }
+        executeCopyIndividualReport();
+      }
+      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
+      else if (type === 'AUDIT_TB') executeCopyAuditReport();
+      else if (type === 'NO_ORDER_REMIND') { openDailyOrdersModal(); setModalFilter('NO_ORDER'); copyManagerReminderReport(); }
+    }
+
+    function executeCopyTeamReport() {
+      const dt = updateLatestOrderDateBanner() || "Gần nhất", ut = localStorage.getItem('UPDATE_TIME') || "";
+      let tM = 0, tD = 0, sMap = {};
+      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
+        tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
+      });
+      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
+      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
+      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Báo cáo Team!")).catch(e => alert("Lỗi: " + e));
+    }
+
+    function executeCopyIndividualReport() {
+      const sr = document.getElementById('srFilter').value, name = document.getElementById('srFilter').options[document.getElementById('srFilter').selectedIndex].text;
+      const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
+      let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
+      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
+      navigator.clipboard.writeText(msg).then(() => alert(`Đã sao chép báo cáo ${name}!`)).catch(e => alert("Lỗi: " + e));
+    }
+
+    function executeCopyIncentiveTeamReport() {
+      const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
+      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
+      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Bảng thưởng Team!")).catch(e => alert("Lỗi: " + e));
+    }
+
+    function executeCopyAuditReport() {
+      const sr = document.getElementById('srFilter').value;
+      const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
+      const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
+      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
+      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép báo cáo Chụp TB!")).catch(e => alert("Lỗi: " + e));
+    }
+
+    function promptDailyOrdersModal() {
+      if (!isManagerVerified) {
+        const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
+        if (pin === ADMIN_PIN) isManagerVerified = true;
+        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
+      }
+      openDailyOrdersModal();
+    }
+
+    function openDailyOrdersModal() {
+      currentModalFilter = 'ALL';
+      const sel = document.getElementById('modalOrderDateSelect');
+      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
+      sel.innerHTML = dates.length ? dates.map(d => `<option value="${d}">Ngày ${d}</option>`).join('') : '<option value="">Chưa có đơn hàng</option>';
+      renderDailyOrdersModalContent();
+      document.getElementById('dailyOrdersModal').classList.remove('hidden');
+    }
+    function closeDailyOrdersModal() { document.getElementById('dailyOrdersModal').classList.add('hidden'); }
+    function setModalFilter(f) { currentModalFilter = f; renderDailyOrdersModalContent(); }
+
+    function renderDailyOrdersModalContent() {
+      const dt = document.getElementById('modalOrderDateSelect').value, listC = document.getElementById('modalSRListContainer');
+      listC.innerHTML = '';
+      if (!dt) { listC.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có đơn hàng.</p>'; return; }
+
+      const dOrders = SEC_ORDERS.filter(o => o.date === dt);
+      let tHL = 0, hCount = 0, nCount = 0, sMap = {};
+      TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
+      dOrders.forEach(o => {
+        if (sMap[o.sr]) {
+          sMap[o.sr].vol += o.vol; sMap[o.sr].cases += Math.round(o.vol / CASE_VOLUME); tHL += o.vol;
+          if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
+          sMap[o.sr].outlets.get(o.code).vol += o.vol;
+        }
+      });
+
+      const rend = [];
+      TEAM_SRS.forEach(k => {
+        const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
+        if (currentModalFilter === 'HAS_ORDER' && !has) return;
+        if (currentModalFilter === 'NO_ORDER' && has) return;
+        rend.push({ key: k, name: TEAM_SR_MAP[k], data: sMap[k], has });
+      });
+      rend.sort((a,b) => b.data.vol - a.data.vol);
+      setText('modalCountBadge', `${rend.length} bạn`);
+
+      rend.forEach(r => {
+        let otHTML = '';
+        if (r.has) r.data.outlets.forEach(ot => { otHTML += `<div class="flex justify-between items-center py-1 border-b border-emerald-100/50 last:border-0 text-[10px] text-gray-700"><span class="truncate pr-1.5">• ${ot.name}</span><span class="font-extrabold text-emerald-800 whitespace-nowrap">${ot.vol.toFixed(2)} HL</span></div>`; });
+        listC.innerHTML += `<div class="p-3 rounded-2xl border text-xs shadow-sm transition-all ${r.has ? 'bg-emerald-50/60 border-emerald-200/90' : 'bg-gray-50/80 border-gray-200'}"><div class="flex justify-between items-center"><span class="font-bold text-[13px] ${r.has ? 'text-gray-900' : 'text-gray-500'}">${r.name}</span><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${r.has ? 'bg-emerald-500 text-white' : 'bg-rose-100 text-rose-700'}">${r.has ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}</span></div><div class="mt-1.5 pt-1.5 border-t ${r.has ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-xs"><span class="text-gray-500">Sản lượng:</span><span class="font-black ${r.has ? 'text-emerald-700 text-sm' : 'text-gray-400'}">${r.data.vol.toFixed(2)} HL (${r.data.cases} th)</span></div>${r.has ? `<details class="mt-1.5 pt-1 border-t border-emerald-100/70"><summary class="cursor-pointer text-[10px] font-bold text-emerald-800 flex justify-between items-center select-none py-0.5"><span>📍 Xem ${r.data.outlets.size} điểm chốt đơn</span><span>▼</span></summary><div class="mt-1 space-y-0.5 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-xs">${otHTML}</div></details>` : ''}</div>`;
+      });
+
+      setText('modalSummaryTotalHL', `${tHL.toFixed(2)} HL`); setText('modalSummaryTotalCases', `${Math.round(tHL / CASE_VOLUME)} th`);
+      setText('modalSummaryHasOrder', `${hCount}/9 SR`); setText('modalSummaryNoOrder', `${nCount}/9 SR`);
+    }
+
+    function copyManagerReminderReport() {
+      const dt = document.getElementById('modalOrderDateSelect').value; if (!dt) return;
+      const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
+      SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
+      const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
+      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
+      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép nhắc nhở!")).catch(e => alert("Lỗi: " + e));
+    }
+
+    function promptExportFiles() {
+      if (prompt("Nhập mật khẩu mở khóa tải file:") === EXPORT_PIN) {
+        document.getElementById('exportActionBox').classList.remove('hidden'); alert("Mở khóa thành công!");
+      } else alert("Mật khẩu không chính xác!");
+    }
+
+    function downloadCloudFile(type) {
+      let data = [], fn = "";
+      if (type === 'TRACKING' && MASTER.length) {
+        data = MASTER.map(m => ({ "Mã CT": m.prog, "Mã Điểm": m.code, "Tên Điểm": m.name, "SR": m.sr, "Level": m.level, "Target Huda": m.tarHuda, "Target Pre": m.tarPre, "Target Tổng": Number((m.tarHuda + m.tarPre).toFixed(2)) }));
+        fn = "Tracking_Display";
+      } else if (type === 'LF' && LISTING_FEE.length) {
+        data = LISTING_FEE.map(l => ({ "Mã Điểm": l.code, "Tên Điểm": l.name, "SR": l.sr, "Kênh": l.channelType, "Target Thùng": l.tarCases, "Target HL": l.tarHL }));
+        fn = "Listing_Fee";
+      } else if (type === 'SEC' && SEC_ORDERS.length) {
+        data = SEC_ORDERS.map(s => ({ "Ngày": s.date, "SR": s.sr, "Mã Điểm": s.code, "Tên Điểm": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Loại": s.category, "Sản Lượng (HL)": s.vol, "Thùng": s.qty }));
+        fn = "SEC06_Daily";
+      }
+      if (!data.length) { alert("Không có dữ liệu để tải!"); return; }
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Data");
+      XLSX.writeFile(wb, `${fn}_${new Date().toISOString().slice(0,10)}.xlsx`);
+    }
+  </script>
+</body>
+</html>
