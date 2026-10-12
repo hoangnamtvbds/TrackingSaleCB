@@ -51,7 +51,7 @@
       <div class="text-center space-y-1">
         <div class="text-2xl">🔒</div>
         <h3 class="text-sm font-black text-[#1F4E79]">ĐỔI MẬT KHẨU MỚI</h3>
-        <p class="text-[10px] text-gray-400">Vì lý do bảo mật, vui lòng đổi mật khẩu mặc định (123456) trước khi tiếp tục.</p>
+        <p class="text-[10px] text-gray-400">Vui lòng đổi mật khẩu mặc định (123456) trước khi tiếp tục.</p>
       </div>
 
       <form onsubmit="handleChangePassword(event)" class="space-y-2.5">
@@ -72,18 +72,17 @@
     </div>
   </div>
 
-  <!-- ================= MODAL QUẢN LÝ USER DÀNH CHO ADMIN ================= -->
+  <!-- ================= MODAL QUẢN LÝ USER (ADMIN) ================= -->
   <div id="adminUserModal" class="fixed inset-0 bg-black/75 z-[105] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div>
           <h3 class="text-sm font-black text-[#1F4E79] flex items-center gap-1.5">👥 QUẢN LÝ TÀI KHOẢN</h3>
-          <p class="text-[10px] text-gray-400">Tạo mới, xem và cập nhật tài khoản toàn hệ thống</p>
+          <p class="text-[10px] text-gray-400">Tạo mới, xem và cập nhật tài khoản</p>
         </div>
         <button onclick="closeAdminUserModal()" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center">✕</button>
       </div>
 
-      <!-- Form Tạo Mới User -->
       <details class="bg-blue-50/60 rounded-2xl p-3 border border-blue-100 text-xs">
         <summary class="font-bold text-blue-900 cursor-pointer flex justify-between items-center select-none">
           <span>➕ Tạo Tài Khoản Mới</span>
@@ -122,14 +121,12 @@
             </select>
           </div>
           <button type="submit" class="w-full py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs shadow-xs">
-            Lưu Tài Khoản (Pass mặc định 123456)
+            Lưu Tài Khoản (Pass mặc định: 123456)
           </button>
         </form>
       </details>
 
-      <!-- Danh sách User & Nút xuất file Excel -->
-      <div class="flex-1 overflow-y-auto space-y-1.5" id="adminUserListContainer">
-      </div>
+      <div class="flex-1 overflow-y-auto space-y-1.5" id="adminUserListContainer"></div>
 
       <div class="pt-2 border-t border-gray-100 flex gap-2">
         <button onclick="exportUsersToExcel()" class="flex-1 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1">
@@ -157,7 +154,6 @@
             <span class="font-bold text-gray-500 italic">by LHN</span>
           </div>
         </div>
-        <!-- Nút QL User cho Admin & Đăng xuất -->
         <div class="flex items-center gap-1.5">
           <button id="btnAdminUserManage" onclick="openAdminUserModal()" class="hidden text-[10px] font-extrabold bg-purple-100 text-purple-800 px-2 py-1 rounded-xl shadow-xs">
             👥 QL User
@@ -257,9 +253,8 @@
           <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI HOÀN HẢO -->
+        <!-- 2 CỘT MAINSTREAM VÀ PREMIUM -->
         <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
-          <!-- Cột Mainstream -->
           <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
             <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800">
               <span>🍺 MAINSTREAM</span>
@@ -275,7 +270,6 @@
             </div>
           </div>
 
-          <!-- Cột Premium -->
           <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-100/90 space-y-1">
             <div class="flex justify-between items-center text-[10px] font-bold text-amber-800">
               <span>👑 PREMIUM</span>
@@ -292,7 +286,6 @@
           </div>
         </div>
 
-        <!-- Menu xem chi tiết Brand Premium -->
         <details class="bg-amber-50/30 rounded-xl border border-amber-100/60 overflow-hidden text-xs">
           <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none text-[11px] font-bold text-amber-900">
             <span>🔍 Xem sản lượng theo Brand Premium</span>
@@ -319,7 +312,6 @@
         </div>
 
         <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
-          <!-- 1. Sản Lượng Total -->
           <div class="bg-white/80 p-2.5 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
             <div>
               <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
@@ -331,7 +323,6 @@
             </div>
           </div>
 
-          <!-- 2. Sản Lượng Premium -->
           <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
             <div>
               <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
@@ -343,7 +334,6 @@
             </div>
           </div>
 
-          <!-- 3. Chỉ Tiêu MP -->
           <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
             <div>
               <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
@@ -355,11 +345,10 @@
             </div>
           </div>
 
-          <!-- 4. Điểm FIT -->
           <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
             <div>
               <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
-              <span id="incFitRatio" class="text-[10px] text-gray-500 font-medium">0% / 0%</span>
+              <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0% / 0%</span>
             </div>
             <div class="text-right">
               <span id="incFitVal" class="text-purple-900 font-black block">0 đ</span>
@@ -367,7 +356,6 @@
             </div>
           </div>
 
-          <!-- Tổng tiền thực nhận -->
           <div class="pt-1 flex justify-between items-center text-xs font-bold bg-amber-100/70 p-2.5 rounded-xl border border-amber-200">
             <span class="text-amber-950 uppercase text-[10px] font-black">💰 Tổng Tiền Thực Nhận (Total):</span>
             <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
@@ -598,7 +586,6 @@
   <!-- ================= MODAL TOTAL KPI ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      
       <div class="flex justify-between items-center border-b border-gray-100 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
@@ -611,7 +598,6 @@
       </div>
 
       <div class="space-y-2 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        <!-- 1. Sản Lượng Total -->
         <div class="p-2.5 rounded-2xl bg-gray-50/80 border border-gray-200/70 flex justify-between items-center">
           <div>
             <span class="font-bold text-gray-800 text-[11px] flex items-center gap-1.5">📦 1. Sản Lượng Total</span>
@@ -620,7 +606,6 @@
           <span id="kpiVolPct" class="px-2.5 py-1 bg-blue-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 2. Sản Lượng Premium -->
         <div class="p-2.5 rounded-2xl bg-amber-50/60 border border-amber-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-amber-950 text-[11px] flex items-center gap-1.5">👑 2. Sản Lượng Premium</span>
@@ -629,7 +614,6 @@
           <span id="kpiSkuPct" class="px-2.5 py-1 bg-amber-500 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 3. Chỉ Tiêu MP -->
         <div class="p-2.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-emerald-950 text-[11px] flex items-center gap-1.5">🎯 3. Chỉ Tiêu MP (Tổng thực thi)</span>
@@ -638,7 +622,6 @@
           <span id="kpiMpPct" class="px-2.5 py-1 bg-emerald-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 4. Độ Phủ (Coverage) -->
         <div class="p-2.5 rounded-2xl bg-teal-50/60 border border-teal-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-teal-950 text-[11px] flex items-center gap-1.5">📍 4. Độ Phủ (Coverage)</span>
@@ -647,7 +630,6 @@
           <span id="kpiCovPct" class="px-2.5 py-1 bg-teal-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 5. Chỉ Tiêu SKU Ưu Tiên -->
         <div class="p-2.5 rounded-2xl bg-indigo-50/60 border border-indigo-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-indigo-950 text-[11px] flex items-center gap-1.5">🍺 5. Chỉ Tiêu SKU Ưu Tiên</span>
@@ -656,7 +638,6 @@
           <span id="kpiSkuPriPct" class="px-2.5 py-1 bg-indigo-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 6. Điểm FIT -->
         <div class="p-2.5 rounded-2xl bg-purple-50/60 border border-purple-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-purple-950 text-[11px] flex items-center gap-1.5">📸 6. Điểm FIT (Hình ảnh / TB)</span>
@@ -665,7 +646,6 @@
           <span id="kpiFitPct" class="px-2.5 py-1 bg-purple-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 7. Call Per Day -->
         <div class="p-2.5 rounded-2xl bg-sky-50/60 border border-sky-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-sky-950 text-[11px] flex items-center gap-1.5">🚶‍♂️ 7. Call Per Day</span>
@@ -674,7 +654,6 @@
           <span id="kpiCpdPct" class="px-2.5 py-1 bg-sky-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
         </div>
 
-        <!-- 8. Visit On Route -->
         <div class="p-2.5 rounded-2xl bg-rose-50/60 border border-rose-200/60 flex justify-between items-center">
           <div>
             <span class="font-bold text-rose-950 text-[11px] flex items-center gap-1.5">🗺️ 8. Visit On Route (Đúng tuyến)</span>
@@ -692,7 +671,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
+  <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS ================= -->
   <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
@@ -749,7 +728,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) ================= -->
+  <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY ================= -->
   <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
@@ -800,7 +779,7 @@
     </div>
   </div>
 
-  <!-- MODAL ADMIN CẬP NHẬT FILE (PIN: 6868) -->
+  <!-- MODAL ADMIN CẬP NHẬT -->
   <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
       <div class="flex justify-between items-center">
@@ -894,7 +873,6 @@
     let currentTBLevel = "ALL";
     let currentAuditStatus = "ALL";
     let isManagerVerified = false;
-
     let currentUser = null;
 
     let supabaseClient = null;
@@ -958,15 +936,8 @@
       const btn = document.getElementById('btnLoginSubmit');
       btn.textContent = "Đang kiểm tra...";
 
-      // DỰ PHÒNG TÀI KHOẢN ADMIN TRỰC TIẾP (AN TOÀN TUYỆT ĐỐI)
       if (u === 'admin' && (p === '123456' || p === '6868')) {
-        currentUser = {
-          id: 'admin-root',
-          username: 'admin',
-          fullname: 'Quản Trị Viên',
-          role: 'ADMIN',
-          is_first_login: (p === '123456')
-        };
+        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Quản Trị Viên', role: 'ADMIN', is_first_login: (p === '123456') };
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
         if (currentUser.is_first_login) {
           document.getElementById('changePasswordModal').classList.remove('hidden');
@@ -988,7 +959,6 @@
         });
 
         if (!res.ok) throw new Error("Lỗi kết nối cơ sở dữ liệu");
-
         const users = await res.json();
         if (!users || users.length === 0) {
           alert("Không tìm thấy tên đăng nhập: " + u);
@@ -1023,14 +993,8 @@
       const p1 = document.getElementById('newPassword').value.trim();
       const p2 = document.getElementById('confirmNewPassword').value.trim();
 
-      if (p1 !== p2) {
-        alert("Mật khẩu xác nhận không khớp!");
-        return;
-      }
-      if (p1 === '123456') {
-        alert("Vui lòng đặt mật khẩu khác mật khẩu mặc định 123456!");
-        return;
-      }
+      if (p1 !== p2) { alert("Mật khẩu xác nhận không khớp!"); return; }
+      if (p1 === '123456') { alert("Vui lòng đặt mật khẩu khác 123456!"); return; }
 
       try {
         if (currentUser && currentUser.username && currentUser.id !== 'admin-root') {
@@ -1049,7 +1013,6 @@
         currentUser.password = p1;
         currentUser.is_first_login = false;
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
-        
         document.getElementById('changePasswordModal').classList.add('hidden');
         alert("Đổi mật khẩu thành công!");
         applyUserPermissions();
@@ -1081,25 +1044,27 @@
       const srContainer = document.getElementById('srFilterContainer');
       const btnAdminUser = document.getElementById('btnAdminUserManage');
 
-      if (role === 'ADMIN' || role === 'ASM' || role === 'SS') {
+      if (role === 'ADMIN') {
         isManagerVerified = true;
-        if (btnAdminUser) {
-          if (role === 'ADMIN') btnAdminUser.classList.remove('hidden');
-          else btnAdminUser.classList.add('hidden');
-        }
-        if (srContainer) srContainer.classList.remove('hidden');
-        if (srSelectEl) srSelectEl.disabled = false;
+        btnAdminUser.classList.remove('hidden');
+        srContainer.classList.remove('hidden');
+        srSelectEl.disabled = false;
+      } else if (role === 'ASM' || role === 'SS') {
+        isManagerVerified = true;
+        btnAdminUser.classList.add('hidden');
+        srContainer.classList.remove('hidden');
+        srSelectEl.disabled = false;
       } else if (role === 'SR') {
         isManagerVerified = false;
-        if (btnAdminUser) btnAdminUser.classList.add('hidden');
-        if (currentUser.sr_key && srSelectEl) {
+        btnAdminUser.classList.add('hidden');
+        if (currentUser.sr_key) {
           srSelectEl.value = currentUser.sr_key;
           srSelectEl.disabled = true;
-          if (srContainer) srContainer.classList.add('hidden');
+          srContainer.classList.add('hidden');
         }
       }
 
-      renderAll();
+      loadDataFromCloud();
     }
 
     function openAdminUserModal() {
@@ -1121,17 +1086,24 @@
 
     async function handleCreateUser(e) {
       e.preventDefault();
-      const username = document.getElementById('newUsername').value.trim();
+      const username = document.getElementById('newUsername').value.trim().toLowerCase();
       const fullname = document.getElementById('newFullname').value.trim();
       const role = document.getElementById('newRole').value;
       const sr_key = (role === 'SR') ? document.getElementById('newSrKey').value : null;
 
       try {
-        const { error } = await supabaseClient
-          .from('app_users')
-          .insert([{ username, fullname, role, sr_key, password: '123456', is_first_login: true }]);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ username, fullname, role, sr_key, password: '123456', is_first_login: true })
+        });
 
-        if (error) throw error;
+        if (!res.ok) throw new Error(await res.text());
         alert("Tạo tài khoản thành công! Pass mặc định: 123456");
         document.getElementById('newUsername').value = '';
         document.getElementById('newFullname').value = '';
@@ -1146,23 +1118,22 @@
       container.innerHTML = '<p class="text-center text-xs text-gray-400 py-3">Đang tải danh sách...</p>';
 
       try {
-        const { data, error } = await supabaseClient
-          .from('app_users')
-          .select('*')
-          .order('role', { ascending: true });
-
-        if (error) throw error;
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users?select=*&order=role.asc`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
 
         container.innerHTML = '';
         data.forEach(u => {
           const div = document.createElement('div');
-          div.className = "p-2 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs";
+          div.className = "p-2.5 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs";
           div.innerHTML = `
             <div>
-              <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
-              <div class="text-[10px] text-gray-400">ID: <b>${u.username}</b> • Pass: <span class="font-mono">${u.password}</span></div>
+              <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
+              <div class="text-[10px] text-gray-400 mt-0.5">ID: <b>${u.username}</b> • Pass: <span class="font-mono">${u.password}</span></div>
             </div>
-            <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px]">Reset 123456</button>
+            <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px]">Reset</button>
           `;
           container.appendChild(div);
         });
@@ -1172,15 +1143,19 @@
     }
 
     async function resetUserPassword(id, uname) {
-      if (!confirm(`Reset mật khẩu của tài khoản ${uname} về mặc định '123456'?`)) return;
+      if (!confirm(`Reset mật khẩu của tài khoản ${uname} về '123456'?`)) return;
       try {
-        const { error } = await supabaseClient
-          .from('app_users')
-          .update({ password: '123456', is_first_login: true })
-          .eq('id', id);
-
-        if (error) throw error;
-        alert("Đã reset mật khẩu thành công!");
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password: '123456', is_first_login: true })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        alert("Đã reset mật khẩu về 123456!");
         loadAdminUserList();
       } catch (err) {
         alert("Lỗi: " + err.message);
@@ -1189,16 +1164,12 @@
 
     async function exportUsersToExcel() {
       try {
-        const { data, error } = await supabaseClient.from('app_users').select('*');
-        if (error) throw error;
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users?select=*`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await res.json();
         const exportData = data.map(u => ({
-          "Tên Đăng Nhập": u.username,
-          "Mật Khẩu": u.password,
-          "Họ Và Tên": u.fullname,
-          "Vai Trò": u.role,
-          "Ánh Xạ SR": u.sr_key || "",
-          "Lần Đầu Đăng Nhập": u.is_first_login ? "Có" : "Không",
-          "Ngày Tạo": u.created_at
+          "Tên Đăng Nhập": u.username, "Mật Khẩu": u.password, "Họ Và Tên": u.fullname, "Vai Trò": u.role, "Ánh Xạ SR": u.sr_key || "", "Lần Đầu": u.is_first_login ? "Có" : "Không", "Ngày Tạo": u.created_at
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -1209,6 +1180,9 @@
       }
     }
 
+    // ==========================================
+    // TẢI DỮ LIỆU TỪ SUPABASE (BẢO VỆ CHỐNG TRÀN BỘ NHỚ)
+    // ==========================================
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
@@ -1219,6 +1193,7 @@
           .maybeSingle();
 
         if (error) {
+          console.error("Lỗi Cloud:", error);
           document.getElementById('lblLastUpdate').textContent = "Chưa kết nối Cloud";
           return;
         }
@@ -1249,20 +1224,20 @@
             localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
             localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
             localStorage.setItem('UPDATE_TIME', data.updated_at);
-          } catch(e) {}
-
-          document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
-          if (document.getElementById('trackStatusText')) {
-            document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
-            document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
+          } catch(e) {
+            console.warn("Bộ nhớ máy đầy, tiếp tục dùng dữ liệu đám mây.");
           }
 
-          if (AUDIT_DATA && AUDIT_DATA.length > 0 && document.getElementById('auditStatusText')) {
+          document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
+          document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
+          document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
+
+          if (AUDIT_DATA && AUDIT_DATA.length > 0) {
             document.getElementById('auditStatusText').textContent = `(Đã có ${AUDIT_DATA.length} điểm)`;
             document.getElementById('auditStatusText').className = "text-emerald-600 font-bold";
           }
 
-          if (Object.keys(SALES_TARGETS).length > 0 && document.getElementById('targetStatusText')) {
+          if (Object.keys(SALES_TARGETS).length > 0) {
             document.getElementById('targetStatusText').textContent = `(Đã có ${Object.keys(SALES_TARGETS).length} SR)`;
             document.getElementById('targetStatusText').className = "text-emerald-600 font-bold";
           }
@@ -1309,26 +1284,16 @@
         if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
         if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
-        const savedSR = localStorage.getItem('SAVED_SR');
-        if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
-          document.getElementById('srFilter').value = savedSR;
-        }
-      } catch(e) {}
-
-      const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
-      if (savedUserStr) {
-        try {
+        const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
+        if (savedUserStr) {
           currentUser = JSON.parse(savedUserStr);
           applyUserPermissions();
-        } catch (e) {
-          localStorage.removeItem('CURRENT_AUTH_USER');
         }
-      }
+      } catch(e) {}
 
       updateLatestOrderDateBanner();
       populateDateFilter();
       renderAll();
-
       loadDataFromCloud();
     });
 
@@ -1450,15 +1415,9 @@
       }
 
       const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
-      let totalDayHL = 0;
-      let totalDayQty = 0;
-      let hasOrderCount = 0;
-      let noOrderCount = 0;
-
+      let totalDayHL = 0, totalDayQty = 0, hasOrderCount = 0, noOrderCount = 0;
       const srSalesMap = {};
-      TEAM_SRS.forEach(k => {
-        srSalesMap[k] = { vol: 0, cases: 0, outlets: new Map() };
-      });
+      TEAM_SRS.forEach(k => { srSalesMap[k] = { vol: 0, cases: 0, outlets: new Map() }; });
 
       dayOrders.forEach(o => {
         if (srSalesMap[o.sr]) {
@@ -1480,9 +1439,7 @@
         const data = srSalesMap[k];
         const hasOrder = data.vol > 0.001;
 
-        if (hasOrder) hasOrderCount++;
-        else noOrderCount++;
-
+        if (hasOrder) hasOrderCount++; else noOrderCount++;
         if (currentModalFilter === 'HAS_ORDER' && !hasOrder) return;
         if (currentModalFilter === 'NO_ORDER' && hasOrder) return;
 
@@ -1490,7 +1447,6 @@
       });
 
       renderedSRs.sort((a, b) => b.data.vol - a.data.vol);
-
       document.getElementById('modalCountBadge').textContent = `${renderedSRs.length} bạn`;
 
       if (renderedSRs.length === 0) {
@@ -1502,7 +1458,7 @@
 
           let outletDetailsHtml = '';
           if (hasOrder && data.outlets.size > 0) {
-            data.outlets.forEach((otData, otCode) => {
+            data.outlets.forEach((otData) => {
               outletDetailsHtml += `
                 <div class="flex justify-between items-center py-1 border-b border-emerald-100/50 last:border-0 text-[10px] text-gray-700">
                   <span class="truncate pr-1.5 font-medium">• ${otData.name}</span>
@@ -1563,10 +1519,7 @@
 
     function copyManagerReminderReport() {
       const selectedDate = document.getElementById('modalOrderDateSelect').value;
-      if (!selectedDate) {
-        alert("Chưa có ngày đơn để sao chép!");
-        return;
-      }
+      if (!selectedDate) { alert("Chưa có ngày đơn để sao chép!"); return; }
 
       const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
       let totalDayHL = 0;
@@ -1591,55 +1544,26 @@
       });
 
       hasList.sort((a,b) => b.vol - a.vol);
-
       let msg = "";
+
       if (currentModalFilter === 'NO_ORDER') {
-        msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG
-📅 Ngày duyệt: ${selectedDate}
-
-⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:
-`;
-        noList.forEach((n, i) => { msg += `${i + 1}. ${n}
-`; });
-        msg += `
-👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
+        msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG\n📅 Ngày duyệt: ${selectedDate}\n\n⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:\n`;
+        noList.forEach((n, i) => { msg += `${i + 1}. ${n}\n`; });
+        msg += `\n👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua báo lại SS nhé!`;
       } else if (currentModalFilter === 'HAS_ORDER') {
-        msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY
-📅 Ngày duyệt: ${selectedDate}
-📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)
-
-🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:
-`;
-        hasList.forEach((item, i) => { msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)
-`; });
-        msg += `
-👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
+        msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn:\n`;
+        hasList.forEach((item, i) => { msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`; });
       } else {
-        msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY
-📅 Ngày duyệt: ${selectedDate}
-📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)
-
-👏 SR ĐÃ CÓ ĐƠN (${hasList.length}/9 bạn):
-`;
-        hasList.forEach((item, i) => { msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)
-`; });
+        msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
+        hasList.forEach((item, i) => { msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`; });
         if (noList.length > 0) {
-          msg += `
-⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):
-`;
-          noList.forEach((n, i) => { msg += `  ${i + 1}. ${n}
-`; });
-          msg += `
-👉 Các bạn chưa có đơn kiểm tra lại tuyến hôm qua có vướng mắc gì báo SS hỗ trợ nhé!`;
-        } else {
-          msg += `
-🎉 Xuất sắc: 100% nhân sự đều có đơn trong ngày!`;
+          msg += `\n⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):\n`;
+          noList.forEach((n, i) => { msg += `  ${i + 1}. ${n}\n`; });
         }
       }
 
       navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!
-Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
@@ -1647,7 +1571,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       const pin = prompt("Nhập mật khẩu mở khóa tải file:");
       if (pin === EXPORT_PIN) {
         document.getElementById('exportActionBox').classList.remove('hidden');
-        alert("Mở khóa thành công! Bạn có thể chọn file để tải về máy.");
+        alert("Mở khóa thành công!");
       } else if (pin !== null) {
         alert("Mật khẩu không chính xác!");
       }
@@ -1758,7 +1682,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
     function openTotalKpiModal() {
       const selectedSR = document.getElementById('srFilter').value;
       const srSelectEl = document.getElementById('srFilter');
-      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
+      const srNameText = srSelectEl.options[srSelectEl.selectedIndex]?.text || selectedSR;
       document.getElementById('lblKpiModalSubtitle').textContent = (selectedSR === 'ALL') ? "Tổng hợp toàn bộ 9 SR trong đội" : `Tiến độ cá nhân: ${srNameText}`;
       document.getElementById('totalKpiModal').classList.remove('hidden');
     }
@@ -1783,7 +1707,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
     }
 
     // ==========================================
-    // XỬ LÝ NẠP FILE (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC, AN TOÀN BỘ NHỚ)
+    // XỬ LÝ NẠP FILE (DÒ HEADER CHUẨN XÁC)
     // ==========================================
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
@@ -1988,7 +1912,9 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
                 const auditDateFormatted = formatAuditDate(auditDateRaw);
                 const srResult = String(r['Kết quả SR'] || 'Đạt').trim();
 
-                if (!auditMap[ocode]) auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
+                if (!auditMap[ocode]) {
+                  auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
+                }
                 auditMap[ocode].count++;
                 auditMap[ocode].audits.push({ date: auditDateFormatted, result: srResult });
               }
@@ -2003,7 +1929,9 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
               if (TEAM_SRS.includes(srNorm)) {
                 const ocode = String(r['Mã điểm bán'] || '').trim();
                 const oname = String(r['Tên điểm bán'] || '').trim();
-                if (!auditMap[ocode]) auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
+                if (!auditMap[ocode]) {
+                  auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
+                }
               }
             });
           }
@@ -2119,8 +2047,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         updateLatestOrderDateBanner();
         populateDateFilter();
         renderAll();
-        alert(`Đồng bộ thành công!
-Đã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target & Total KPI.`);
+        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target & Total KPI.`);
       } catch (err) {
         console.error("Lỗi cập nhật:", err);
         alert("Lỗi khi xử lý file: " + (err.message || err));
@@ -2188,8 +2115,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       else if (type === 'INDIVIDUAL_SR') {
         const curSR = document.getElementById('srFilter').value;
         if (curSR === 'ALL') {
-          alert("Bạn đang chọn '-- Toàn bộ Team --'.
-Vui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang trước khi lấy báo cáo riêng nhé!");
+          alert("Bạn đang chọn '-- Toàn bộ Team --'.\nVui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang trước khi lấy báo cáo riêng nhé!");
           return;
         }
         executeCopyIndividualReport();
@@ -2264,27 +2190,13 @@ Vui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang tr�
       topSRs.forEach(([srKey, vol], i) => {
         const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
         const name = opt ? opt.text : srKey;
-        topText += `
-  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
+        topText += `\n  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
       });
 
-      const reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM
-📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})
-
-1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):
-• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)
-${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}
-
-2️⃣ LŨY KẾ THÁNG (MTD):
-• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)
-• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)
-• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)
-
-👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
+      const reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)\n${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)\n• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)\n• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)\n\n👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!
-Bạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
       }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
@@ -2357,30 +2269,10 @@ Bạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
       const tbMiss = listSRMaster.length - tbPass;
       const lfMiss = listSRLF.length - lfPass;
 
-      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}
-📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})
-
-1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):
-• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)
-
-2️⃣ LŨY KẾ THÁNG (MTD):
-• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)
-  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)
-  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)
-
-3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:
-• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)
-  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}
-• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)
-  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}
-
-💵 TẠM TÍNH THƯỞNG INCENTIVE: ${totalInc.toLocaleString('vi-VN')} đ
-
-👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
+      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n💵 TẠM TÍNH THƯỞNG INCENTIVE: ${totalInc.toLocaleString('vi-VN')} đ\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!
-Bạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
+        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
       }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
@@ -2402,36 +2294,27 @@ Bạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).
 
       incList.sort((a, b) => b.total - a.total);
 
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE TOÀN ĐỘI (FIT-10)
-📅 Ngày cập nhật: ${nowStr}
-💰 Tổng quỹ thưởng tạm tính: ${totalTeamInc.toLocaleString('vi-VN')} đ
-
-`;
+      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE TOÀN ĐỘI (FIT-10)\n📅 Ngày cập nhật: ${nowStr}\n💰 Tổng quỹ thưởng tạm tính: ${totalTeamInc.toLocaleString('vi-VN')} đ\n\n`;
 
       incList.forEach((item, i) => {
         const d = item.data;
-        msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ
-`;
+        msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ\n`;
         if (item.total > 0) {
           const parts = [];
           if (d.mep_inc > 0) parts.push(`MP: ${(d.mep_inc/1000).toFixed(0)}k`);
           if (d.fit_inc > 0) parts.push(`FIT: ${(d.fit_inc/1000).toFixed(0)}k`);
           if (d.vol_inc > 0) parts.push(`Vol: ${(d.vol_inc/1000).toFixed(0)}k`);
           if (d.sku_inc > 0) parts.push(`Pre: ${(d.sku_inc/1000).toFixed(0)}k`);
-          if (parts.length > 0) msg += `   └ (${parts.join(', ')})
-`;
+          if (parts.length > 0) msg += `   └ (${parts.join(', ')})\n`;
         } else {
-          msg += `   └ (Chưa đạt mốc thưởng chặn)
-`;
+          msg += `   └ (Chưa đạt mốc thưởng chặn)\n`;
         }
       });
 
-      msg += `
-👉 Lưu ý: Tiền thưởng tạm tính dựa trên tiến độ file FIT-10. Anh em bám sát điều kiện Volume & Tiêu chuẩn để nhận trọn thưởng tháng!`;
+      msg += `\n👉 Lưu ý: Tiền thưởng tạm tính dựa trên tiến độ file FIT-10. Anh em bám sát điều kiện Volume & Tiêu chuẩn để nhận trọn thưởng tháng!`;
 
       navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!
-Bạn có thể mở Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!\nBạn có thể mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
@@ -2449,68 +2332,42 @@ Bạn có thể mở Zalo và Dán (Paste) để gửi.");
 
       let msg = "";
       if (selectedSR === "ALL") {
-        msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)
-📅 Tính đến ngày: ${nowStr}
-• Tổng điểm trưng bày: ${list.length} điểm
-• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)
-• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm
-• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm
-`;
+        msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
 
         if (noneList.length > 0) {
           const srNoneMap = {};
           noneList.forEach(a => { srNoneMap[a.sr] = (srNoneMap[a.sr] || 0) + 1; });
-          msg += `
-⚠️ CÁC BẠN CÒN ĐIỂM CHƯA CHỤP LẦN NÀO:
-`;
+          msg += `\n⚠️ CÁC BẠN CÒN ĐIỂM CHƯA CHỤP LẦN NÀO:\n`;
           Object.entries(srNoneMap).sort((a,b) => b[1] - a[1]).forEach(([srKey, cnt], i) => {
             const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
             const name = opt ? opt.text : srKey;
-            msg += `  ${i + 1}. ${name}: Còn ${cnt} điểm
-`;
+            msg += `  ${i + 1}. ${name}: Còn ${cnt} điểm\n`;
           });
         }
 
         if (need2List.length > 0) {
-          msg += `
-💡 LƯU Ý: Còn ${need2List.length} điểm đã chấm lần 1, anh em nhớ sắp xếp lịch đi chụp bổ sung lần 2 đúng tiến độ nhé!`;
+          msg += `\n💡 LƯU Ý: Còn ${need2List.length} điểm đã chấm lần 1, anh em nhớ sắp xếp lịch đi chụp bổ sung lần 2 đúng tiến độ nhé!`;
         }
       } else {
-        msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY - ${srNameText.toUpperCase()}
-📅 Tính đến ngày: ${nowStr}
-
-• Đã xong (2/2 lần): ${doneList.length}/${list.length} điểm
-• Thiếu lần 2 (1/2 lần): ${need2List.length} điểm
-• Chưa chụp (0/2 lần): ${noneList.length} điểm
-`;
+        msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY - ${srNameText.toUpperCase()}\n📅 Tính đến ngày: ${nowStr}\n\n• Đã xong (2/2 lần): ${doneList.length}/${list.length} điểm\n• Thiếu lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp (0/2 lần): ${noneList.length} điểm\n`;
 
         if (noneList.length > 0) {
-          msg += `
-❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:
-`;
-          noneList.slice(0, 10).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})
-`; });
-          if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác
-`;
+          msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
+          noneList.slice(0, 10).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
+          if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
         }
 
         if (need2List.length > 0) {
-          msg += `
-⚠️ DANH SÁCH CẦN CHỤP LẦN 2:
-`;
-          need2List.slice(0, 5).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})
-`; });
-          if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác
-`;
+          msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
+          need2List.slice(0, 5).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
+          if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
         }
 
-        msg += `
-👉 Nhớ mở app DMS chụp hình đầy đủ trước hạn để đảm bảo tiền thưởng cho quán nhé!`;
+        msg += `\n👉 Nhớ mở app DMS chụp hình đầy đủ trước hạn để đảm bảo tiền thưởng cho quán nhé!`;
       }
 
       navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!
-Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
+        alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
@@ -2558,22 +2415,22 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       const pctTargetMain = targetMain > 0 ? Math.round((monthHudaHL / targetMain) * 100) : 0;
       const pctTargetPrem = targetPrem > 0 ? Math.round((monthPreHL / targetPrem) * 100) : 0;
 
-      if (document.getElementById('txtTargetPercent')) document.getElementById('txtTargetPercent').textContent = `${pctTargetVol}%`;
-      if (document.getElementById('txtTargetAchieved')) document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
-      if (document.getElementById('txtTargetCases')) document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
-      if (document.getElementById('barTargetVol')) document.getElementById('barTargetVol').style.width = `${Math.min(100, pctTargetVol)}%`;
+      document.getElementById('txtTargetPercent').textContent = `${pctTargetVol}%`;
+      document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
+      document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
+      document.getElementById('barTargetVol').style.width = `${Math.min(100, pctTargetVol)}%`;
 
-      if (document.getElementById('badgeMainPct')) document.getElementById('badgeMainPct').textContent = `${pctTargetMain}%`;
-      if (document.getElementById('valMainAct')) document.getElementById('valMainAct').innerHTML = `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
-      if (document.getElementById('valMainTar')) document.getElementById('valMainTar').textContent = `${targetMain.toFixed(2)} HL`;
-      if (document.getElementById('barMainMini')) document.getElementById('barMainMini').style.width = `${Math.min(100, pctTargetMain)}%`;
+      document.getElementById('badgeMainPct').textContent = `${pctTargetMain}%`;
+      document.getElementById('valMainAct').innerHTML = `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
+      document.getElementById('valMainTar').textContent = `${targetMain.toFixed(2)} HL`;
+      document.getElementById('barMainMini').style.width = `${Math.min(100, pctTargetMain)}%`;
 
-      if (document.getElementById('badgePrePct')) document.getElementById('badgePrePct').textContent = `${pctTargetPrem}%`;
-      if (document.getElementById('valPreAct')) document.getElementById('valPreAct').innerHTML = `${monthPreHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
-      if (document.getElementById('valPreTar')) document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
-      if (document.getElementById('barPreMini')) document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
+      document.getElementById('badgePrePct').textContent = `${pctTargetPrem}%`;
+      document.getElementById('valPreAct').innerHTML = `${monthPreHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
+      document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
+      document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT INCENTIVE & TOTAL KPI (AN TOÀN BẢO VỆ PHẦN TỬ KHÔNG BAO GIỜ NULL)
+      // CẬP NHẬT INCENTIVE & TOTAL KPI (SỬA LỖI CPD, VOR & LÀM TRÒN GỌN GÀNG)
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
@@ -2613,40 +2470,40 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         const pctAllFit = avgFitTarPct > 0 ? Math.round((avgFitActPct / avgFitTarPct) * 100) : 0;
         const pctAllVor = sumVorTarLượt > 0 ? Math.round((sumVorActLượt / sumVorTarLượt) * 100) : 0;
 
-        if (document.getElementById('txtTotalIncentiveDisplay')) document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
-        if (document.getElementById('incVolRatio')) document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
-        if (document.getElementById('incVolAch')) document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
-        if (document.getElementById('incVolVal')) document.getElementById('incVolVal').textContent = `${sumVolInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
+        document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
+        document.getElementById('incVolVal').textContent = `${sumVolInc.toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incSkuRatio')) document.getElementById('incSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
-        if (document.getElementById('incSkuAch')) document.getElementById('incSkuAch').textContent = `${pctAllPre}%`;
-        if (document.getElementById('incSkuVal')) document.getElementById('incSkuVal').textContent = `${sumSkuInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pctAllPre}%`;
+        document.getElementById('incSkuVal').textContent = `${sumSkuInc.toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incMepRatio')) document.getElementById('incMepRatio').textContent = `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`;
-        if (document.getElementById('incMepAch')) document.getElementById('incMepAch').textContent = `${pctAllMep}%`;
-        if (document.getElementById('incMepVal')) document.getElementById('incMepVal').textContent = `${sumMepInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incMepRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('incMepAch').textContent = `${pctAllMep}%`;
+        document.getElementById('incMepVal').textContent = `${sumMepInc.toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incFitRatio')) document.getElementById('incFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
-        if (document.getElementById('incFitAch')) document.getElementById('incFitAch').textContent = `${pctAllFit}%`;
-        if (document.getElementById('incFitVal')) document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
-        if (document.getElementById('incTotalVal')) document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
+        document.getElementById('incFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
+        document.getElementById('incFitAch').textContent = `${pctAllFit}%`;
+        document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
 
-        if (document.getElementById('kpiVolRatio')) document.getElementById('kpiVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
-        if (document.getElementById('kpiVolPct')) document.getElementById('kpiVolPct').textContent = `${pctAllVol}%`;
-        if (document.getElementById('kpiSkuRatio')) document.getElementById('kpiSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
-        if (document.getElementById('kpiSkuPct')) document.getElementById('kpiSkuPct').textContent = `${pctAllPre}%`;
-        if (document.getElementById('kpiMpRatio')) document.getElementById('kpiMpRatio').textContent = `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`;
-        if (document.getElementById('kpiMpPct')) document.getElementById('kpiMpPct').textContent = `${pctAllMep}%`;
-        if (document.getElementById('kpiCovRatio')) document.getElementById('kpiCovRatio').textContent = `${sumCovAct.toFixed(1)} / ${sumCovTar.toFixed(1)} điểm`;
-        if (document.getElementById('kpiCovPct')) document.getElementById('kpiCovPct').textContent = `${pctAllCov}%`;
-        if (document.getElementById('kpiSkuPriRatio')) document.getElementById('kpiSkuPriRatio').textContent = `${sumSkuPriAct.toFixed(1)} / ${sumSkuPriTar.toFixed(1)} điểm`;
-        if (document.getElementById('kpiSkuPriPct')) document.getElementById('kpiSkuPriPct').textContent = `${pctAllSkuPri}%`;
-        if (document.getElementById('kpiFitRatio')) document.getElementById('kpiFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
-        if (document.getElementById('kpiFitPct')) document.getElementById('kpiFitPct').textContent = `${pctAllFit}%`;
-        if (document.getElementById('kpiCpdRatio')) document.getElementById('kpiCpdRatio').textContent = `${(sumCpdAct/cntSR).toFixed(1)} / ${(sumCpdTar/cntSR).toFixed(1)} cuộc`;
-        if (document.getElementById('kpiCpdPct')) document.getElementById('kpiCpdPct').textContent = `${pctAllCpd}%`;
-        if (document.getElementById('kpiVorRatio')) document.getElementById('kpiVorRatio').textContent = `${sumVorActLượt} / ${sumVorTarLượt} lượt`;
-        if (document.getElementById('kpiVorPct')) document.getElementById('kpiVorPct').textContent = `${pctAllVor}%`;
+        document.getElementById('kpiVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
+        document.getElementById('kpiVolPct').textContent = `${pctAllVol}%`;
+        document.getElementById('kpiSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
+        document.getElementById('kpiSkuPct').textContent = `${pctAllPre}%`;
+        document.getElementById('kpiMpRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiMpPct').textContent = `${pctAllMep}%`;
+        document.getElementById('kpiCovRatio').textContent = `${sumCovAct.toLocaleString('vi-VN')} / ${sumCovTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiCovPct').textContent = `${pctAllCov}%`;
+        document.getElementById('kpiSkuPriRatio').textContent = `${sumSkuPriAct.toLocaleString('vi-VN')} / ${sumSkuPriTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiSkuPriPct').textContent = `${pctAllSkuPri}%`;
+        document.getElementById('kpiFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
+        document.getElementById('kpiFitPct').textContent = `${pctAllFit}%`;
+        document.getElementById('kpiCpdRatio').textContent = `${(sumCpdAct/cntSR).toFixed(1)} / ${(sumCpdTar/cntSR).toFixed(1)} cuộc`;
+        document.getElementById('kpiCpdPct').textContent = `${pctAllCpd}%`;
+        document.getElementById('kpiVorRatio').textContent = `${sumVorActLượt} / ${sumVorTarLượt} lượt`;
+        document.getElementById('kpiVorPct').textContent = `${pctAllVor}%`;
       } else {
         const d = SALES_TARGETS[selectedSR] || {};
         const vTar = d.volume_target || 0, vAct = d.volume_actual || 0, vAch = Math.round((d.vol_ach || 0) * 100);
@@ -2664,60 +2521,58 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
 
         const tot = d.total_inc || 0;
 
-        if (document.getElementById('txtTotalIncentiveDisplay')) document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
-        if (document.getElementById('incVolRatio')) document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
-        if (document.getElementById('incVolAch')) document.getElementById('incVolAch').textContent = `${vAch}%`;
-        if (document.getElementById('incVolVal')) document.getElementById('incVolVal').textContent = `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`;
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
+        document.getElementById('incVolAch').textContent = `${vAch}%`;
+        document.getElementById('incVolVal').textContent = `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incSkuRatio')) document.getElementById('incSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
-        if (document.getElementById('incSkuAch')) document.getElementById('incSkuAch').textContent = `${pAch}%`;
-        if (document.getElementById('incSkuVal')) document.getElementById('incSkuVal').textContent = `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`;
+        document.getElementById('incSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pAch}%`;
+        document.getElementById('incSkuVal').textContent = `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incMepRatio')) document.getElementById('incMepRatio').textContent = `${mAct.toFixed(1)} / ${mTar.toFixed(1)} điểm`;
-        if (document.getElementById('incMepAch')) document.getElementById('incMepAch').textContent = `${mAch}%`;
-        if (document.getElementById('incMepVal')) document.getElementById('incMepVal').textContent = `${(d.mep_inc || 0).toLocaleString('vi-VN')} đ`;
+        document.getElementById('incMepRatio').textContent = `${mAct.toFixed(1)} / ${mTar.toFixed(1)} điểm`;
+        document.getElementById('incMepAch').textContent = `${mAch}%`;
+        document.getElementById('incMepVal').textContent = `${(d.mep_inc || 0).toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('incFitRatio')) document.getElementById('incFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
-        if (document.getElementById('incFitAch')) document.getElementById('incFitAch').textContent = `${fAch}%`;
-        if (document.getElementById('incFitVal')) document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
-        if (document.getElementById('incTotalVal')) document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
+        document.getElementById('incFitAch').textContent = `${fAch}%`;
+        document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
+        document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
 
-        if (document.getElementById('kpiVolRatio')) document.getElementById('kpiVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
-        if (document.getElementById('kpiVolPct')) document.getElementById('kpiVolPct').textContent = `${vAch}%`;
-        if (document.getElementById('kpiSkuRatio')) document.getElementById('kpiSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
-        if (document.getElementById('kpiSkuPct')) document.getElementById('kpiSkuPct').textContent = `${pAch}%`;
-        if (document.getElementById('kpiMpRatio')) document.getElementById('kpiMpRatio').textContent = `${mAct.toFixed(1)} / ${mTar.toFixed(1)} điểm`;
-        if (document.getElementById('kpiMpPct')) document.getElementById('kpiMpPct').textContent = `${mAch}%`;
-        if (document.getElementById('kpiCovRatio')) document.getElementById('kpiCovRatio').textContent = `${cAct} / ${cTar} điểm`;
-        if (document.getElementById('kpiCovPct')) document.getElementById('kpiCovPct').textContent = `${cAch}%`;
-        if (document.getElementById('kpiSkuPriRatio')) document.getElementById('kpiSkuPriRatio').textContent = `${spAct.toFixed(1)} / ${spTar.toFixed(1)} điểm`;
-        if (document.getElementById('kpiSkuPriPct')) document.getElementById('kpiSkuPriPct').textContent = `${spAch}%`;
-        if (document.getElementById('kpiFitRatio')) document.getElementById('kpiFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
-        if (document.getElementById('kpiFitPct')) document.getElementById('kpiFitPct').textContent = `${fAch}%`;
-        if (document.getElementById('kpiCpdRatio')) document.getElementById('kpiCpdRatio').textContent = `${cpdAct} / ${cpdTar} cuộc`;
-        if (document.getElementById('kpiCpdPct')) document.getElementById('kpiCpdPct').textContent = `${cpdAch}%`;
-        if (document.getElementById('kpiVorRatio')) document.getElementById('kpiVorRatio').textContent = `${vorActLượt} / ${vorTarLượt} lượt`;
-        if (document.getElementById('kpiVorPct')) document.getElementById('kpiVorPct').textContent = `${vorAch}%`;
+        document.getElementById('kpiVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
+        document.getElementById('kpiVolPct').textContent = `${vAch}%`;
+        document.getElementById('kpiSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
+        document.getElementById('kpiSkuPct').textContent = `${pAch}%`;
+        document.getElementById('kpiMpRatio').textContent = `${mAct.toFixed(1)} / ${mTar.toFixed(1)} điểm`;
+        document.getElementById('kpiMpPct').textContent = `${mAch}%`;
+        document.getElementById('kpiCovRatio').textContent = `${cAct} / ${cTar} điểm`;
+        document.getElementById('kpiCovPct').textContent = `${cAch}%`;
+        document.getElementById('kpiSkuPriRatio').textContent = `${spAct.toFixed(1)} / ${spTar.toFixed(1)} điểm`;
+        document.getElementById('kpiSkuPriPct').textContent = `${spAch}%`;
+        document.getElementById('kpiFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
+        document.getElementById('kpiFitPct').textContent = `${fAch}%`;
+        document.getElementById('kpiCpdRatio').textContent = `${cpdAct} / ${cpdTar} cuộc`;
+        document.getElementById('kpiCpdPct').textContent = `${cpdAch}%`;
+        document.getElementById('kpiVorRatio').textContent = `${vorActLượt} / ${vorTarLượt} lượt`;
+        document.getElementById('kpiVorPct').textContent = `${vorAch}%`;
       }
 
       const preBox = document.getElementById('preBrandBreakdown');
-      if (preBox) {
-        preBox.innerHTML = '';
-        if (Object.keys(preBrandMap).length === 0) {
-          preBox.innerHTML = '<span class="text-gray-400">Chưa có sản lượng Premium</span>';
-        } else {
-          Object.entries(preBrandMap).sort((a,b) => b[1] - a[1]).forEach(([br, vol]) => {
-            const div = document.createElement('div');
-            div.className = "flex justify-between items-center text-gray-700 font-semibold";
-            div.innerHTML = `<span>● ${br}</span> <span class="font-black text-amber-700">${vol.toFixed(2)} HL</span>`;
-            preBox.appendChild(div);
-          });
-        }
+      preBox.innerHTML = '';
+      if (Object.keys(preBrandMap).length === 0) {
+        preBox.innerHTML = '<span class="text-gray-400">Chưa có sản lượng Premium</span>';
+      } else {
+        Object.entries(preBrandMap).sort((a,b) => b[1] - a[1]).forEach(([br, vol]) => {
+          const div = document.createElement('div');
+          div.className = "flex justify-between items-center text-gray-700 font-semibold";
+          div.innerHTML = `<span>● ${br}</span> <span class="font-black text-amber-700">${vol.toFixed(2)} HL</span>`;
+          preBox.appendChild(div);
+        });
       }
 
       const boxDate = document.getElementById('boxSpecificDateSales');
       let listFiltered = listMonth;
-      if (selectedDate !== "ALL" && boxDate) {
+      if (selectedDate !== "ALL") {
         listFiltered = listMonth.filter(o => o.date === selectedDate);
         let dayHuda = 0, dayPre = 0;
         listFiltered.forEach(o => {
@@ -2730,7 +2585,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         document.getElementById('lblSpecificDateVol').innerHTML = `${dayTot.toFixed(2)} HL <span class="text-xs font-bold text-amber-700">(${Math.round(dayTot / CASE_VOLUME)} th)</span>`;
         document.getElementById('lblSpecificDateMain').textContent = `${dayHuda.toFixed(2)} HL`;
         document.getElementById('lblSpecificDatePre').textContent = `${dayPre.toFixed(2)} HL`;
-      } else if (boxDate) {
+      } else {
         boxDate.classList.add('hidden');
       }
 
@@ -2749,77 +2604,73 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       }
 
       const aggBox = document.getElementById('aggregatedOutletList');
-      if (aggBox) {
-        aggBox.innerHTML = '';
-        document.getElementById('txtAggCount').textContent = `${sortedOutlets.length} điểm bán`;
+      aggBox.innerHTML = '';
+      document.getElementById('txtAggCount').textContent = `${sortedOutlets.length} điểm bán`;
 
-        sortedOutlets.forEach(ot => {
-          const otCases = (ot.totalVol / CASE_VOLUME).toFixed(1);
-          let prodItemsHtml = '';
-          Object.entries(ot.products).forEach(([pName, pData]) => {
-            prodItemsHtml += `
-              <div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]">
-                <span class="text-gray-700 font-medium">${pName}</span>
-                <span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span>
-              </div>
-            `;
-          });
-
-          const detailCard = document.createElement('details');
-          detailCard.className = "bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden";
-          detailCard.innerHTML = `
-            <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none">
-              <div class="pr-2">
-                <div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div>
-                <div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div>
-              </div>
-              <div class="text-right">
-                <div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div>
-                <div class="text-[10px] font-bold text-amber-700">${otCases} thùng ▼</div>
-              </div>
-            </summary>
-            <div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">
-              ${prodItemsHtml}
+      sortedOutlets.forEach(ot => {
+        const otCases = (ot.totalVol / CASE_VOLUME).toFixed(1);
+        let prodItemsHtml = '';
+        Object.entries(ot.products).forEach(([pName, pData]) => {
+          prodItemsHtml += `
+            <div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]">
+              <span class="text-gray-700 font-medium">${pName}</span>
+              <span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span>
             </div>
           `;
-          aggBox.appendChild(detailCard);
         });
-      }
+
+        const detailCard = document.createElement('details');
+        detailCard.className = "bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden";
+        detailCard.innerHTML = `
+          <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none">
+            <div class="pr-2">
+              <div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div>
+              <div class="text-[10px] font-bold text-amber-700">${otCases} thùng ▼</div>
+            </div>
+          </summary>
+          <div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">
+            ${prodItemsHtml}
+          </div>
+        `;
+        aggBox.appendChild(detailCard);
+      });
 
       let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
       if (selectedDate !== "ALL") promoList = promoList.filter(p => p.date === selectedDate);
 
       const promoBox = document.getElementById('promoListContent');
-      if (promoBox) {
-        promoBox.innerHTML = '';
-        const promoGroup = {};
-        promoList.forEach(p => {
-          const key = p.promoName;
-          if (!promoGroup[key]) promoGroup[key] = { count: 0, rewardName: p.rewardItem, outlets: new Set() };
-          promoGroup[key].count += p.qty;
-          promoGroup[key].outlets.add(p.outletName);
+      promoBox.innerHTML = '';
+      const promoGroup = {};
+      promoList.forEach(p => {
+        const key = p.promoName;
+        if (!promoGroup[key]) promoGroup[key] = { count: 0, rewardName: p.rewardItem, outlets: new Set() };
+        promoGroup[key].count += p.qty;
+        promoGroup[key].outlets.add(p.outletName);
+      });
+
+      const promoKeys = Object.keys(promoGroup);
+      document.getElementById('badgePromoCount').textContent = promoKeys.length;
+
+      if (promoKeys.length === 0) {
+        promoBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào trong đợt này.</p>`;
+      } else {
+        promoKeys.forEach(k => {
+          const item = promoGroup[k];
+          const div = document.createElement('div');
+          div.className = "p-2.5 bg-white rounded-xl border border-gray-100 flex justify-between items-center";
+          div.innerHTML = `
+            <div class="pr-2">
+              <div class="font-bold text-gray-800 text-[11px]">${k}</div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${item.rewardName} • Áp dụng ${item.outlets.size} điểm</div>
+            </div>
+            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span>
+          `;
+          promoBox.appendChild(div);
         });
-
-        const promoKeys = Object.keys(promoGroup);
-        document.getElementById('badgePromoCount').textContent = promoKeys.length;
-
-        if (promoKeys.length === 0) {
-          promoBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào trong đợt này.</p>`;
-        } else {
-          promoKeys.forEach(k => {
-            const item = promoGroup[k];
-            const div = document.createElement('div');
-            div.className = "p-2.5 bg-white rounded-xl border border-gray-100 flex justify-between items-center";
-            div.innerHTML = `
-              <div class="pr-2">
-                <div class="font-bold text-gray-800 text-[11px]">${k}</div>
-                <div class="text-[10px] text-gray-400 mt-0.5">${item.rewardName} • Áp dụng ${item.outlets.size} điểm</div>
-              </div>
-              <span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span>
-            `;
-            promoBox.appendChild(div);
-          });
-        }
       }
 
       // ==========================================
@@ -2852,11 +2703,7 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
         const actTot = actH + actP;
 
-        let minPreCases = 2;
-        if (m.level === "LV1") minPreCases = 5;
-        else if (m.level === "LV2") minPreCases = 3;
-        else if (m.level === "LV3") minPreCases = 2;
-
+        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
         const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
         const effectiveTarHuda = m.tarHuda;
         const effectiveTarTot = effectiveTarHuda + effectiveTarPre;
@@ -2924,49 +2771,48 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       });
 
       const outletBox = document.getElementById('outletList');
-      if (outletBox) {
-        outletBox.innerHTML = '';
-        preparedList.forEach(({ item: m, actH, actP, effectiveTarPre, effectiveTarHuda, isPass, pct, missingNotice }) => {
-          const card = document.createElement('div');
-          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
-          card.innerHTML = `
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr} • <span class="text-blue-600 font-extrabold">${m.level}</span></div>
-                <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
-                <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-                  ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-                </span>
-              </div>
+      outletBox.innerHTML = '';
+
+      preparedList.forEach(({ item: m, actH, actP, effectiveTarPre, effectiveTarHuda, isPass, pct, missingNotice }) => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr} • <span class="text-blue-600 font-extrabold">${m.level}</span></div>
+              <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
             </div>
-
-            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, pct)}%"></div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
+              <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+                ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+              </span>
             </div>
+          </div>
 
-            <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
-              <div class="text-[11px] text-gray-500 space-x-2">
-                <span>Huda: <b>${actH.toFixed(2)}</b>/${effectiveTarHuda.toFixed(2)}</span>
-                <span>Pre: <b>${actP.toFixed(2)}</b>/${effectiveTarPre.toFixed(2)}</span>
-              </div>
-              <div>${missingNotice}</div>
+          <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+            <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, pct)}%"></div>
+          </div>
+
+          <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
+            <div class="text-[11px] text-gray-500 space-x-2">
+              <span>Huda: <b>${actH.toFixed(2)}</b>/${effectiveTarHuda.toFixed(2)}</span>
+              <span>Pre: <b>${actP.toFixed(2)}</b>/${effectiveTarPre.toFixed(2)}</span>
             </div>
-          `;
-          outletBox.appendChild(card);
-        });
-      }
+            <div>${missingNotice}</div>
+          </div>
+        `;
+        outletBox.appendChild(card);
+      });
 
-      if (document.getElementById('countLV1')) document.getElementById('countLV1').textContent = cLV1;
-      if (document.getElementById('passLV1')) document.getElementById('passLV1').textContent = `Đạt ${pLV1}/${cLV1} điểm`;
+      document.getElementById('countLV1').textContent = cLV1;
+      document.getElementById('passLV1').textContent = `Đạt ${pLV1}/${cLV1} điểm`;
 
-      if (document.getElementById('countLV2')) document.getElementById('countLV2').textContent = cLV2;
-      if (document.getElementById('passLV2')) document.getElementById('passLV2').textContent = `Đạt ${pLV2}/${cLV2} điểm`;
+      document.getElementById('countLV2').textContent = cLV2;
+      document.getElementById('passLV2').textContent = `Đạt ${pLV2}/${cLV2} điểm`;
 
-      if (document.getElementById('countLV3')) document.getElementById('countLV3').textContent = cLV3;
-      if (document.getElementById('passLV3')) document.getElementById('passLV3').textContent = `Đạt ${pLV3}/${cLV3} điểm`;
+      document.getElementById('countLV3').textContent = cLV3;
+      document.getElementById('passLV3').textContent = `Đạt ${pLV3}/${cLV3} điểm`;
 
       const cardLV1 = document.getElementById('cardLV1');
       const cardLV2 = document.getElementById('cardLV2');
@@ -2974,34 +2820,34 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       const btnResetLV = document.getElementById('btnResetTBLevel');
 
       const baseLvlCard = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
-      if (cardLV1) cardLV1.className = baseLvlCard + " bg-blue-50/70 border-blue-200";
-      if (cardLV2) cardLV2.className = baseLvlCard + " bg-emerald-50/70 border-emerald-200";
-      if (cardLV3) cardLV3.className = baseLvlCard + " bg-purple-50/70 border-purple-200";
+      cardLV1.className = baseLvlCard + " bg-blue-50/70 border-blue-200";
+      cardLV2.className = baseLvlCard + " bg-emerald-50/70 border-emerald-200";
+      cardLV3.className = baseLvlCard + " bg-purple-50/70 border-purple-200";
 
-      if (currentTBLevel === 'LV1' && cardLV1) {
+      if (currentTBLevel === 'LV1') {
         cardLV1.className = baseLvlCard + " bg-blue-100/90 border-blue-300 ring-2 ring-blue-500 shadow-xs";
-        if (btnResetLV) btnResetLV.classList.remove('hidden');
-      } else if (currentTBLevel === 'LV2' && cardLV2) {
+        btnResetLV.classList.remove('hidden');
+      } else if (currentTBLevel === 'LV2') {
         cardLV2.className = baseLvlCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
-        if (btnResetLV) btnResetLV.classList.remove('hidden');
-      } else if (currentTBLevel === 'LV3' && cardLV3) {
+        btnResetLV.classList.remove('hidden');
+      } else if (currentTBLevel === 'LV3') {
         cardLV3.className = baseLvlCard + " bg-purple-100/90 border-purple-300 ring-2 ring-purple-500 shadow-xs";
-        if (btnResetLV) btnResetLV.classList.remove('hidden');
-      } else if (btnResetLV) {
+        btnResetLV.classList.remove('hidden');
+      } else {
         btnResetLV.classList.add('hidden');
       }
 
       const pctPass = listMaster.length ? Math.round((passCount / listMaster.length) * 100) : 0;
-      if (document.getElementById('txtOutletPercent')) document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
-      if (document.getElementById('txtOutletAchieved')) document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${listMaster.length}`;
-      if (document.getElementById('barOutlet')) document.getElementById('barOutlet').style.width = `${Math.min(100, pctPass)}%`;
+      document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
+      document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${listMaster.length}`;
+      document.getElementById('barOutlet').style.width = `${Math.min(100, pctPass)}%`;
 
-      if (document.getElementById('txtVolHuda')) document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
-      if (document.getElementById('barHuda')) document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
+      document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
+      document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
 
-      if (document.getElementById('txtVolPre')) document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
-      if (document.getElementById('barPre')) document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
-      if (document.getElementById('txtListCount')) document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
+      document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
+      document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
+      document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
       // ==========================================
       // 3. RENDER TAB 3: OLS LISTING FEE
@@ -3023,26 +2869,26 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         }
       });
 
-      if (document.getElementById('passLFTont')) document.getElementById('passLFTont').textContent = `Đạt ${pTONT}/${cTONT} điểm`;
-      if (document.getElementById('passLFToft')) document.getElementById('passLFToft').textContent = `Đạt ${pTOFT}/${cTOFT} điểm`;
+      document.getElementById('passLFTont').textContent = `Đạt ${pTONT}/${cTONT} điểm`;
+      document.getElementById('passLFToft').textContent = `Đạt ${pTOFT}/${cTOFT} điểm`;
 
       const cardLFTont = document.getElementById('cardLFTont');
       const cardLFToft = document.getElementById('cardLFToft');
       const baseLFCard = "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all";
 
-      if (cardLFTont) cardLFTont.className = baseLFCard + " bg-amber-50/70 border-amber-200";
-      if (cardLFToft) cardLFToft.className = baseLFCard + " bg-emerald-50/70 border-emerald-200";
+      cardLFTont.className = baseLFCard + " bg-amber-50/70 border-amber-200";
+      cardLFToft.className = baseLFCard + " bg-emerald-50/70 border-emerald-200";
 
       const actBtn = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
       const inactBtn = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
 
-      if (document.getElementById('btnLFChannelAll')) document.getElementById('btnLFChannelAll').className = (currentLFChannel === 'ALL') ? actBtn : inactBtn;
-      if (document.getElementById('btnLFTont')) document.getElementById('btnLFTont').className = (currentLFChannel === 'TONT') ? (actBtn + " text-amber-700") : inactBtn;
-      if (document.getElementById('btnLFToft')) document.getElementById('btnLFToft').className = (currentLFChannel === 'TOFT') ? (actBtn + " text-emerald-700") : inactBtn;
+      document.getElementById('btnLFChannelAll').className = (currentLFChannel === 'ALL') ? actBtn : inactBtn;
+      document.getElementById('btnLFTont').className = (currentLFChannel === 'TONT') ? (actBtn + " text-amber-700") : inactBtn;
+      document.getElementById('btnLFToft').className = (currentLFChannel === 'TOFT') ? (actBtn + " text-emerald-700") : inactBtn;
 
-      if (currentLFChannel === 'TONT' && cardLFTont) {
+      if (currentLFChannel === 'TONT') {
         cardLFTont.className = baseLFCard + " bg-amber-100/90 border-amber-300 ring-2 ring-amber-500 shadow-xs";
-      } else if (currentLFChannel === 'TOFT' && cardLFToft) {
+      } else if (currentLFChannel === 'TOFT') {
         cardLFToft.className = baseLFCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
       }
 
@@ -3118,47 +2964,46 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       });
 
       const lfBox = document.getElementById('lfOutletList');
-      if (lfBox) {
-        lfBox.innerHTML = '';
-        if (preparedLFList.length === 0) {
-          lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee phù hợp.</div>`;
-        } else {
-          preparedLFList.forEach(({ item: l, isPass, pct, statusDisplay, missingNotice }) => {
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
-            card.innerHTML = `
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="text-[10px] font-bold text-gray-400 tracking-wide">${l.code} • ${l.sr} • <span class="${l.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${l.channelType}</span> <span class="text-gray-400 font-normal">(${l.channelDesc})</span></div>
-                  <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${l.name}</div>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
-                  <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-                    ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-                  </span>
-                </div>
-              </div>
+      lfBox.innerHTML = '';
 
-              <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, pct)}%"></div>
+      if (preparedLFList.length === 0) {
+        lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee phù hợp.</div>`;
+      } else {
+        preparedLFList.forEach(({ item: l, isPass, pct, statusDisplay, missingNotice }) => {
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
+          card.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${l.code} • ${l.sr} • <span class="${l.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${l.channelType}</span> <span class="text-gray-400 font-normal">(${l.channelDesc})</span></div>
+                <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${l.name}</div>
               </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
+                <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+                  ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+                </span>
+              </div>
+            </div>
 
-              <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
-                <div class="text-[11px] text-gray-500">${statusDisplay}</div>
-                <div>${missingNotice}</div>
-              </div>
-            `;
-            lfBox.appendChild(card);
-          });
-        }
+            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, pct)}%"></div>
+            </div>
+
+            <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
+              <div class="text-[11px] text-gray-500">${statusDisplay}</div>
+              <div>${missingNotice}</div>
+            </div>
+          `;
+          lfBox.appendChild(card);
+        });
       }
 
       const pctLFPass = listLF.length ? Math.round((passLFCount / listLF.length) * 100) : 0;
-      if (document.getElementById('txtLFPercent')) document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
-      if (document.getElementById('txtLFAchieved')) document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
-      if (document.getElementById('barLF')) document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
-      if (document.getElementById('txtLFListCount')) document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
+      document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
+      document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
+      document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
+      document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
 
       // ==========================================
       // 4. RENDER TAB 4: CHỤP TB
@@ -3172,16 +3017,16 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
         else cntAuditNone++;
       });
 
-      if (document.getElementById('countAuditDone')) document.getElementById('countAuditDone').textContent = cntAuditDone;
-      if (document.getElementById('countAuditNeed2')) document.getElementById('countAuditNeed2').textContent = cntAuditNeed2;
-      if (document.getElementById('countAuditNone')) document.getElementById('countAuditNone').textContent = cntAuditNone;
+      document.getElementById('countAuditDone').textContent = cntAuditDone;
+      document.getElementById('countAuditNeed2').textContent = cntAuditNeed2;
+      document.getElementById('countAuditNone').textContent = cntAuditNone;
 
       const totalAuditOutlets = baseAuditList.length;
       const pctAuditPass = totalAuditOutlets ? Math.round((cntAuditDone / totalAuditOutlets) * 100) : 0;
 
-      if (document.getElementById('txtAuditPercent')) document.getElementById('txtAuditPercent').textContent = `${pctAuditPass}%`;
-      if (document.getElementById('txtAuditAchieved')) document.getElementById('txtAuditAchieved').textContent = `${cntAuditDone} / ${totalAuditOutlets}`;
-      if (document.getElementById('barAudit')) document.getElementById('barAudit').style.width = `${Math.min(100, pctAuditPass)}%`;
+      document.getElementById('txtAuditPercent').textContent = `${pctAuditPass}%`;
+      document.getElementById('txtAuditAchieved').textContent = `${cntAuditDone} / ${totalAuditOutlets}`;
+      document.getElementById('barAudit').style.width = `${Math.min(100, pctAuditPass)}%`;
 
       const cardADone = document.getElementById('cardAuditDone');
       const cardANeed2 = document.getElementById('cardAuditNeed2');
@@ -3189,20 +3034,20 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       const btnResetAudit = document.getElementById('btnResetAuditStatus');
 
       const baseAuditCardClass = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
-      if (cardADone) cardADone.className = baseAuditCardClass + " bg-emerald-50/70 border-emerald-200";
-      if (cardANeed2) cardANeed2.className = baseAuditCardClass + " bg-amber-50/70 border-amber-200";
-      if (cardANone) cardANone.className = baseAuditCardClass + " bg-rose-50/70 border-rose-200";
+      cardADone.className = baseAuditCardClass + " bg-emerald-50/70 border-emerald-200";
+      cardANeed2.className = baseAuditCardClass + " bg-amber-50/70 border-amber-200";
+      cardANone.className = baseAuditCardClass + " bg-rose-50/70 border-rose-200";
 
-      if (currentAuditStatus === 'DONE' && cardADone) {
+      if (currentAuditStatus === 'DONE') {
         cardADone.className = baseAuditCardClass + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
-        if (btnResetAudit) btnResetAudit.classList.remove('hidden');
-      } else if (currentAuditStatus === 'NEED_SECOND' && cardANeed2) {
+        btnResetAudit.classList.remove('hidden');
+      } else if (currentAuditStatus === 'NEED_SECOND') {
         cardANeed2.className = baseAuditCardClass + " bg-amber-100/90 border-amber-300 ring-2 ring-amber-500 shadow-xs";
-        if (btnResetAudit) btnResetAudit.classList.remove('hidden');
-      } else if (currentAuditStatus === 'NONE' && cardANone) {
+        btnResetAudit.classList.remove('hidden');
+      } else if (currentAuditStatus === 'NONE') {
         cardANone.className = baseAuditCardClass + " bg-rose-100/90 border-rose-300 ring-2 ring-rose-500 shadow-xs";
-        if (btnResetAudit) btnResetAudit.classList.remove('hidden');
-      } else if (btnResetAudit) {
+        btnResetAudit.classList.remove('hidden');
+      } else {
         btnResetAudit.classList.add('hidden');
       }
 
@@ -3218,55 +3063,55 @@ Bạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
       filteredAuditList.sort((a, b) => a.count - b.count);
 
       const auditBox = document.getElementById('auditOutletList');
-      if (auditBox) {
-        auditBox.innerHTML = '';
-        if (filteredAuditList.length === 0) {
-          auditBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu chụp trưng bày phù hợp.</div>`;
-        } else {
-          filteredAuditList.forEach(a => {
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
+      auditBox.innerHTML = '';
 
-            let badgeHtml = '';
-            if (a.count >= 2) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-800">ĐỦ 2 LẦN</span>`;
-            else if (a.count === 1) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-amber-100 text-amber-800">THIẾU LẦN 2</span>`;
-            else badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700">CHƯA CHẤM</span>`;
+      if (filteredAuditList.length === 0) {
+        auditBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu chụp trưng bày phù hợp.</div>`;
+      } else {
+        filteredAuditList.forEach(a => {
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
 
-            let auditDetailsHtml = '';
-            if (a.count === 0) {
-              auditDetailsHtml = `<div class="text-[11px] text-rose-500 font-semibold italic">Chưa ghi nhận lượt chấm nào trong tháng</div>`;
-            } else {
-              a.audits.forEach((aud, idx) => {
-                const resColor = (aud.result === 'Đạt' || aud.result.includes('Đạt')) ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold';
-                auditDetailsHtml += `
-                  <div class="flex justify-between items-center text-[10px] py-0.5 border-b border-gray-50 last:border-0">
-                    <span class="text-gray-600">Lần ${idx + 1}: <b class="text-gray-800">${aud.date}</b></span>
-                    <span class="${resColor}">${aud.result}</span>
-                  </div>
-                `;
-              });
-              if (a.count === 1) {
-                auditDetailsHtml += `<div class="text-[10px] text-amber-700 font-semibold mt-0.5">⚠️ Cần chấm Lần 2 trước ngày 25</div>`;
-              }
-            }
+          let badgeHtml = '';
+          if (a.count >= 2) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-800">ĐỦ 2 LẦN</span>`;
+          else if (a.count === 1) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-amber-100 text-amber-800">THIẾU LẦN 2</span>`;
+          else badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700">CHƯA CHẤM</span>`;
 
-            card.innerHTML = `
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div>
-                  <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${a.name}</div>
+          let auditDetailsHtml = '';
+          if (a.count === 0) {
+            auditDetailsHtml = `<div class="text-[11px] text-rose-500 font-semibold italic">Chưa ghi nhận lượt chấm nào trong tháng</div>`;
+          } else {
+            a.audits.forEach((aud, idx) => {
+              const resColor = (aud.result === 'Đạt' || aud.result.includes('Đạt')) ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold';
+              auditDetailsHtml += `
+                <div class="flex justify-between items-center text-[10px] py-0.5 border-b border-gray-50 last:border-0">
+                  <span class="text-gray-600">Lần ${idx + 1}: <b class="text-gray-800">${aud.date}</b></span>
+                  <span class="${resColor}">${aud.result}</span>
                 </div>
-                <div>${badgeHtml}</div>
+              `;
+            });
+            if (a.count === 1) {
+              auditDetailsHtml += `<div class="text-[10px] text-amber-700 font-semibold mt-0.5">⚠️ Cần chấm Lần 2 trước ngày 25</div>`;
+            }
+          }
+
+          card.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div>
+                <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${a.name}</div>
               </div>
-              <div class="pt-1.5 border-t border-gray-100">
-                ${auditDetailsHtml}
-              </div>
-            `;
-            auditBox.appendChild(card);
-          });
-        }
-        document.getElementById('txtAuditListCount').textContent = `${filteredAuditList.length} điểm bán`;
+              <div>${badgeHtml}</div>
+            </div>
+            <div class="pt-1.5 border-t border-gray-100">
+              ${auditDetailsHtml}
+            </div>
+          `;
+          auditBox.appendChild(card);
+        });
       }
+
+      document.getElementById('txtAuditListCount').textContent = `${filteredAuditList.length} điểm bán`;
     }
   </script>
 </body>
