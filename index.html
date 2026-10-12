@@ -17,7 +17,7 @@
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN -->
+  <!-- Header & Chữ ký LHN (Cân đối 100%, không lệch) -->
   <div class="mb-2.5 px-0.5">
     <div class="flex justify-between items-center mb-2">
       <div>
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <!-- 3 Nút chức năng -->
+    <!-- 3 Nút chức năng dàn đều 3 cột cực kỳ ngay ngắn -->
     <div class="grid grid-cols-3 gap-2">
       <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
         📦 Đơn ngày
@@ -45,7 +45,7 @@
       </button>
     </div>
 
-    <!-- Banner ngày đơn gần nhất -->
+    <!-- Dòng hiển thị ngày đơn gần nhất (Độ trễ duyệt T+1) -->
     <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
       <span class="text-blue-900 font-semibold flex items-center gap-1">
         📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <!-- BỘ LỌC TÊN SR -->
+  <!-- BỘ LỌC TÊN SR (Tự động ghi nhớ cho từng nhân viên) -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <div class="flex justify-between items-center mb-1">
       <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
@@ -74,7 +74,7 @@
     </select>
   </div>
 
-  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
+  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN (SEARCH BAR) -->
   <div class="mb-3">
     <div class="relative">
       <input type="text" id="searchInput" oninput="renderAll()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
@@ -84,7 +84,7 @@
     </div>
   </div>
 
-  <!-- THANH CHUYỂN 4 TAB -->
+  <!-- THANH CHUYỂN 4 TAB (Khung viền nổi bật, sắc nét) -->
   <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
     <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN
@@ -106,7 +106,10 @@
     <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
-        <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
+        <div class="flex items-center gap-1.5">
+          <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xs active:scale-95 transition-all">🎯 TOTAL KPI</button>
+          <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
+        </div>
       </div>
       <div class="flex items-baseline justify-between">
         <span id="txtTargetAchieved" class="text-2xl font-black text-[#1F4E79]">0.00 / 0.00 HL</span>
@@ -116,7 +119,7 @@
         <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
+      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI HOÀN HẢO -->
       <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
         <!-- Cột Mainstream -->
         <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
@@ -161,86 +164,12 @@
       </details>
     </div>
 
-    <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE (ĐẦY ĐỦ ACT / TARGET / % VÀ TIỀN THƯỞNG) -->
-    <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
-      <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">💵</span>
-          <div>
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide block">TẠM TÍNH THƯỞNG (INCENTIVE)</span>
-            <span id="txtTotalIncentiveDisplay" class="text-base font-black text-amber-900 leading-tight">0 đ</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-1 bg-white/90 border border-amber-200 px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-amber-800 shadow-xs">
-          <span id="lblIncentiveToggleText">Chi tiết</span>
-          <span id="iconIncentiveToggle" class="text-[9px]">▼</span>
-        </div>
-      </div>
-
-      <!-- Khối chi tiết bung ra: Đầy đủ 4 mục Act/Target + % + Số tiền -->
-      <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
-        <!-- 1. Sản Lượng Total -->
-        <div class="bg-white/80 p-2 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
-            <span id="incVolRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
-          </div>
-          <div class="text-right">
-            <span id="incVolVal" class="text-blue-900 font-black block">0 đ</span>
-            <span id="incVolAch" class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 2. Sản Lượng Premium -->
-        <div class="bg-white/80 p-2 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
-            <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
-          </div>
-          <div class="text-right">
-            <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
-            <span id="incSkuAch" class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 3. Chỉ Tiêu MP -->
-        <div class="bg-white/80 p-2 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
-            <span id="incMepRatio" class="text-[10px] text-gray-400 font-medium">0 / 0 điểm</span>
-          </div>
-          <div class="text-right">
-            <span id="incMepVal" class="text-emerald-900 font-black block">0 đ</span>
-            <span id="incMepAch" class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 4. Điểm FIT -->
-        <div class="bg-white/80 p-2 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
-            <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00</span>
-          </div>
-          <div class="text-right">
-            <span id="incFitVal" class="text-purple-900 font-black block">0 đ</span>
-            <span id="incFitAch" class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- Tổng kết tiền thực nhận -->
-        <div class="pt-1 flex justify-between items-center text-xs font-bold bg-amber-100/70 p-2.5 rounded-xl border border-amber-200">
-          <span class="text-amber-950 uppercase text-[10px] font-black">💰 Tổng Tiền Thực Nhận (Total):</span>
-          <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. BỘ LỌC NGÀY -->
+    <!-- 2. BỘ LỌC NGÀY (GỌN GÀNG, CHỈ HIỆN KHI CHỌN NGÀY CỤ THỂ) -->
     <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
       <div class="flex gap-2 items-center">
         <div class="flex-1">
           <select id="dateFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
-            <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>
+            <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng </option>
           </select>
         </div>
         <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 rounded-xl text-xs font-bold transition-all">Reset</button>
@@ -304,7 +233,7 @@
         </div>
       </div>
 
-      <!-- CARD LEVEL 1, 2, 3 -->
+      <!-- CARD LEVEL 1, 2, 3: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
       <div class="pt-2 border-t border-gray-100">
         <div class="flex justify-between items-center mb-1.5">
           <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ (Chạm để lọc):</span>
@@ -389,11 +318,11 @@
         </div>
       </div>
 
-      <!-- CARD TONT & TOFT -->
+      <!-- CARD TONT & TOFT: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
       <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
         <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
           <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
-          <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
+          <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Premium</span>
           <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
         </div>
         <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
@@ -426,7 +355,7 @@
         <div id="barAudit" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- BỘ LỌC CHẠM CARD -->
+      <!-- BỘ LỌC CHẠM CARD: 2 LẦN / THIẾU LẦN 2 / CHƯA CHẤM -->
       <div class="pt-2 border-t border-gray-100">
         <div class="flex justify-between items-center mb-1.5">
           <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm (Chạm để lọc):</span>
@@ -450,6 +379,8 @@
           </div>
         </div>
       </div>
+
+
     </div>
 
     <div class="flex justify-between items-center mb-1 px-1">
@@ -457,6 +388,102 @@
       <span id="txtAuditListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
     </div>
     <div id="auditOutletList" class="space-y-2.5"></div>
+  </div>
+
+      <!-- ================= MODAL TOTAL KPI (POPUP NẮM BẮT TIẾN ĐỘ ACT/TARGET) ================= -->
+  <div id="totalKpiModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-black text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
+            🎯 TIẾN ĐỘ TOTAL KPI (FIT-10)
+          </h3>
+          <p class="text-[10px] text-gray-400 font-medium" id="lblKpiModalSubtitle">Theo dõi toàn diện Act / Target & % hoàn thành</p>
+        </div>
+        <button onclick="closeTotalKpiModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
+      </div>
+
+      <!-- Danh sách 8 chỉ số phẳng, trực quan -->
+      <div class="space-y-1.5 max-h-[68vh] overflow-y-auto pr-0.5 text-xs">
+        <!-- 1. Sản Lượng Total -->
+        <div class="bg-blue-50/70 p-2.5 rounded-2xl border border-blue-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">📦 1. Sản Lượng Total</span>
+            <span id="kpiVolRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+          </div>
+          <span id="kpiVolPct" class="px-2 py-0.5 bg-blue-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 2. Sản Lượng Premium -->
+        <div class="bg-amber-50/70 p-2.5 rounded-2xl border border-amber-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">👑 2. Sản Lượng Premium</span>
+            <span id="kpiSkuRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+          </div>
+          <span id="kpiSkuPct" class="px-2 py-0.5 bg-amber-500 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 3. Chỉ Tiêu MP -->
+        <div class="bg-emerald-50/70 p-2.5 rounded-2xl border border-emerald-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">🎯 3. Chỉ Tiêu MP</span>
+            <span id="kpiMpRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
+          </div>
+          <span id="kpiMpPct" class="px-2 py-0.5 bg-emerald-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 4. Độ Phủ (Coverage) -->
+        <div class="bg-teal-50/70 p-2.5 rounded-2xl border border-teal-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">📍 4. Độ Phủ (Coverage)</span>
+            <span id="kpiCovRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
+          </div>
+          <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 5. Chỉ Tiêu SKU Ưu Tiên -->
+        <div class="bg-indigo-50/70 p-2.5 rounded-2xl border border-indigo-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">🍺 5. Chỉ Tiêu SKU Ưu Tiên</span>
+            <span id="kpiSkuPriRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
+          </div>
+          <span id="kpiSkuPriPct" class="px-2 py-0.5 bg-indigo-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 6. Điểm FIT (Quy đổi %) -->
+        <div class="bg-purple-50/70 p-2.5 rounded-2xl border border-purple-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">📸 6. Điểm FIT (Hình ảnh/Trưng bày)</span>
+            <span id="kpiFitRatio" class="text-[10px] text-gray-500 font-medium">0% / 0%</span>
+          </div>
+          <span id="kpiFitPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 7. Call Per Day -->
+        <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">🚶‍♂️ 7. Call Per Day (Ghé thăm/ngày)</span>
+            <span id="kpiCpdRatio" class="text-[10px] text-gray-500 font-medium">0.0 / 0.0 cuộc</span>
+          </div>
+          <span id="kpiCpdPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+
+        <!-- 8. Visit On Route -->
+        <div class="bg-rose-50/70 p-2.5 rounded-2xl border border-rose-100 flex justify-between items-center">
+          <div>
+            <span class="font-bold text-gray-800 block text-[11px]">🗺️ 8. Visit On Route (Đúng tuyến MCP)</span>
+            <span id="kpiVorRatio" class="text-[10px] text-gray-500 font-medium">0% / 0%</span>
+          </div>
+          <span id="kpiVorPct" class="px-2 py-0.5 bg-rose-600 text-white font-black rounded-lg text-[11px]">0%</span>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-gray-100">
+        <button onclick="closeTotalKpiModal()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 font-bold rounded-xl text-xs transition-all">
+          Đóng
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
@@ -472,44 +499,36 @@
         <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
-      <!-- Danh sách 5 tùy chọn báo cáo -->
-      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
+      <!-- Danh sách 4 tùy chọn báo cáo chuyên nghiệp -->
+      <div class="space-y-2">
+        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-3 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
+            <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
         </button>
 
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
+        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-3 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
+            <span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
           </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
+          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, tiến độ Target tháng (Volume & Premium), điểm thiếu cần bù</p>
         </button>
 
-        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
-            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
-        </button>
-
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
+        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-3 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
+            <span class="text-[10px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
         </button>
 
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
+        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-3 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
+            <span class="text-[10px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
           </div>
           <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
         </button>
@@ -530,12 +549,14 @@
         <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
+      <!-- Chọn ngày muốn xem -->
       <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
         <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
         <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
         </select>
       </div>
 
+      <!-- 3 Card tương tác: Bấm để lọc trực tiếp -->
       <div class="grid grid-cols-3 gap-2 text-center select-none">
         <div id="cardFilterAll" onclick="setModalFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50 border-blue-200 ring-2 ring-blue-500 shadow-sm">
           <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG SẢN LƯỢNG</span>
@@ -554,15 +575,18 @@
         </div>
       </div>
 
+      <!-- Header danh sách hiển thị trạng thái lọc & Nút sao chép nhắc nhở -->
       <div class="flex justify-between items-center px-1 pt-0.5">
         <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
         <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
       </div>
 
+      <!-- Nút sao chép tin nhắn gửi nhóm Zalo linh hoạt theo bộ lọc -->
       <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
         📢 Sao chép nhắc nhở các bạn chưa có đơn
       </button>
 
+      <!-- Danh sách 9 bạn SR cuộn mượt -->
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
       </div>
     </div>
@@ -629,6 +653,7 @@
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -757,15 +782,13 @@
             SALES_TARGETS = data.targets || {};
           }
 
-          try {
-            localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-            localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-            localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-            localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-            localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-            localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-            localStorage.setItem('UPDATE_TIME', data.updated_at);
-          } catch(e) {}
+          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+          localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
+          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+          localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
+          localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+          localStorage.setItem('UPDATE_TIME', data.updated_at);
 
           document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
           document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
@@ -806,28 +829,26 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      try {
-        const localMaster = localStorage.getItem('MASTER_DATA');
-        const localListing = localStorage.getItem('LISTING_DATA');
-        const localSec = localStorage.getItem('SEC_DATA');
-        const localPromo = localStorage.getItem('PROMO_DATA');
-        const localAudit = localStorage.getItem('AUDIT_DATA');
-        const localTargets = localStorage.getItem('SALES_TARGETS');
-        const localTime = localStorage.getItem('UPDATE_TIME');
+      const localMaster = localStorage.getItem('MASTER_DATA');
+      const localListing = localStorage.getItem('LISTING_DATA');
+      const localSec = localStorage.getItem('SEC_DATA');
+      const localPromo = localStorage.getItem('PROMO_DATA');
+      const localAudit = localStorage.getItem('AUDIT_DATA');
+      const localTargets = localStorage.getItem('SALES_TARGETS');
+      const localTime = localStorage.getItem('UPDATE_TIME');
 
-        if (localMaster) MASTER = JSON.parse(localMaster);
-        if (localListing) LISTING_FEE = JSON.parse(localListing);
-        if (localSec) SEC_ORDERS = JSON.parse(localSec);
-        if (localPromo) PROMOTIONS = JSON.parse(localPromo);
-        if (localAudit) AUDIT_DATA = JSON.parse(localAudit);
-        if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
-        if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
+      if (localMaster) MASTER = JSON.parse(localMaster);
+      if (localListing) LISTING_FEE = JSON.parse(localListing);
+      if (localSec) SEC_ORDERS = JSON.parse(localSec);
+      if (localPromo) PROMOTIONS = JSON.parse(localPromo);
+      if (localAudit) AUDIT_DATA = JSON.parse(localAudit);
+      if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
+      if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
-        const savedSR = localStorage.getItem('SAVED_SR');
-        if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
-          document.getElementById('srFilter').value = savedSR;
-        }
-      } catch(e) {}
+      const savedSR = localStorage.getItem('SAVED_SR');
+      if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
+        document.getElementById('srFilter').value = savedSR;
+      }
 
       updateLatestOrderDateBanner();
       populateDateFilter();
@@ -838,7 +859,7 @@
 
     function onSRChange() {
       const selected = document.getElementById('srFilter').value;
-      try { localStorage.setItem('SAVED_SR', selected); } catch(e) {}
+      localStorage.setItem('SAVED_SR', selected);
       renderAll();
     }
 
@@ -1115,9 +1136,12 @@
       hasList.sort((a,b) => b.vol - a.vol);
 
       let msg = "";
+
       if (currentModalFilter === 'NO_ORDER') {
         msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG\n📅 Ngày duyệt: ${selectedDate}\n\n⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:\n`;
-        noList.forEach((n, i) => { msg += `${i + 1}. ${n}\n`; });
+        noList.forEach((n, i) => {
+          msg += `${i + 1}. ${n}\n`;
+        });
         msg += `\n👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
       } else if (currentModalFilter === 'HAS_ORDER') {
         msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:\n`;
@@ -1133,7 +1157,9 @@
 
         if (noList.length > 0) {
           msg += `\n⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):\n`;
-          noList.forEach((n, i) => { msg += `  ${i + 1}. ${n}\n`; });
+          noList.forEach((n, i) => {
+            msg += `  ${i + 1}. ${n}\n`;
+          });
           msg += `\n👉 Các bạn chưa có đơn kiểm tra lại tuyến hôm qua có vướng mắc gì báo SS hỗ trợ nhé!`;
         } else {
           msg += `\n🎉 Xuất sắc: 100% nhân sự đều có đơn trong ngày!`;
@@ -1142,7 +1168,9 @@
 
       navigator.clipboard.writeText(msg).then(() => {
         alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
     }
 
     function promptExportFiles() {
@@ -1157,27 +1185,58 @@
 
     function downloadCloudFile(type) {
       if (type === 'TRACKING') {
-        if (!MASTER || MASTER.length === 0) { alert("Không có dữ liệu Trưng bày trên Cloud!"); return; }
+        if (!MASTER || MASTER.length === 0) {
+          alert("Không có dữ liệu Trưng bày trên Cloud!");
+          return;
+        }
         const exportData = MASTER.map(m => ({
-          "Mã Chương Trình": m.prog, "Mã Điểm Bán": m.code, "Tên Điểm Bán": m.name, "SR Quản Lý": m.sr, "Level": m.level, "Target Huda (HL)": m.tarHuda, "Target Premium (HL)": m.tarPre, "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
+          "Mã Chương Trình": m.prog,
+          "Mã Điểm Bán": m.code,
+          "Tên Điểm Bán": m.name,
+          "SR Quản Lý": m.sr,
+          "Level": m.level,
+          "Target Huda (HL)": m.tarHuda,
+          "Target Premium (HL)": m.tarPre,
+          "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Display TOFT");
         XLSX.writeFile(wb, `Tracking_TrungBay_${new Date().toISOString().slice(0,10)}.xlsx`);
       } else if (type === 'LF') {
-        if (!LISTING_FEE || LISTING_FEE.length === 0) { alert("Không có dữ liệu Listing Fee trên Cloud!"); return; }
+        if (!LISTING_FEE || LISTING_FEE.length === 0) {
+          alert("Không có dữ liệu Listing Fee trên Cloud!");
+          return;
+        }
         const exportData = LISTING_FEE.map(l => ({
-          "CODE DRAGON": l.code, "Tên Điểm Bán": l.name, "SR": l.sr, "Kênh Phân Loại": l.channelType, "Mô Tả Kênh": l.channelDesc, "Huyện": l.district, "Target Thùng": l.tarCases, "Target HL": l.tarHL
+          "CODE DRAGON": l.code,
+          "Tên Điểm Bán": l.name,
+          "SR": l.sr,
+          "Kênh Phân Loại": l.channelType,
+          "Mô Tả Kênh": l.channelDesc,
+          "Huyện": l.district,
+          "Target Thùng": l.tarCases,
+          "Target HL": l.tarHL
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Listing Fee");
         XLSX.writeFile(wb, `Listing_Fee_${new Date().toISOString().slice(0,10)}.xlsx`);
       } else if (type === 'SEC') {
-        if (!SEC_ORDERS || SEC_ORDERS.length === 0) { alert("Không có dữ liệu đơn SEC-06 trên Cloud!"); return; }
+        if (!SEC_ORDERS || SEC_ORDERS.length === 0) {
+          alert("Không có dữ liệu đơn SEC-06 trên Cloud!");
+          return;
+        }
         const exportData = SEC_ORDERS.map(s => ({
-          "Ngày Đặt": s.date, "SR": s.sr, "Mã Điểm Bán": s.code, "Tên Điểm Bán": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Phân Loại": s.category, "Sản Lượng (HL)": s.vol, "Số Thùng": s.qty
+          "Ngày Đặt": s.date,
+          "SR": s.sr,
+          "Mã Điểm Bán": s.code,
+          "Tên Điểm Bán": s.name,
+          "Brand": s.brand,
+          "Sản Phẩm": s.product,
+          "Phân Loại": s.category,
+          "Sản Lượng (HL)": s.vol,
+          "Số Thùng": s.qty
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -1186,21 +1245,10 @@
       }
     }
 
-    // HÀM ĐỌC NGÀY CHUẨN XÁC XỬ LÝ ĐƯỢC CẢ YYYY-MM-DD, DD/MM/YYYY VÀ SERIAL EXCEL
-    function parseExcelDate(val) {
-      if (!val) return '';
-      const s = String(val).trim();
-      if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0, 10);
-      if (s.includes('/')) {
-        const parts = s.split(' ')[0].split('/');
-        if (parts.length === 3 && parts[2].length === 4) {
-          const d = parts[0].padStart(2, '0');
-          const m = parts[1].padStart(2, '0');
-          const y = parts[2];
-          return `${y}-${m}-${d}`;
-        }
-      }
-      const num = parseFloat(s);
+    function parseExcelDate(serial) {
+      if (!serial) return '';
+      if (typeof serial === 'string' && serial.includes('-')) return serial.substring(0, 10);
+      const num = parseFloat(serial);
       if (!isNaN(num) && num > 30000) {
         const utc_days = Math.floor(num - 25569);
         const date = new Date(utc_days * 86400 * 1000);
@@ -1209,7 +1257,7 @@
         const y = date.getFullYear();
         return `${y}-${m}-${d}`;
       }
-      return s.substring(0, 10);
+      return String(serial);
     }
 
     function formatAuditDate(serial) {
@@ -1237,7 +1285,7 @@
       SEC_ORDERS.forEach(o => { if (o.date) dateSet.add(o.date); });
       const sel = document.getElementById('dateFilter');
       const cur = sel.value;
-      sel.innerHTML = '<option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>';
+      sel.innerHTML = '<option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng </option>';
       Array.from(dateSet).sort().reverse().forEach(dt => {
         const opt = document.createElement('option');
         opt.value = dt;
@@ -1258,24 +1306,7 @@
       renderAll();
     }
 
-    function toggleIncentiveDetail() {
-      const box = document.getElementById('boxIncentiveDetail');
-      const icon = document.getElementById('iconIncentiveToggle');
-      const lbl = document.getElementById('lblIncentiveToggleText');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        icon.textContent = '▲';
-        lbl.textContent = 'Thu gọn';
-      } else {
-        box.classList.add('hidden');
-        icon.textContent = '▼';
-        lbl.textContent = 'Chi tiết';
-      }
-    }
-
-    // ==========================================
-    // XỬ LÝ NẠP FILE (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC, AN TOÀN BỘ NHỚ)
-    // ==========================================
+    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET FIT-10)
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1293,15 +1324,14 @@
 
       const btnSave = document.getElementById('btnSaveData');
       btnSave.textContent = "Đang xử lý dữ liệu...";
-      await new Promise(r => setTimeout(r, 40));
+      await new Promise(r => setTimeout(r, 30));
 
       try {
-        // 1. FILE TRACKING MASTER
         if (fTrack) {
           const bTrack = await fTrack.arrayBuffer();
-          const wbTrack = XLSX.read(bTrack, { dense: false });
+          const wbTrack = XLSX.read(bTrack, { sheets: [' Display TOFT', 'Listing Free'], dense: false });
 
-          // 1.1 Sheet Trưng bày TOFT
+          // 1. ĐỌC SHEET TRƯNG BÀY
           const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
           if (wbTrack.Sheets[sTrack]) {
             const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
@@ -1311,7 +1341,7 @@
               if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
             }
 
-            const h = (rawTrack[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
+            const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
             let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
             h.forEach((val, i) => {
               if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
@@ -1345,21 +1375,31 @@
             }
           }
 
-          // 1.2 Sheet Listing Fee
+          // 2. ĐỌC SHEET LISTING FEE
           const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
           if (sLFName && wbTrack.Sheets[sLFName]) {
-            const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1, defval: "" });
+            const wsLF = wbTrack.Sheets[sLFName];
+            const rawLF = XLSX.utils.sheet_to_json(wsLF, { header: 1, range: 0, defval: "" });
             LISTING_FEE = [];
 
             for (let r = 0; r < rawLF.length; r++) {
               const row = rawLF[r];
               if (!row || row.length === 0) continue;
 
-              let isHDL = false, dragonCode = "", rawSR = "", rawOutlet = "", onOff = "", kenhDesc = "", district = "", tarHL = 0;
+              let isHDL = false;
+              let dragonCode = "";
+              let rawSR = "";
+              let rawOutlet = "";
+              let onOff = "";
+              let kenhDesc = "";
+              let district = "";
+              let tarHL = 0;
 
               for (let c = 0; c < row.length; c++) {
                 const cell = String(row[c] || '').trim();
-                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) isHDL = true;
+                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) {
+                  isHDL = true;
+                }
                 if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
                   dragonCode = cell;
                   rawSR = String(row[c + 1] || '').trim();
@@ -1372,9 +1412,21 @@
               }
 
               if (isHDL && dragonCode) {
-                let channelType = (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) ? "TOFT" : "TONT";
-                let tarCases = (channelType === "TONT") ? Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15) : Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
-                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
+                let channelType = "TONT";
+                if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
+                  channelType = "TOFT";
+                } else {
+                  channelType = "TONT";
+                }
+
+                let tarCases = 15;
+                if (channelType === "TONT") {
+                  tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
+                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
+                } else {
+                  tarCases = Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
+                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
+                }
 
                 LISTING_FEE.push({
                   code: dragonCode,
@@ -1391,59 +1443,27 @@
           }
         }
 
-        // 2. FILE SEC-06 HÀNG NGÀY (DÒ TÌM HEADER BẤT KỂ ĐỊNH DẠNG)
         if (fSec) {
           const bSec = await fSec.arrayBuffer();
           const wbSec = XLSX.read(bSec, { dense: false });
           const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
-          const rawSecRows = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec], { header: 1 });
-
-          let hSecIdx = 0;
-          for (let i = 0; i < Math.min(6, rawSecRows.length); i++) {
-            const rowStr = (rawSecRows[i] || []).join(' ').toLowerCase();
-            if (rowStr.includes('outletcode') || rowStr.includes('product') || rowStr.includes('volumehl')) {
-              hSecIdx = i;
-              break;
-            }
-          }
-
-          const secHeaders = (rawSecRows[hSecIdx] || []).map(v => String(v || '').trim().toLowerCase());
-          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1, colDate = -1;
-
-          secHeaders.forEach((hd, idx) => {
-            if (hd === 'product' || hd.includes('product name') || hd.includes('tên sản phẩm')) colProd = idx;
-            if (hd.includes('promotion') || hd.includes('khuyến mãi')) colPromo = idx;
-            if (hd === 'brand' || hd.includes('nhãn hiệu')) colBrand = idx;
-            if (hd.includes('volumehl') || hd.includes('volume') || hd.includes('sản lượng hl')) colVol = idx;
-            if (hd === 'quantity' || hd.includes('số lượng') || hd === 'qty') colQty = idx;
-            if (hd === 'price' || hd.includes('đơn giá')) colPrice = idx;
-            if (hd === 'revenue' || hd.includes('doanh thu')) colRev = idx;
-            if (hd.includes('cvtcsr') || hd.includes('fullname') || hd.includes('nhân viên') || hd === 'sr') colSr = idx;
-            if (hd.includes('outletcode') || hd.includes('mã khách') || hd.includes('mã điểm')) colOCode = idx;
-            if (hd.includes('outletname') || hd.includes('tên khách') || hd.includes('tên điểm')) colOName = idx;
-            if (hd.includes('ordereddate') || hd.includes('order date') || hd.includes('ngày đặt') || hd.includes('ngày')) colDate = idx;
-          });
+          const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
 
           SEC_ORDERS = [];
           PROMOTIONS = [];
 
-          for (let r = hSecIdx + 1; r < rawSecRows.length; r++) {
-            const row = rawSecRows[r];
-            if (!row || row.length === 0) continue;
-
-            const prod = String(row[colProd] || '').trim();
-            const promoName = String(row[colPromo] || '').trim();
-            const brand = String(row[colBrand] || '').trim();
-            const vol = parseFloat(row[colVol]) || 0;
-            const qty = parseInt(row[colQty]) || 0;
-            const price = parseFloat(row[colPrice]) || 0;
-            const rev = parseFloat(row[colRev]) || 0;
-            const srName = normalizeSR(row[colSr]);
-            const ocode = String(row[colOCode] || '').trim();
-            const oname = String(row[colOName] || '').trim();
-            const dateStr = parseExcelDate(row[colDate]);
-
-            if (!ocode) continue;
+          rawSec.forEach(r => {
+            const prod = String(r['Product'] || '').trim();
+            const promoName = String(r['Promotion Name'] || '').trim();
+            const brand = String(r['Brand'] || '').trim();
+            const vol = parseFloat(r['VolumeHL']) || 0;
+            const qty = parseInt(r['Quantity']) || 0;
+            const price = parseFloat(r['Price']) || 0;
+            const rev = parseFloat(r['Revenue']) || 0;
+            const srName = normalizeSR(r['CVTCSR'] || r['Fullname']);
+            const ocode = String(r['OutletCode'] || '').trim();
+            const oname = String(r['OutletName'] || '').trim();
+            const dateStr = parseExcelDate(r['OrderedDate']);
 
             const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
             if (promoName && isReward) {
@@ -1458,7 +1478,7 @@
               });
             }
 
-            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
+            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
 
             let cat = "Other";
             const pLower = prod.toLowerCase();
@@ -1479,10 +1499,9 @@
               vol: vol,
               qty: qty
             });
-          }
+          });
         }
 
-        // 3. FILE CHỤP TB DIP-01
         if (fAudit) {
           const bAudit = await fAudit.arrayBuffer();
           const wbAudit = XLSX.read(bAudit, { dense: false });
@@ -1527,7 +1546,7 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // 4. FILE SALES TARGET & INCENTIVE FIT-10
+        // XỬ LÝ FILE 4: SALES TARGET FIT-10 (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC)
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1536,20 +1555,34 @@
             const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
             SALES_TARGETS = {};
 
-            let offset = 0;
-            const r1 = rawTarget[1] || [];
-            r1.forEach((val, idx) => {
-              if (String(val || '').trim().toLowerCase() === 'cvtcsr') {
-                offset = (idx === 4) ? -1 : 0;
-              }
+            let colVol = 12;
+            let colPrem = 17;
+            const row0 = rawTarget[0] || [];
+            row0.forEach((val, idx) => {
+              const str = String(val || '').trim().toLowerCase();
+              if (str.includes('sales volume')) colVol = idx;
+              if (str.includes('focused skus')) colPrem = idx + 1;
             });
 
-            rawTarget.forEach(row => {
+                        rawTarget.forEach(row => {
               if (!row || row.length < 10) return;
               for (let c = 0; c < Math.min(8, row.length); c++) {
                 const norm = normalizeSR(row[c]);
                 if (TEAM_SRS.includes(norm)) {
+                  // Tính tổng chỉ tiêu và thực tế các SKU ưu tiên
+                  let skuTarSum = 0, skuActSum = 0;
+                  for (let sc = 25; sc <= 35; sc++) skuTarSum += (parseFloat(row[sc + offset]) || 0);
+                  for (let sc = 38; sc <= 48; sc++) skuActSum += (parseFloat(row[sc + offset]) || 0);
+
                   SALES_TARGETS[norm] = {
+                    cpd_tar: parseFloat(row[7 + offset]) || 0,
+                    cpd_act: parseFloat(row[8 + offset]) || 0,
+                    cpd_ach: parseFloat(row[9 + offset]) || 0,
+
+                    vor_tar: parseFloat(row[10 + offset]) || 0,
+                    vor_act: parseFloat(row[11 + offset]) || 0,
+                    vor_ach: parseFloat(row[12 + offset]) || 0,
+
                     volume_target: parseFloat(row[13 + offset]) || 0,
                     volume_actual: parseFloat(row[14 + offset]) || 0,
                     vol_ach: parseFloat(row[15 + offset]) || 0,
@@ -1561,7 +1594,13 @@
                     sku_inc: parseFloat(row[21 + offset]) || 0,
 
                     mep_tar: parseFloat(row[23 + offset]) || 0,
+                    cov_tar: parseFloat(row[24 + offset]) || 0,
+                    sku_pri_tar: skuTarSum,
+
                     mep_act: parseFloat(row[36 + offset]) || 0,
+                    cov_act: parseFloat(row[37 + offset]) || 0,
+                    sku_pri_act: skuActSum,
+
                     mep_ach: parseFloat(row[49 + offset]) || 0,
                     mep_inc: parseFloat(row[50 + offset]) || 0,
 
@@ -1576,8 +1615,6 @@
                 }
               }
             });
-          }
-        }
 
         const nowStr = new Date().toLocaleString('vi-VN');
         btnSave.textContent = "Đang gửi lên Cloud...";
@@ -1608,20 +1645,16 @@
 
         if (!res.ok) {
           const errText = await res.text();
-          throw new Error("Lỗi lưu Cloud: " + errText);
+          throw new Error(errText);
         }
 
-        try {
-          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-          localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-          localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-          localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('UPDATE_TIME', nowStr);
-        } catch (storageErr) {
-          console.warn("Bộ nhớ máy đầy, dữ liệu đã lưu an toàn trên Cloud Supabase.");
-        }
+        localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+        localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
+        localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+        localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+        localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
+        localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+        localStorage.setItem('UPDATE_TIME', nowStr);
 
         document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
         toggleAdminModal();
@@ -1629,7 +1662,7 @@
         updateLatestOrderDateBanner();
         populateDateFilter();
         renderAll();
-        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target.`);
+        alert(`Đồng bộ thành công! Tìm thấy ${Object.keys(SALES_TARGETS).length} SR Target.`);
       } catch (err) {
         console.error("Lỗi cập nhật:", err);
         alert("Lỗi khi xử lý file: " + (err.message || err));
@@ -1686,7 +1719,7 @@
       renderAll();
     }
 
-    // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
+        // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
     function copyZaloReport() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
@@ -1717,8 +1750,6 @@
           return;
         }
         executeCopyIndividualReport();
-      } else if (type === 'INCENTIVE_TEAM') {
-        executeCopyIncentiveTeamReport();
       } else if (type === 'AUDIT_TB') {
         executeCopyAuditReport();
       } else if (type === 'NO_ORDER_REMIND') {
@@ -1763,7 +1794,7 @@
         const actTot = actH + actP;
         const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
         if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) >= 0.5)) {
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
           tbPass++;
         }
       });
@@ -1771,8 +1802,8 @@
       let lfPass = 0;
       LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
         if (l.channelType === "TONT") {
-          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          if (preHL >= (l.tarHL - 0.001)) lfPass++;
+          const preQty = SEC_ORDERS.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+          if (preQty >= l.tarCases) lfPass++;
         } else {
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
           if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
@@ -1794,7 +1825,9 @@
 
       navigator.clipboard.writeText(reportText).then(() => {
         alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
     }
 
     function executeCopyIndividualReport() {
@@ -1815,12 +1848,13 @@
       });
 
       const dayCases = Math.round(dayHL / CASE_VOLUME);
+      const monthCases = Math.round(monthHL / CASE_VOLUME);
 
-      let tarVol = 0, tarPre = 0, totalInc = 0;
+      // Lấy Target từ file FIT-10 (chuẩn xác)
+      let tarVol = 0, tarPre = 0;
       if (SALES_TARGETS && SALES_TARGETS[selectedSR]) {
         tarVol = SALES_TARGETS[selectedSR].volume_target || 0;
         tarPre = SALES_TARGETS[selectedSR].premium_target || 0;
-        totalInc = SALES_TARGETS[selectedSR].total_inc || 0;
       }
       const tarMain = Math.max(0, tarVol - tarPre);
       const pctVol = tarVol > 0 ? Math.round((monthHL / tarVol) * 100) : 0;
@@ -1843,7 +1877,7 @@
         const actTot = actH + actP;
         const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
         if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) >= 0.5)) {
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
           tbPass++;
         }
       });
@@ -1852,8 +1886,8 @@
       let lfPass = 0;
       listSRLF.forEach(l => {
         if (l.channelType === "TONT") {
-          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          if (preHL >= (l.tarHL - 0.001)) lfPass++;
+          const preQty = listSRSec.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
+          if (preQty >= l.tarCases) lfPass++;
         } else {
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
           if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
@@ -1863,53 +1897,13 @@
       const tbMiss = listSRMaster.length - tbPass;
       const lfMiss = listSRLF.length - lfPass;
 
-      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n💵 TẠM TÍNH THƯỞNG INCENTIVE: ${totalInc.toLocaleString('vi-VN')} đ\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
+      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
-    function executeCopyIncentiveTeamReport() {
-      const nowStr = new Date().toLocaleDateString('vi-VN');
-      const srSelectEl = document.getElementById('srFilter');
-
-      const incList = [];
-      let totalTeamInc = 0;
-
-      TEAM_SRS.forEach(k => {
-        const opt = Array.from(srSelectEl.options).find(o => o.value === k);
-        const name = opt ? opt.text : k;
-        const incData = SALES_TARGETS[k] || {};
-        const total = incData.total_inc || 0;
-        totalTeamInc += total;
-        incList.push({ name, total, data: incData });
+        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste) để gửi.`);
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
       });
-
-      incList.sort((a, b) => b.total - a.total);
-
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE TOÀN ĐỘI (FIT-10)\n📅 Ngày cập nhật: ${nowStr}\n💰 Tổng quỹ thưởng tạm tính: ${totalTeamInc.toLocaleString('vi-VN')} đ\n\n`;
-
-      incList.forEach((item, i) => {
-        const d = item.data;
-        msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ\n`;
-        if (item.total > 0) {
-          const parts = [];
-          if (d.mep_inc > 0) parts.push(`MP: ${(d.mep_inc/1000).toFixed(0)}k`);
-          if (d.fit_inc > 0) parts.push(`FIT: ${(d.fit_inc/1000).toFixed(0)}k`);
-          if (d.vol_inc > 0) parts.push(`Vol: ${(d.vol_inc/1000).toFixed(0)}k`);
-          if (d.sku_inc > 0) parts.push(`Pre: ${(d.sku_inc/1000).toFixed(0)}k`);
-          if (parts.length > 0) msg += `   └ (${parts.join(', ')})\n`;
-        } else {
-          msg += `   └ (Chưa đạt mốc thưởng chặn)\n`;
-        }
-      });
-
-      msg += `\n👉 Lưu ý: Tiền thưởng tạm tính dựa trên tiến độ file FIT-10. Anh em bám sát điều kiện Volume & Tiêu chuẩn để nhận trọn thưởng tháng!`;
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!\nBạn có thể mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function executeCopyAuditReport() {
@@ -1925,6 +1919,7 @@
       const doneList = list.filter(a => a.count >= 2);
 
       let msg = "";
+
       if (selectedSR === "ALL") {
         msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
 
@@ -1947,13 +1942,17 @@
 
         if (noneList.length > 0) {
           msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
-          noneList.slice(0, 10).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
+          noneList.slice(0, 10).forEach((a, i) => {
+            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
+          });
           if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
         }
 
         if (need2List.length > 0) {
           msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
-          need2List.slice(0, 5).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
+          need2List.slice(0, 5).forEach((a, i) => {
+            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
+          });
           if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
         }
 
@@ -1962,7 +1961,9 @@
 
       navigator.clipboard.writeText(msg).then(() => {
         alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
+      }).catch(err => {
+        alert("Lỗi sao chép: " + err);
+      });
     }
 
     function renderAll() {
@@ -1990,7 +1991,7 @@
       });
       const monthTotalHL = monthHudaHL + monthPreHL;
 
-      // XỬ LÝ TARGET & INCENTIVE THÁNG
+      // XỬ LÝ TARGET THÁNG
       let targetVol = 0, targetPrem = 0;
       if (selectedSR === "ALL") {
         TEAM_SRS.forEach(srKey => {
@@ -2005,7 +2006,6 @@
           targetPrem = SALES_TARGETS[selectedSR].premium_target || 0;
         }
       }
-
       const targetMain = Math.max(0, targetVol - targetPrem);
       const pctTargetVol = targetVol > 0 ? Math.round((monthTotalHL / targetVol) * 100) : 0;
       const pctTargetMain = targetMain > 0 ? Math.round((monthHudaHL / targetMain) * 100) : 0;
@@ -2028,74 +2028,6 @@
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT KHỐI THƯỞNG INCENTIVE (HIỂN THỊ CHI TIẾT ACT / TARGET / % VÀ TIỀN THƯỞNG)
-      if (selectedSR === "ALL") {
-        let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
-        let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
-        let sumMepTar = 0, sumMepAct = 0;
-
-        TEAM_SRS.forEach(k => {
-          const d = SALES_TARGETS[k] || {};
-          sumVolTar += (d.volume_target || 0); sumVolAct += (d.volume_actual || 0);
-          sumPreTar += (d.premium_target || 0); sumPreAct += (d.premium_actual || 0);
-          sumMepTar += (d.mep_tar || 0); sumMepAct += (d.mep_act || 0);
-          sumVolInc += (d.vol_inc || 0);
-          sumSkuInc += (d.sku_inc || 0);
-          sumMepInc += (d.mep_inc || 0);
-          sumFitInc += (d.fit_inc || 0);
-          sumTotInc += (d.total_inc || 0);
-        });
-
-        const pctAllVol = sumVolTar > 0 ? Math.round((sumVolAct / sumVolTar) * 100) : 0;
-        const pctAllPre = sumPreTar > 0 ? Math.round((sumPreAct / sumPreTar) * 100) : 0;
-        const pctAllMep = sumMepTar > 0 ? Math.round((sumMepAct / sumMepTar) * 100) : 0;
-
-        document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
-        document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
-        document.getElementById('incVolVal').textContent = `${sumVolInc.toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
-        document.getElementById('incSkuAch').textContent = `${pctAllPre}%`;
-        document.getElementById('incSkuVal').textContent = `${sumSkuInc.toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incMepRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
-        document.getElementById('incMepAch').textContent = `${pctAllMep}%`;
-        document.getElementById('incMepVal').textContent = `${sumMepInc.toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incFitRatio').textContent = `Đánh giá toàn đội`;
-        document.getElementById('incFitAch').textContent = `--`;
-        document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
-      } else {
-        const d = SALES_TARGETS[selectedSR] || {};
-        const vTar = d.volume_target || 0, vAct = d.volume_actual || 0, vAch = Math.round((d.vol_ach || 0) * 100);
-        const pTar = d.premium_target || 0, pAct = d.premium_actual || 0, pAch = Math.round((d.sku_ach || 0) * 100);
-        const mTar = d.mep_tar || 0, mAct = d.mep_act || 0, mAch = Math.round((d.mep_ach || 0) * 100);
-        const fTar = (d.fit_tar || 0).toFixed(2), fAct = (d.fit_act || 0).toFixed(2), fAch = Math.round((d.fit_ach || 0) * 100);
-        const tot = d.total_inc || 0;
-
-        document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
-        document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
-        document.getElementById('incVolAch').textContent = `${vAch}%`;
-        document.getElementById('incVolVal').textContent = `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
-        document.getElementById('incSkuAch').textContent = `${pAch}%`;
-        document.getElementById('incSkuVal').textContent = `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incMepRatio').textContent = `${mAct.toLocaleString('vi-VN')} / ${mTar.toLocaleString('vi-VN')} điểm`;
-        document.getElementById('incMepAch').textContent = `${mAch}%`;
-        document.getElementById('incMepVal').textContent = `${(d.mep_inc || 0).toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incFitRatio').textContent = `${fAct} / ${fTar} điểm`;
-        document.getElementById('incFitAch').textContent = `${fAch}%`;
-        document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
-
-        document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
-      }
-
       // ĐỔ DỮ LIỆU BRAND PREMIUM
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
@@ -2110,7 +2042,7 @@
         });
       }
 
-      // XỬ LÝ BỘ LỌC NGÀY LẺ
+      // XỬ LÝ BỘ LỌC NGÀY LẺ (CHỈ HIỆN CARD KHI CHỌN NGÀY CỤ THỂ)
       const boxDate = document.getElementById('boxSpecificDateSales');
       let listFiltered = listMonth;
       if (selectedDate !== "ALL") {
@@ -2130,7 +2062,7 @@
         boxDate.classList.add('hidden');
       }
 
-      // GOM NHÓM ĐIỂM BÁN
+      // GOM NHÓM ĐIỂM BÁN THEO BỘ LỌC ĐÃ CHỌN
       const outletGroup = {};
       listFiltered.forEach(o => {
         if (!outletGroup[o.code]) {
@@ -2224,9 +2156,10 @@
       }
 
       // ==========================================
-      // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA (TÍNH THEO HL CHUẨN)
+      // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
       // ==========================================
       const salesByOutlet = {};
+      const salesPreQtyByOutlet = {};
       const salesHudaCan20ByOutlet = {};
 
       SEC_ORDERS.forEach(o => {
@@ -2236,8 +2169,7 @@
           salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
         }
         if (o.category === "Premium") {
-          // BỔ SUNG DÒNG CỘNG HL PREMIUM (SỬA LỖI PRE = 0.00 HL)
-          salesByOutlet[o.code].pre += o.vol;
+          salesPreQtyByOutlet[o.code] = (salesPreQtyByOutlet[o.code] || 0) + o.qty;
         }
         salesByOutlet[o.code].total += o.vol;
       });
@@ -2259,11 +2191,8 @@
         const roundTarP = Math.round(m.tarPre * 100) / 100;
         const roundTarTot = Math.round(tarTot * 100) / 100;
 
-        // ĐIỀU KIỆN ĐẠT THEO HL:
-        // 1. Đạt cả 2 nhánh Huda và Pre theo HL cam kết
-        // 2. Hoặc Tổng bán vượt Target và Sản lượng Premium chiếm từ 50% trở lên
-        const condStandard = (actH >= roundTarH - 0.001) && (actP >= roundTarP - 0.001);
-        const condPreDominant = (actTot >= roundTarTot - 0.001) && (roundTarTot > 0) && ((actP / actTot) >= 0.5);
+        const condStandard = (actH >= roundTarH) && (actP >= roundTarP);
+        const condPreDominant = (actTot >= roundTarTot) && (roundTarTot > 0) && ((actP / actTot) > 0.5);
         const isPass = condStandard || condPreDominant;
 
         if (isPass) passCount++;
@@ -2281,16 +2210,15 @@
         if (isPass) {
           missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctOutlet}%)</span>`;
         } else {
-          // Tính số thùng thiếu theo THÙNG TIÊU CHUẨN (24x330 = 0.0792 HL)
           const gapPreHL = Math.max(0, roundTarP - actP);
-          const gapPreCasesTC = Math.ceil(gapPreHL / CASE_VOLUME);
+          const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
           
           const gapHudaHL = Math.max(0, roundTarH - actH);
           const safeHudaCases = Math.ceil(Math.round(gapHudaHL * 1000) / 1000 / HUDA_CAN20_VOL);
 
           let missingParts = [];
           if (safeHudaCases > 0) missingParts.push(`Thiếu <b>${safeHudaCases}</b> th Huda lon 20`);
-          if (gapPreCasesTC > 0) missingParts.push(`Thiếu <b>${gapPreCasesTC}</b> th Pre tiêu chuẩn`);
+          if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
           missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')} (${pctOutlet}%)</span>`;
         }
 
@@ -2403,7 +2331,7 @@
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
       // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE (CHUẨN HÓA THEO HL)
+      // 3. RENDER TAB 3: OLS LISTING FEE
       // ==========================================
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
@@ -2413,8 +2341,8 @@
       baseListLF.forEach(l => {
         if (l.channelType === "TONT") {
           cTONT++;
-          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          if (preHL >= (l.tarHL - 0.001)) pTONT++;
+          const preQty = salesPreQtyByOutlet[l.code] || 0;
+          if (preQty >= l.tarCases) pTONT++;
         } else {
           cTOFT++;
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
@@ -2460,18 +2388,16 @@
         let missingNoticeLF = "";
 
         if (l.channelType === "TONT") {
-          const actPreHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          const actCasesTC = Math.round((actPreHL / CASE_VOLUME) * 10) / 10;
-          isPassLF = actPreHL >= (l.tarHL - 0.001);
-          pctLF = l.tarHL > 0 ? Math.round((actPreHL / l.tarHL) * 100) : 0;
+          const actCount = salesPreQtyByOutlet[l.code] || 0;
+          isPassLF = actCount >= l.tarCases;
+          pctLF = l.tarCases > 0 ? Math.round((actCount / l.tarCases) * 100) : 0;
 
-          statusDisplay = `Thực bán: <b class="text-gray-900">${actCasesTC}</b>/${l.tarCases} th Pre tiêu chuẩn <span class="text-gray-400">(${actPreHL.toFixed(2)} HL)</span>`;
+          statusDisplay = `Thực bán: <b class="text-gray-900">${actCount}</b>/${l.tarCases} th Pre`;
           if (isPassLF) {
             missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
           } else {
-            const gapHL = Math.max(0, l.tarHL - actPreHL);
-            const gapCasesTC = Math.ceil(gapHL / CASE_VOLUME);
-            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gapCasesTC}</b> th Pre tiêu chuẩn (${pctLF}%)</span>`;
+            const gap = l.tarCases - actCount;
+            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Pre (${pctLF}%)</span>`;
           }
         } else {
           const actHudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
@@ -2679,4 +2605,146 @@
     }
   </script>
 </body>
-</html>
+</html>    function openTotalKpiModal() {
+      const selectedSR = document.getElementById('srFilter').value;
+      const srSelectEl = document.getElementById('srFilter');
+      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
+      document.getElementById('lblKpiModalSubtitle').textContent = (selectedSR === 'ALL') ? "Tổng hợp toàn bộ 9 SR trong đội" : `Tiến độ cá nhân: ${srNameText}`;
+      document.getElementById('totalKpiModal').classList.remove('hidden');
+    }
+
+    function closeTotalKpiModal() {
+      document.getElementById('totalKpiModal').classList.add('hidden');
+    }
+
+          // CẬP NHẬT KHỐI THƯỞNG INCENTIVE & POPUP TOTAL KPI
+      if (selectedSR === "ALL") {
+        let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
+        let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
+        let sumMepTar = 0, sumMepAct = 0, sumCovTar = 0, sumCovAct = 0;
+        let sumSkuPriTar = 0, sumSkuPriAct = 0;
+        let sumCpdTar = 0, sumCpdAct = 0, cntSR = 0;
+        let sumFitTarPct = 0, sumFitActPct = 0;
+        let sumVorTarPct = 0, sumVorActPct = 0;
+
+        TEAM_SRS.forEach(k => {
+          const d = SALES_TARGETS[k] || {};
+          cntSR++;
+          sumVolTar += (d.volume_target || 0); sumVolAct += (d.volume_actual || 0);
+          sumPreTar += (d.premium_target || 0); sumPreAct += (d.premium_actual || 0);
+          sumMepTar += (d.mep_tar || 0); sumMepAct += (d.mep_act || 0);
+          sumCovTar += (d.cov_tar || 0); sumCovAct += (d.cov_act || 0);
+          sumSkuPriTar += (d.sku_pri_tar || 0); sumSkuPriAct += (d.sku_pri_act || 0);
+          sumCpdTar += (d.cpd_tar || 0); sumCpdAct += (d.cpd_act || 0);
+          sumFitTarPct += Math.round((d.fit_tar || 0) * 100); sumFitActPct += Math.round((d.fit_act || 0) * 100);
+          sumVorTarPct += Math.round((d.vor_tar || 0) * 100); sumVorActPct += Math.round((d.vor_act || 0) * 100);
+
+          sumVolInc += (d.vol_inc || 0);
+          sumSkuInc += (d.sku_inc || 0);
+          sumMepInc += (d.mep_inc || 0);
+          sumFitInc += (d.fit_inc || 0);
+          sumTotInc += (d.total_inc || 0);
+        });
+
+        const pctAllVol = sumVolTar > 0 ? Math.round((sumVolAct / sumVolTar) * 100) : 0;
+        const pctAllPre = sumPreTar > 0 ? Math.round((sumPreAct / sumPreTar) * 100) : 0;
+        const pctAllMep = sumMepTar > 0 ? Math.round((sumMepAct / sumMepTar) * 100) : 0;
+        const pctAllCov = sumCovTar > 0 ? Math.round((sumCovAct / sumCovTar) * 100) : 0;
+        const pctAllSkuPri = sumSkuPriTar > 0 ? Math.round((sumSkuPriAct / sumSkuPriTar) * 100) : 0;
+        const pctAllCpd = sumCpdTar > 0 ? Math.round((sumCpdAct / sumCpdTar) * 100) : 0;
+        const avgFitTarPct = cntSR > 0 ? Math.round(sumFitTarPct / cntSR) : 0;
+        const avgFitActPct = cntSR > 0 ? Math.round(sumFitActPct / cntSR) : 0;
+        const pctAllFit = avgFitTarPct > 0 ? Math.round((avgFitActPct / avgFitTarPct) * 100) : 0;
+        const avgVorTarPct = cntSR > 0 ? Math.round(sumVorTarPct / cntSR) : 0;
+        const avgVorActPct = cntSR > 0 ? Math.round(sumVorActPct / cntSR) : 0;
+        const pctAllVor = avgVorTarPct > 0 ? Math.round((avgVorActPct / avgVorTarPct) * 100) : 0;
+
+        // Card Incentive
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
+        document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
+        document.getElementById('incVolVal').textContent = `${sumVolInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pctAllPre}%`;
+        document.getElementById('incSkuVal').textContent = `${sumSkuInc.toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incMepRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('incMepAch').textContent = `${pctAllMep}%`;
+        document.getElementById('incMepVal').textContent = `${sumMepInc.toLocaleString('vi-VN')} đ`;
+
+        // Điểm FIT bên card Incentive hiển thị %
+        document.getElementById('incFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
+        document.getElementById('incFitAch').textContent = `${pctAllFit}%`;
+        document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
+
+        // Popup Total KPI Modal (Toàn đội)
+        document.getElementById('kpiVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
+        document.getElementById('kpiVolPct').textContent = `${pctAllVol}%`;
+        document.getElementById('kpiSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
+        document.getElementById('kpiSkuPct').textContent = `${pctAllPre}%`;
+        document.getElementById('kpiMpRatio').textContent = `${sumMepAct.toLocaleString('vi-VN')} / ${sumMepTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiMpPct').textContent = `${pctAllMep}%`;
+        document.getElementById('kpiCovRatio').textContent = `${sumCovAct.toLocaleString('vi-VN')} / ${sumCovTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiCovPct').textContent = `${pctAllCov}%`;
+        document.getElementById('kpiSkuPriRatio').textContent = `${sumSkuPriAct.toLocaleString('vi-VN')} / ${sumSkuPriTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiSkuPriPct').textContent = `${pctAllSkuPri}%`;
+        document.getElementById('kpiFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
+        document.getElementById('kpiFitPct').textContent = `${pctAllFit}%`;
+        document.getElementById('kpiCpdRatio').textContent = `${(sumCpdAct/cntSR).toFixed(1)} / ${(sumCpdTar/cntSR).toFixed(1)} cuộc`;
+        document.getElementById('kpiCpdPct').textContent = `${pctAllCpd}%`;
+        document.getElementById('kpiVorRatio').textContent = `${avgVorActPct}% / ${avgVorTarPct}%`;
+        document.getElementById('kpiVorPct').textContent = `${pctAllVor}%`;
+      } else {
+        const d = SALES_TARGETS[selectedSR] || {};
+        const vTar = d.volume_target || 0, vAct = d.volume_actual || 0, vAch = Math.round((d.vol_ach || 0) * 100);
+        const pTar = d.premium_target || 0, pAct = d.premium_actual || 0, pAch = Math.round((d.sku_ach || 0) * 100);
+        const mTar = d.mep_tar || 0, mAct = d.mep_act || 0, mAch = Math.round((d.mep_ach || 0) * 100);
+        const cTar = d.cov_tar || 0, cAct = d.cov_act || 0, cAch = cTar > 0 ? Math.round((cAct / cTar) * 100) : 0;
+        const spTar = d.sku_pri_tar || 0, spAct = d.sku_pri_act || 0, spAch = spTar > 0 ? Math.round((spAct / spTar) * 100) : 0;
+        const fitTarPct = Math.round((d.fit_tar || 0) * 100), fitActPct = Math.round((d.fit_act || 0) * 100), fAch = Math.round((d.fit_ach || 0) * 100);
+        const cpdTar = (d.cpd_tar || 0).toFixed(1), cpdAct = (d.cpd_act || 0).toFixed(1), cpdAch = Math.round((d.cpd_ach || 0) * 100);
+        const vorTarPct = Math.round((d.vor_tar || 0) * 100), vorActPct = Math.round((d.vor_act || 0) * 100), vorAch = Math.round((d.vor_ach || 0) * 100);
+        const tot = d.total_inc || 0;
+
+        // Card Incentive
+        document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
+        document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
+        document.getElementById('incVolAch').textContent = `${vAch}%`;
+        document.getElementById('incVolVal').textContent = `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
+        document.getElementById('incSkuAch').textContent = `${pAch}%`;
+        document.getElementById('incSkuVal').textContent = `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        document.getElementById('incMepRatio').textContent = `${mAct.toLocaleString('vi-VN')} / ${mTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('incMepAch').textContent = `${mAch}%`;
+        document.getElementById('incMepVal').textContent = `${(d.mep_inc || 0).toLocaleString('vi-VN')} đ`;
+
+        // Điểm FIT bên card Incentive hiển thị %
+        document.getElementById('incFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
+        document.getElementById('incFitAch').textContent = `${fAch}%`;
+        document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
+        document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
+
+        // Popup Total KPI Modal (Cá nhân SR)
+        document.getElementById('kpiVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
+        document.getElementById('kpiVolPct').textContent = `${vAch}%`;
+        document.getElementById('kpiSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
+        document.getElementById('kpiSkuPct').textContent = `${pAch}%`;
+        document.getElementById('kpiMpRatio').textContent = `${mAct.toLocaleString('vi-VN')} / ${mTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiMpPct').textContent = `${mAch}%`;
+        document.getElementById('kpiCovRatio').textContent = `${cAct.toLocaleString('vi-VN')} / ${cTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiCovPct').textContent = `${cAch}%`;
+        document.getElementById('kpiSkuPriRatio').textContent = `${spAct.toLocaleString('vi-VN')} / ${spTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiSkuPriPct').textContent = `${spAch}%`;
+        document.getElementById('kpiFitRatio').textContent = `${fitActPct}% / ${fitTarPct}%`;
+        document.getElementById('kpiFitPct').textContent = `${fAch}%`;
+        document.getElementById('kpiCpdRatio').textContent = `${cpdAct} / ${cpdTar} cuộc`;
+        document.getElementById('kpiCpdPct').textContent = `${cpdAch}%`;
+        document.getElementById('kpiVorRatio').textContent = `${vorActPct}% / ${vorTarPct}%`;
+        document.getElementById('kpiVorPct').textContent = `${vorAch}%`;
+      }
+
+      
