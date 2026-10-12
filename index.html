@@ -17,724 +17,582 @@
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN -->
-  <div class="mb-2.5 px-0.5">
-    <div class="flex justify-between items-center mb-2">
-      <div>
-        <h1 class="text-[17px] font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
-          🍺 Carlsberg Sale Tracking
-        </h1>
-        <div class="flex items-center gap-1 mt-0.5 text-[10px] text-gray-400">
-          <span id="lblLastUpdate" class="font-medium">Đang tải dữ liệu...</span>
-          <span class="text-gray-300">•</span>
-          <span class="font-bold text-gray-500 italic">by LHN</span>
-        </div>
+  <!-- ================= MÀN HÌNH ĐĂNG NHẬP ================= -->
+  <div id="loginScreen" class="fixed inset-0 bg-[#F8F9FA] z-[100] flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 card-shadow border border-gray-100 space-y-4 shadow-xl">
+      <div class="text-center space-y-1">
+        <div class="w-14 h-14 bg-blue-50 text-[#1F4E79] rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-inner">🍺</div>
+        <h2 class="text-lg font-black text-[#1F4E79] tracking-tight pt-2">Carlsberg Sale Tracking</h2>
+        <p class="text-xs text-gray-400 font-semibold">Đăng nhập tài khoản để vào hệ thống</p>
       </div>
-    </div>
 
-    <!-- 3 Nút chức năng -->
-    <div class="grid grid-cols-3 gap-2">
-      <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
-        📦 Đơn ngày
-      </button>
-      <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
-        📋 Báo cáo
-      </button>
-      <button onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
-        ⚙️ Nạp file
-      </button>
-    </div>
+      <form onsubmit="handleLogin(event)" class="space-y-3 pt-2">
+        <div>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">Tên đăng nhập (ID):</label>
+          <input type="text" id="loginUsername" required placeholder="Nhập mã nhân viên hoặc username" 
+            class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">Mật khẩu:</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" 
+            class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-blue-500">
+        </div>
 
-    <!-- Banner ngày đơn gần nhất -->
-    <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
-      <span class="text-blue-900 font-semibold flex items-center gap-1">
-        📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
-      </span>
-      <span class="text-[10px] text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded-lg border border-blue-200">T+1</span>
+        <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 bg-[#1F4E79] hover:bg-blue-900 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
+          Đăng Nhập
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- BỘ LỌC TÊN SR -->
-  <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
-    <div class="flex justify-between items-center mb-1">
-      <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
-      <span class="text-[10px] text-gray-400 italic" id="srSaveStatus">Tự lưu máy này</span>
-    </div>
-    <select id="srFilter" onchange="onSRChange()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
-      <option value="ALL">-- Toàn bộ Team --</option>
-      <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
-      <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
-      <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
-      <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
-      <option value="Nam Le Hoang">Lê Hoàng Nam</option>
-      <option value="Phu Tran Trong">Trần Trọng Phú</option>
-      <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
-      <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
-      <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
-    </select>
-  </div>
+  <!-- ================= MODAL BẮT BUỘC ĐỔI MẬT KHẨU LẦN ĐẦU ================= -->
+  <div id="changePasswordModal" class="fixed inset-0 bg-black/75 z-[110] flex items-center justify-center p-4 hidden backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100">
+      <div class="text-center space-y-1">
+        <div class="text-2xl">🔒</div>
+        <h3 class="text-sm font-black text-[#1F4E79]">ĐỔI MẬT KHẨU MỚI</h3>
+        <p class="text-[10px] text-gray-400">Vì lý do bảo mật, vui lòng đổi mật khẩu mặc định (123456) trước khi tiếp tục.</p>
+      </div>
 
-  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
-  <div class="mb-3">
-    <div class="relative">
-      <input type="text" id="searchInput" oninput="renderAll()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
-        class="w-full p-2.5 pl-9 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-800 placeholder-gray-400 card-shadow outline-none focus:border-blue-500">
-      <span class="absolute left-3 top-2.5 text-gray-400 text-xs">🔍</span>
-      <button onclick="clearSearch()" id="btnClearSearch" class="hidden absolute right-3 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold">✕</button>
+      <form onsubmit="handleChangePassword(event)" class="space-y-2.5">
+        <div>
+          <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Mật khẩu mới:</label>
+          <input type="password" id="newPassword" required minlength="6" placeholder="Tối thiểu 6 ký tự" 
+            class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Xác nhận mật khẩu mới:</label>
+          <input type="password" id="confirmNewPassword" required minlength="6" placeholder="Nhập lại mật khẩu mới" 
+            class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm transition-all">
+          Xác Nhận Đổi Mật Khẩu
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- THANH CHUYỂN 4 TAB -->
-  <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
-    <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
-      📊 SỐ BÁN
-    </button>
-    <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
-      🎯 DISPLAY
-    </button>
-    <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
-      💰 LF
-    </button>
-    <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
-      📸 CHỤP TB
-    </button>
-  </div>
-
-  <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
-  <div id="tab1Content" class="space-y-3">
-    <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET -->
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
-        <div class="flex items-center gap-1.5">
-          <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-xs active:scale-95 transition-all flex items-center gap-1">
-            <span>🎯</span> TOTAL KPI
-          </button>
-          <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
+  <!-- ================= MODAL QUẢN LÝ USER DÀNH CHO ADMIN ================= -->
+  <div id="adminUserModal" class="fixed inset-0 bg-black/75 z-[105] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-black text-[#1F4E79] flex items-center gap-1.5">👥 QUẢN LÝ TÀI KHOẢN</h3>
+          <p class="text-[10px] text-gray-400">Tạo mới, xem và cập nhật tài khoản toàn hệ thống</p>
         </div>
-      </div>
-      <div class="flex items-baseline justify-between">
-        <span id="txtTargetAchieved" class="text-2xl font-black text-[#1F4E79]">0.00 / 0.00 HL</span>
-        <span id="txtTargetCases" class="text-xs font-bold text-amber-700">0 / 0 th</span>
-      </div>
-      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-        <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+        <button onclick="closeAdminUserModal()" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center">✕</button>
       </div>
 
-      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
-      <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
-        <!-- Cột Mainstream -->
-        <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
-          <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800">
-            <span>🍺 MAINSTREAM</span>
-            <span id="badgeMainPct" class="bg-emerald-200/80 text-emerald-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
-          </div>
-          <div class="text-base font-black text-emerald-950" id="valMainAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
-          <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
-            <span>Target:</span>
-            <b class="text-gray-700" id="valMainTar">0.00 HL</b>
-          </div>
-          <div class="w-full bg-emerald-100 h-1.5 rounded-full overflow-hidden mt-1">
-            <div id="barMainMini" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-
-        <!-- Cột Premium -->
-        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-100/90 space-y-1">
-          <div class="flex justify-between items-center text-[10px] font-bold text-amber-800">
-            <span>👑 PREMIUM</span>
-            <span id="badgePrePct" class="bg-amber-200/80 text-amber-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
-          </div>
-          <div class="text-base font-black text-amber-950" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
-          <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
-            <span>Target:</span>
-            <b class="text-gray-700" id="valPreTar">0.00 HL</b>
-          </div>
-          <div class="w-full bg-amber-100 h-1.5 rounded-full overflow-hidden mt-1">
-            <div id="barPreMini" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Menu xem chi tiết Brand Premium -->
-      <details class="bg-amber-50/30 rounded-xl border border-amber-100/60 overflow-hidden text-xs">
-        <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none text-[11px] font-bold text-amber-900">
-          <span>🔍 Xem sản lượng theo Brand Premium</span>
-          <span class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-lg font-bold">Xem chi tiết ▼</span>
+      <!-- Form Tạo Mới User -->
+      <details class="bg-blue-50/60 rounded-2xl p-3 border border-blue-100 text-xs">
+        <summary class="font-bold text-blue-900 cursor-pointer flex justify-between items-center select-none">
+          <span>➕ Tạo Tài Khoản Mới</span>
+          <span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-lg">Mở form ▼</span>
         </summary>
-        <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
+        <form onsubmit="handleCreateUser(event)" class="mt-2.5 space-y-2 pt-2 border-t border-blue-100">
+          <div>
+            <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Tên Đăng Nhập (ID):</label>
+            <input type="text" id="newUsername" required placeholder="vd: nam.lh, loi.hd" class="w-full p-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Họ và Tên:</label>
+            <input type="text" id="newFullname" required placeholder="vd: Lê Hoàng Nam" class="w-full p-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Vai trò (Role):</label>
+            <select id="newRole" onchange="onRoleSelectChange()" class="w-full p-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold">
+              <option value="SR">SR (Nhân viên bán hàng)</option>
+              <option value="SS">SS (Giám sát bán hàng)</option>
+              <option value="ASM">ASM (Quản lý khu vực)</option>
+              <option value="ADMIN">ADMIN (Toàn quyền)</option>
+            </select>
+          </div>
+          <div id="boxSelectSrKey">
+            <label class="text-[10px] font-bold text-gray-600 block mb-0.5">Ánh xạ tên chuẩn trong file:</label>
+            <select id="newSrKey" class="w-full p-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-[#1F4E79]">
+              <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
+              <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
+              <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
+              <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
+              <option value="Nam Le Hoang">Lê Hoàng Nam</option>
+              <option value="Phu Tran Trong">Trần Trọng Phú</option>
+              <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
+              <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
+              <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs shadow-xs">
+            Lưu Tài Khoản (Pass mặc định 123456)
+          </button>
+        </form>
       </details>
-    </div>
 
-    <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE -->
-    <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
-      <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">💵</span>
-          <div>
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide block">TẠM TÍNH THƯỞNG (INCENTIVE)</span>
-            <span id="txtTotalIncentiveDisplay" class="text-base font-black text-amber-900 leading-tight">0 đ</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-1 bg-white/90 border border-amber-200 px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-amber-800 shadow-xs">
-          <span id="lblIncentiveToggleText">Chi tiết</span>
-          <span id="iconIncentiveToggle" class="text-[9px]">▼</span>
-        </div>
+      <!-- Danh sách User & Nút xuất file Excel -->
+      <div class="flex-1 overflow-y-auto space-y-1.5" id="adminUserListContainer">
+        <!-- Render danh sách tài khoản -->
       </div>
 
-      <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
-        <!-- 1. Sản Lượng Total -->
-        <div class="bg-white/80 p-2.5 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
-            <span id="incVolRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
-          </div>
-          <div class="text-right">
-            <span id="incVolVal" class="text-blue-900 font-black block">0 đ</span>
-            <span id="incVolAch" class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 2. Sản Lượng Premium -->
-        <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
-            <span id="incSkuRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
-          </div>
-          <div class="text-right">
-            <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
-            <span id="incSkuAch" class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 3. Chỉ Tiêu MP -->
-        <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
-            <span id="incMepRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
-          </div>
-          <div class="text-right">
-            <span id="incMepVal" class="text-emerald-900 font-black block">0 đ</span>
-            <span id="incMepAch" class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- 4. Điểm FIT (Hiển thị %) -->
-        <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
-          <div>
-            <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
-            <span id="incFitRatio" class="text-[10px] text-gray-500 font-medium">0% / 0%</span>
-          </div>
-          <div class="text-right">
-            <span id="incFitVal" class="text-purple-900 font-black block">0 đ</span>
-            <span id="incFitAch" class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
-          </div>
-        </div>
-
-        <!-- Tổng tiền thực nhận -->
-        <div class="pt-1 flex justify-between items-center text-xs font-bold bg-amber-100/70 p-2.5 rounded-xl border border-amber-200">
-          <span class="text-amber-950 uppercase text-[10px] font-black">💰 Tổng Tiền Thực Nhận (Total):</span>
-          <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. BỘ LỌC NGÀY -->
-    <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
-      <div class="flex gap-2 items-center">
-        <div class="flex-1">
-          <select id="dateFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
-            <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>
-          </select>
-        </div>
-        <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 rounded-xl text-xs font-bold transition-all">Reset</button>
-      </div>
-      <div id="boxSpecificDateSales" class="hidden mt-2.5 pt-2.5 border-t border-gray-100">
-        <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
-          <div>
-            <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
-            <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
-          </div>
-          <div class="text-right text-[11px] space-y-0.5">
-            <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
-            <div class="text-amber-700 font-bold">Pre: <span id="lblSpecificDatePre">0.00 HL</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- KHỐI KHUYẾN MÃI THU GỌN -->
-    <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
-      <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
-        <div class="flex items-center gap-2">
-          <span class="text-sm">🎁</span>
-          <span class="text-xs font-bold text-gray-800">KHUYẾN MÃI ĐÃ KEY</span>
-          <span id="badgePromoCount" class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-extrabold rounded-full">0</span>
-        </div>
-        <span class="text-xs text-gray-400 font-bold">Chạm để xem ▼</span>
-      </summary>
-      <div id="promoListContent" class="p-3 border-t border-gray-100 space-y-2 text-xs"></div>
-    </details>
-
-    <div class="flex justify-between items-center px-1 pt-1">
-      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Chi tiết theo điểm bán</span>
-      <span id="txtAggCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-    </div>
-
-    <div id="aggregatedOutletList" class="space-y-2.5"></div>
-  </div>
-
-  <!-- ================= TAB 2: OLS TRƯNG BÀY BIA ================= -->
-  <div id="tab2Content" class="hidden space-y-3">
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500">🏆 TỔNG ĐIỂM BÁN ĐẠT</span>
-        <span id="txtOutletPercent" class="text-xs font-extrabold text-blue-600">0%</span>
-      </div>
-      <div class="flex items-baseline justify-between">
-        <span id="txtOutletAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
-        <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
-      </div>
-      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-        <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
-      </div>
-
-      <!-- BỘ LỌC TRẠNG THÁI -->
-      <div class="pt-2 border-t border-gray-100">
-        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-          <button id="btnFilterTBAll" onclick="setTBStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
-          <button id="btnFilterTBFail" onclick="setTBStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
-          <button id="btnFilterTBPass" onclick="setTBStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
-        </div>
-      </div>
-
-      <!-- CARD LEVEL 1, 2, 3 -->
-      <div class="pt-2 border-t border-gray-100">
-        <div class="flex justify-between items-center mb-1.5">
-          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ (Chạm để lọc):</span>
-          <button id="btnResetTBLevel" onclick="toggleTBLevel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Tất cả cấp độ</button>
-        </div>
-        <div class="grid grid-cols-3 gap-2 text-center select-none">
-          <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
-            <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1 (≥5 th Pre)</span>
-            <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
-            <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-          </div>
-          <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-            <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2 (≥3 th Pre)</span>
-            <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
-            <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-          </div>
-          <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
-            <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3 (≥2 th Pre)</span>
-            <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
-            <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="pt-2 border-t border-gray-100 space-y-2">
-        <div>
-          <div class="flex justify-between text-xs font-semibold mb-1">
-            <span class="text-emerald-700">● Huda Core</span>
-            <span id="txtVolHuda">0.00 / 0.00 HL</span>
-          </div>
-          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div id="barHuda" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between text-xs font-semibold mb-1">
-            <span class="text-amber-600">● Premium (Tuborg / Blanc)</span>
-            <span id="txtVolPre">0.00 / 0.00 HL</span>
-          </div>
-          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div id="barPre" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex justify-between items-center mb-1 px-1">
-      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách trưng bày</span>
-      <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-    </div>
-    <div id="outletList" class="space-y-2.5"></div>
-  </div>
-
-  <!-- ================= TAB 3: OLS LISTING FEE ================= -->
-  <div id="tab3Content" class="hidden space-y-3">
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500">💰 TỔNG ĐIỂM LISTING FEE ĐẠT</span>
-        <span id="txtLFPercent" class="text-xs font-extrabold text-amber-600">0%</span>
-      </div>
-      <div class="flex items-baseline justify-between">
-        <span id="txtLFAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
-        <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
-      </div>
-      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-        <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
-      </div>
-
-      <!-- BỘ LỌC TRẠNG THÁI LF -->
-      <div class="pt-2 border-t border-gray-100">
-        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1 mb-2">
-          <button id="btnFilterLFAll" onclick="setLFStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
-          <button id="btnFilterLFFail" onclick="setLFStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
-          <button id="btnFilterLFPass" onclick="setLFStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
-        </div>
-
-        <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-          <button id="btnLFChannelAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
-          <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán nhậu)</button>
-          <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-emerald-700 text-center">TOFT (Tạp hóa)</button>
-        </div>
-      </div>
-
-      <!-- CARD TONT & TOFT -->
-      <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
-        <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
-          <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
-          <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
-          <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-        </div>
-        <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-          <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
-          <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
-          <span id="passLFToft" class="text-[10px] text-emerald-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex justify-between items-center mb-1 px-1">
-      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách Listing Fee</span>
-      <span id="txtLFListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-    </div>
-    <div id="lfOutletList" class="space-y-2.5"></div>
-  </div>
-
-  <!-- ================= TAB 4: CHỤP TB (CHẤM TRƯNG BÀY) ================= -->
-  <div id="tab4Content" class="hidden space-y-3">
-    <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold text-gray-500">📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY</span>
-        <span id="txtAuditPercent" class="text-xs font-extrabold text-blue-600">0%</span>
-      </div>
-      <div class="flex items-baseline justify-between">
-        <span id="txtAuditAchieved" class="text-2xl font-black text-gray-900">0 / 0</span>
-        <span class="text-xs font-semibold text-emerald-600">Điểm Đủ 2/2 Lần</span>
-      </div>
-      <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-        <div id="barAudit" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-      </div>
-
-      <!-- BỘ LỌC CHẠM CARD -->
-      <div class="pt-2 border-t border-gray-100">
-        <div class="flex justify-between items-center mb-1.5">
-          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm (Chạm để lọc):</span>
-          <button id="btnResetAuditStatus" onclick="setAuditStatusFilter('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Xem tất cả</button>
-        </div>
-        <div class="grid grid-cols-3 gap-2 text-center select-none">
-          <div id="cardAuditDone" onclick="setAuditStatusFilter('DONE')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-            <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐỦ 2 LẦN</span>
-            <span id="countAuditDone" class="text-sm font-black text-emerald-950 block mt-0.5">0</span>
-            <span class="text-[9px] text-emerald-600 font-semibold block mt-0.5">Hoàn thành</span>
-          </div>
-          <div id="cardAuditNeed2" onclick="setAuditStatusFilter('NEED_SECOND')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
-            <span class="text-[9px] font-bold text-amber-800 block uppercase">THIẾU LẦN 2</span>
-            <span id="countAuditNeed2" class="text-sm font-black text-amber-950 block mt-0.5">0</span>
-            <span class="text-[9px] text-amber-700 font-semibold block mt-0.5">Mới chấm 1 lần</span>
-          </div>
-          <div id="cardAuditNone" onclick="setAuditStatusFilter('NONE')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200">
-            <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CHẤM</span>
-            <span id="countAuditNone" class="text-sm font-black text-rose-950 block mt-0.5">0</span>
-            <span class="text-[9px] text-rose-600 font-semibold block mt-0.5">Cần đi gấp</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex justify-between items-center mb-1 px-1">
-      <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách chụp trưng bày</span>
-      <span id="txtAuditListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
-    </div>
-    <div id="auditOutletList" class="space-y-2.5"></div>
-  </div>
-
-  <!-- ================= MODAL TOTAL KPI (THIẾT KẾ HIỆN ĐẠI, GỌN GÀNG, SANG TRỌNG) ================= -->
-  <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      
-      <!-- Header Modal -->
-      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
-          <div>
-            <h3 class="text-sm font-black text-[#1F4E79] tracking-tight">TIẾN ĐỘ TOTAL KPI (FIT-10)</h3>
-            <p class="text-[10px] text-gray-400 font-semibold" id="lblKpiModalSubtitle">Tiến độ chi tiết từng chỉ số</p>
-          </div>
-        </div>
-        <button onclick="closeTotalKpiModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <!-- Danh sách 8 chỉ số phẳng, hiện đại -->
-      <div class="space-y-2 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        
-        <!-- 1. Sản Lượng Total -->
-        <div class="p-2.5 rounded-2xl bg-gray-50/80 border border-gray-200/70 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-gray-800 text-[11px] flex items-center gap-1.5">📦 1. Sản Lượng Total</span>
-            <span id="kpiVolRatio" class="text-[10px] text-gray-500 font-semibold mt-0.5 block">0.00 / 0.00 HL</span>
-          </div>
-          <span id="kpiVolPct" class="px-2.5 py-1 bg-blue-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 2. Sản Lượng Premium -->
-        <div class="p-2.5 rounded-2xl bg-amber-50/60 border border-amber-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-amber-950 text-[11px] flex items-center gap-1.5">👑 2. Sản Lượng Premium</span>
-            <span id="kpiSkuRatio" class="text-[10px] text-amber-700 font-semibold mt-0.5 block">0.00 / 0.00 HL</span>
-          </div>
-          <span id="kpiSkuPct" class="px-2.5 py-1 bg-amber-500 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 3. Chỉ Tiêu MP -->
-        <div class="p-2.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-emerald-950 text-[11px] flex items-center gap-1.5">🎯 3. Chỉ Tiêu MP (Tổng thực thi)</span>
-            <span id="kpiMpRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-          </div>
-          <span id="kpiMpPct" class="px-2.5 py-1 bg-emerald-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 4. Độ Phủ (Coverage) -->
-        <div class="p-2.5 rounded-2xl bg-teal-50/60 border border-teal-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-teal-950 text-[11px] flex items-center gap-1.5">📍 4. Độ Phủ (Coverage)</span>
-            <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-          </div>
-          <span id="kpiCovPct" class="px-2.5 py-1 bg-teal-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 5. Chỉ Tiêu SKU Ưu Tiên -->
-        <div class="p-2.5 rounded-2xl bg-indigo-50/60 border border-indigo-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-indigo-950 text-[11px] flex items-center gap-1.5">🍺 5. Chỉ Tiêu SKU Ưu Tiên</span>
-            <span id="kpiSkuPriRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-          </div>
-          <span id="kpiSkuPriPct" class="px-2.5 py-1 bg-indigo-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 6. Điểm FIT -->
-        <div class="p-2.5 rounded-2xl bg-purple-50/60 border border-purple-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-purple-950 text-[11px] flex items-center gap-1.5">📸 6. Điểm FIT (Hình ảnh / TB)</span>
-            <span id="kpiFitRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0% / 0%</span>
-          </div>
-          <span id="kpiFitPct" class="px-2.5 py-1 bg-purple-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 7. Call Per Day -->
-        <div class="p-2.5 rounded-2xl bg-sky-50/60 border border-sky-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-sky-950 text-[11px] flex items-center gap-1.5">🚶‍♂️ 7. Call Per Day</span>
-            <span id="kpiCpdRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0.0 / 0.0 cuộc</span>
-          </div>
-          <span id="kpiCpdPct" class="px-2.5 py-1 bg-sky-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <!-- 8. Visit On Route -->
-        <div class="p-2.5 rounded-2xl bg-rose-50/60 border border-rose-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-rose-950 text-[11px] flex items-center gap-1.5">🗺️ 8. Visit On Route (Đúng tuyến)</span>
-            <span id="kpiVorRatio" class="text-[10px] text-rose-700 font-semibold mt-0.5 block">0 / 0 lượt</span>
-          </div>
-          <span id="kpiVorPct" class="px-2.5 py-1 bg-rose-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-      </div>
-
-      <div class="pt-2 border-t border-gray-100">
-        <button onclick="closeTotalKpiModal()" class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 font-extrabold rounded-2xl text-xs transition-all">
-          Đóng cửa sổ
+      <div class="pt-2 border-t border-gray-100 flex gap-2">
+        <button onclick="exportUsersToExcel()" class="flex-1 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1">
+          📥 Xuất danh sách Excel
+        </button>
+        <button onclick="closeAdminUserModal()" class="px-4 py-2 bg-gray-100 text-gray-600 font-bold rounded-xl text-xs">
+          Đóng
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ================= MODAL QUẢN LÝ: TRUNG TÂM BÁO CÁO SS (PIN: 6868) ================= -->
-  <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+  <!-- ================= GIAO DIỆN CHÍNH DASHBOARD ================= -->
+  <div id="mainDashboard">
+    <!-- Header & Chữ ký LHN -->
+    <div class="mb-2.5 px-0.5">
+      <div class="flex justify-between items-center mb-2">
         <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📋 TRUNG TÂM BÁO CÁO (SS)
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảo mật quản lý • Chọn loại báo cáo cần gửi Zalo</p>
-        </div>
-        <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <!-- Danh sách 5 tùy chọn báo cáo -->
-      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
+          <h1 class="text-[17px] font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
+            🍺 Carlsberg Sale Tracking
+          </h1>
+          <div class="flex items-center gap-1 mt-0.5 text-[10px] text-gray-400">
+            <span id="lblLastUpdate" class="font-medium">Đang tải dữ liệu...</span>
+            <span class="text-gray-300">•</span>
+            <span class="font-bold text-gray-500 italic">by LHN</span>
           </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
-            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
-        </button>
-
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
-        </button>
-
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL QUẢN LÝ: SOI ĐƠN HÀNG NGÀY (PIN: 6868) ================= -->
-  <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📦 ĐƠN DUYỆT THEO NGÀY
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
         </div>
-        <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
-        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
-        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
-        </select>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2 text-center select-none">
-        <div id="cardFilterAll" onclick="setModalFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50 border-blue-200 ring-2 ring-blue-500 shadow-sm">
-          <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG SẢN LƯỢNG</span>
-          <span id="modalSummaryTotalHL" class="text-xs font-black text-blue-950 mt-0.5 block">0.00 HL</span>
-          <span id="modalSummaryTotalCases" class="text-[9px] text-blue-700 font-semibold block">0 th</span>
-        </div>
-        <div id="cardFilterHasOrder" onclick="setModalFilter('HAS_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/70">
-          <span class="text-[9px] font-bold text-emerald-700 block uppercase">CÓ ĐƠN</span>
-          <span id="modalSummaryHasOrder" class="text-xs font-black text-emerald-950 mt-0.5 block">0 SR</span>
-          <span class="text-[9px] text-emerald-700 font-semibold block">Chạm để lọc</span>
-        </div>
-        <div id="cardFilterNoOrder" onclick="setModalFilter('NO_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200 hover:bg-rose-100/70">
-          <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CÓ ĐƠN</span>
-          <span id="modalSummaryNoOrder" class="text-xs font-black text-rose-950 mt-0.5 block">0 SR</span>
-          <span class="text-[9px] text-rose-700 font-semibold block">Chạm để lọc</span>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center px-1 pt-0.5">
-        <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
-        <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
-      </div>
-
-      <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
-        📢 Sao chép nhắc nhở các bạn chưa có đơn
-      </button>
-
-      <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL ADMIN CẬP NHẬT -->
-  <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-sm font-extrabold text-gray-900">🔒 CẬP NHẬT DỮ LIỆU</h3>
-        <button onclick="toggleAdminModal()" class="text-gray-400 font-bold text-lg">✕</button>
-      </div>
-
-      <div id="pinBox">
-        <label class="text-xs font-bold text-gray-600 block mb-1.5">Nhập mã PIN xác thực:</label>
-        <div class="flex gap-2">
-          <input type="password" id="inputPin" placeholder="••••" class="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-center text-base tracking-widest font-bold outline-none focus:border-amber-500">
-          <button onclick="verifyPin()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Xác nhận</button>
-        </div>
-      </div>
-
-      <div id="uploadBox" class="hidden space-y-3">
-        <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng. Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong!
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
-          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">2. FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
-          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">3. FILE CHỤP TB DIP-01 (.xlsx) <span id="auditStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileAudit" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
-          ⚡ XÁC NHẬN CẬP NHẬT
-        </button>
-
-        <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span class="text-[11px] text-gray-400 font-medium">Bảo mật hệ thống</span>
-          <button onclick="promptExportFiles()" class="text-base p-1.5 rounded-full hover:bg-amber-100 active:scale-90 transition-all select-none" title="Mở khóa tải file">
-            🍺
+        <!-- Thông tin đăng nhập & Đăng xuất -->
+        <div class="flex items-center gap-1.5">
+          <button id="btnAdminUserManage" onclick="openAdminUserModal()" class="hidden text-[10px] font-extrabold bg-purple-100 text-purple-800 px-2 py-1 rounded-xl shadow-xs">
+            👥 QL User
+          </button>
+          <button onclick="handleLogout()" class="text-[10px] font-extrabold bg-gray-100 hover:bg-rose-50 text-gray-600 hover:text-rose-600 px-2 py-1 rounded-xl transition-all" title="Đăng xuất">
+            Đăng xuất ⎋
           </button>
         </div>
+      </div>
 
-        <div id="exportActionBox" class="hidden space-y-2 pt-2 bg-amber-50/60 p-3 rounded-2xl border border-amber-200/70">
-          <p class="text-[11px] font-bold text-amber-900 text-center">🔓 ĐÃ MỞ KHÓA TẢI FILE CLOUD</p>
-          <div class="grid grid-cols-3 gap-1.5 pt-1">
-            <button onclick="downloadCloudFile('TRACKING')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">
-              📥 Trưng bày
+      <!-- 3 Nút chức năng -->
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
+          📦 Đơn ngày
+        </button>
+        <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
+          📋 Báo cáo
+        </button>
+        <button id="btnTopUpload" onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
+          ⚙️ Nạp file
+        </button>
+      </div>
+
+      <!-- Banner ngày đơn gần nhất -->
+      <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
+        <span class="text-blue-900 font-semibold flex items-center gap-1">
+          📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
+        </span>
+        <span class="text-[10px] text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded-lg border border-blue-200">T+1</span>
+      </div>
+    </div>
+
+    <!-- BỘ LỌC TÊN SR -->
+    <div id="srFilterContainer" class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
+      <div class="flex justify-between items-center mb-1">
+        <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
+        <span class="text-[10px] text-gray-400 italic" id="srSaveStatus">Tự lưu máy này</span>
+      </div>
+      <select id="srFilter" onchange="onSRChange()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
+        <option value="ALL">-- Toàn bộ Team --</option>
+        <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
+        <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
+        <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
+        <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
+        <option value="Nam Le Hoang">Lê Hoàng Nam</option>
+        <option value="Phu Tran Trong">Trần Trọng Phú</option>
+        <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
+        <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
+        <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
+      </select>
+    </div>
+
+    <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
+    <div class="mb-3">
+      <div class="relative">
+        <input type="text" id="searchInput" oninput="renderAll()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
+          class="w-full p-2.5 pl-9 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-800 placeholder-gray-400 card-shadow outline-none focus:border-blue-500">
+        <span class="absolute left-3 top-2.5 text-gray-400 text-xs">🔍</span>
+        <button onclick="clearSearch()" id="btnClearSearch" class="hidden absolute right-3 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold">✕</button>
+      </div>
+    </div>
+
+    <!-- THANH CHUYỂN 4 TAB -->
+    <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
+      <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
+        📊 SỐ BÁN
+      </button>
+      <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
+        🎯 DISPLAY
+      </button>
+      <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
+        💰 LF
+      </button>
+      <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">
+        📸 CHỤP TB
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
+    <div id="tab1Content" class="space-y-3">
+      <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET -->
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-xs active:scale-95 transition-all flex items-center gap-1">
+              <span>🎯</span> TOTAL KPI
             </button>
-            <button onclick="downloadCloudFile('LF')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">
-              📥 Listing Fee
-            </button>
-            <button onclick="downloadCloudFile('SEC')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">
-              📥 SEC-06
-            </button>
+            <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtTargetAchieved" class="text-2xl font-black text-[#1F4E79]">0.00 / 0.00 HL</span>
+          <span id="txtTargetCases" class="text-xs font-bold text-amber-700">0 / 0 th</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
+        <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
+          <!-- Cột Mainstream -->
+          <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
+            <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800">
+              <span>🍺 MAINSTREAM</span>
+              <span id="badgeMainPct" class="bg-emerald-200/80 text-emerald-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
+            </div>
+            <div class="text-base font-black text-emerald-950" id="valMainAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+            <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
+              <span>Target:</span>
+              <b class="text-gray-700" id="valMainTar">0.00 HL</b>
+            </div>
+            <div class="w-full bg-emerald-100 h-1.5 rounded-full overflow-hidden mt-1">
+              <div id="barMainMini" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <!-- Cột Premium -->
+          <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-100/90 space-y-1">
+            <div class="flex justify-between items-center text-[10px] font-bold text-amber-800">
+              <span>👑 PREMIUM</span>
+              <span id="badgePrePct" class="bg-amber-200/80 text-amber-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
+            </div>
+            <div class="text-base font-black text-amber-950" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+            <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
+              <span>Target:</span>
+              <b class="text-gray-700" id="valPreTar">0.00 HL</b>
+            </div>
+            <div class="w-full bg-amber-100 h-1.5 rounded-full overflow-hidden mt-1">
+              <div id="barPreMini" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu xem chi tiết Brand Premium -->
+        <details class="bg-amber-50/30 rounded-xl border border-amber-100/60 overflow-hidden text-xs">
+          <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none text-[11px] font-bold text-amber-900">
+            <span>🔍 Xem sản lượng theo Brand Premium</span>
+            <span class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-lg font-bold">Xem chi tiết ▼</span>
+          </summary>
+          <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
+        </details>
+      </div>
+
+      <!-- KHỐI TẠM TÍNH THƯỞNG INCENTIVE -->
+      <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
+        <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">💵</span>
+            <div>
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide block">TẠM TÍNH THƯỞNG (INCENTIVE)</span>
+              <span id="txtTotalIncentiveDisplay" class="text-base font-black text-amber-900 leading-tight">0 đ</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 bg-white/90 border border-amber-200 px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-amber-800 shadow-xs">
+            <span id="lblIncentiveToggleText">Chi tiết</span>
+            <span id="iconIncentiveToggle" class="text-[9px]">▼</span>
+          </div>
+        </div>
+
+        <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
+          <!-- 1. Sản Lượng Total -->
+          <div class="bg-white/80 p-2.5 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
+            <div>
+              <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
+              <span id="incVolRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+            </div>
+            <div class="text-right">
+              <span id="incVolVal" class="text-blue-900 font-black block">0 đ</span>
+              <span id="incVolAch" class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">0%</span>
+            </div>
+          </div>
+
+          <!-- 2. Sản Lượng Premium -->
+          <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
+            <div>
+              <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
+              <span id="incSkuRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+            </div>
+            <div class="text-right">
+              <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
+              <span id="incSkuAch" class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">0%</span>
+            </div>
+          </div>
+
+          <!-- 3. Chỉ Tiêu MP -->
+          <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
+            <div>
+              <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
+              <span id="incMepRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
+            </div>
+            <div class="text-right">
+              <span id="incMepVal" class="text-emerald-900 font-black block">0 đ</span>
+              <span id="incMepAch" class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">0%</span>
+            </div>
+          </div>
+
+          <!-- 4. Điểm FIT -->
+          <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
+            <div>
+              <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
+              <span id="incFitRatio" class="text-[10px] text-gray-500 font-medium">0% / 0%</span>
+            </div>
+            <div class="text-right">
+              <span id="incFitVal" class="text-purple-900 font-black block">0 đ</span>
+              <span id="incFitAch" class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
+            </div>
+          </div>
+
+          <!-- Tổng tiền thực nhận -->
+          <div class="pt-1 flex justify-between items-center text-xs font-bold bg-amber-100/70 p-2.5 rounded-xl border border-amber-200">
+            <span class="text-amber-950 uppercase text-[10px] font-black">💰 Tổng Tiền Thực Nhận (Total):</span>
+            <span id="incTotalVal" class="text-sm font-black text-amber-900">0 đ</span>
           </div>
         </div>
       </div>
+
+      <!-- 2. BỘ LỌC NGÀY -->
+      <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
+        <div class="flex gap-2 items-center">
+          <div class="flex-1">
+            <select id="dateFilter" onchange="renderAll()" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none">
+              <option value="ALL">🗓️ Lọc Theo Ngày: Cả Tháng</option>
+            </select>
+          </div>
+          <button onclick="resetDateFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 rounded-xl text-xs font-bold transition-all">Reset</button>
+        </div>
+        <div id="boxSpecificDateSales" class="hidden mt-2.5 pt-2.5 border-t border-gray-100">
+          <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
+            <div>
+              <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
+              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
+            </div>
+            <div class="text-right text-[11px] space-y-0.5">
+              <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
+              <div class="text-amber-700 font-bold">Pre: <span id="lblSpecificDatePre">0.00 HL</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHỐI KHUYẾN MÃI THU GỌN -->
+      <details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden">
+        <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-amber-50/50">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">🎁</span>
+            <span class="text-xs font-bold text-gray-800">KHUYẾN MÃI ĐÃ KEY</span>
+            <span id="badgePromoCount" class="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-extrabold rounded-full">0</span>
+          </div>
+          <span class="text-xs text-gray-400 font-bold">Chạm để xem ▼</span>
+        </summary>
+        <div id="promoListContent" class="p-3 border-t border-gray-100 space-y-2 text-xs"></div>
+      </details>
+
+      <div class="flex justify-between items-center px-1 pt-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Chi tiết theo điểm bán</span>
+        <span id="txtAggCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+
+      <div id="aggregatedOutletList" class="space-y-2.5"></div>
+    </div>
+
+    <!-- ================= TAB 2: OLS TRƯNG BÀY BIA ================= -->
+    <div id="tab2Content" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500">🏆 TỔNG ĐIỂM BÁN ĐẠT</span>
+          <span id="txtOutletPercent" class="text-xs font-extrabold text-blue-600">0%</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtOutletAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
+          <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barOutlet" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+            <button id="btnFilterTBAll" onclick="setTBStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+            <button id="btnFilterTBFail" onclick="setTBStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
+            <button id="btnFilterTBPass" onclick="setTBStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ:</span>
+            <button id="btnResetTBLevel" onclick="toggleTBLevel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Tất cả cấp độ</button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center select-none">
+            <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
+              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1 (≥5 th Pre)</span>
+              <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
+              <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
+            </div>
+            <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2 (≥3 th Pre)</span>
+              <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
+              <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
+            </div>
+            <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
+              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3 (≥2 th Pre)</span>
+              <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
+              <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100 space-y-2">
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span class="text-emerald-700">● Huda Core</span>
+              <span id="txtVolHuda">0.00 / 0.00 HL</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+              <div id="barHuda" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span class="text-amber-600">● Premium (Tuborg / Blanc)</span>
+              <span id="txtVolPre">0.00 / 0.00 HL</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+              <div id="barPre" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách trưng bày</span>
+        <span id="txtListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+      <div id="outletList" class="space-y-2.5"></div>
+    </div>
+
+    <!-- ================= TAB 3: OLS LISTING FEE ================= -->
+    <div id="tab3Content" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500">💰 TỔNG ĐIỂM LISTING FEE ĐẠT</span>
+          <span id="txtLFPercent" class="text-xs font-extrabold text-amber-600">0%</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtLFAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
+          <span class="text-xs font-semibold text-emerald-600">Điểm Đạt KPI</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1 mb-2">
+            <button id="btnFilterLFAll" onclick="setLFStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+            <button id="btnFilterLFFail" onclick="setLFStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
+            <button id="btnFilterLFPass" onclick="setLFStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
+          </div>
+
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+            <button id="btnLFChannelAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
+            <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán nhậu)</button>
+            <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-emerald-700 text-center">TOFT (Tạp hóa)</button>
+          </div>
+        </div>
+
+        <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
+          <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
+            <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
+            <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
+            <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
+          </div>
+          <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+            <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
+            <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
+            <span id="passLFToft" class="text-[10px] text-emerald-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách Listing Fee</span>
+        <span id="txtLFListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+      <div id="lfOutletList" class="space-y-2.5"></div>
+    </div>
+
+    <!-- ================= TAB 4: CHỤP TB ================= -->
+    <div id="tab4Content" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500">📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY</span>
+          <span id="txtAuditPercent" class="text-xs font-extrabold text-blue-600">0%</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtAuditAchieved" class="text-2xl font-black text-gray-900">0 / 0</span>
+          <span class="text-xs font-semibold text-emerald-600">Điểm Đủ 2/2 Lần</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barAudit" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm:</span>
+            <button id="btnResetAuditStatus" onclick="setAuditStatusFilter('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Xem tất cả</button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center select-none">
+            <div id="cardAuditDone" onclick="setAuditStatusFilter('DONE')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+              <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐỦ 2 LẦN</span>
+              <span id="countAuditDone" class="text-sm font-black text-emerald-950 block mt-0.5">0</span>
+              <span class="text-[9px] text-emerald-600 font-semibold block mt-0.5">Hoàn thành</span>
+            </div>
+            <div id="cardAuditNeed2" onclick="setAuditStatusFilter('NEED_SECOND')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
+              <span class="text-[9px] font-bold text-amber-800 block uppercase">THIẾU LẦN 2</span>
+              <span id="countAuditNeed2" class="text-sm font-black text-amber-950 block mt-0.5">0</span>
+              <span class="text-[9px] text-amber-700 font-semibold block mt-0.5">Mới chấm 1 lần</span>
+            </div>
+            <div id="cardAuditNone" onclick="setAuditStatusFilter('NONE')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200">
+              <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CHẤM</span>
+              <span id="countAuditNone" class="text-sm font-black text-rose-950 block mt-0.5">0</span>
+              <span class="text-[9px] text-rose-600 font-semibold block mt-0.5">Cần đi gấp</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách chụp trưng bày</span>
+        <span id="txtAuditListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+      <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
   </div>
 
@@ -768,19 +626,32 @@
     let currentAuditStatus = "ALL";
     let isManagerVerified = false;
 
+    // Biến lưu thông tin User hiện tại
+    let currentUser = null;
+
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (e) {
+      console.error("Lỗi Supabase:", e);
+    }
+
+    let MASTER = [];
+    let LISTING_FEE = [];
+    let SEC_ORDERS = [];
+    let PROMOTIONS = [];
+    let AUDIT_DATA = [];
+    let SALES_TARGETS = {};
+
     function normalizeSR(name) {
       if (!name) return "";
       const s = String(name).trim();
       const sLower = s.toLowerCase();
 
-      if (sLower.includes("phan tuan vu") || sLower.includes("vu2") || sLower.includes("phan tuấn vũ")) {
-        return "Vu2 Phan Tuan";
-      }
-
-      if (sLower.includes("tuan nguyen hoang") || sLower.includes("nguyễn hoàng tuấn") || sLower.includes("nguyen hoang tuan")) {
-        return "Tuan Nguyen Hoang";
-      }
-
+      if (sLower.includes("phan tuan vu") || sLower.includes("vu2") || sLower.includes("phan tuấn vũ")) return "Vu2 Phan Tuan";
+      if (sLower.includes("tuan nguyen hoang") || sLower.includes("nguyễn hoàng tuấn") || sLower.includes("nguyen hoang tuan")) return "Tuan Nguyen Hoang";
       if (s.includes("Tai") || s.includes("Tài")) return "Tai Nguyen Ngoc";
       if (s.includes("Thuong") || s.includes("Thương") || s.includes("Thưởng")) return "Thuong Hoang Van";
       if (s.includes("Luan") || s.includes("Luân")) return "Luan Nguyen Van";
@@ -809,489 +680,253 @@
       return 'Premium Khác';
     }
 
-    let supabaseClient = null;
-    try {
-      if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-    } catch (e) {
-      console.error("Lỗi Supabase:", e);
-    }
+    // ==========================================
+    // LOGIC ĐĂNG NHẬP, PHÂN QUYỀN & QUẢN LÝ USER
+    // ==========================================
+    async function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.textContent = "Đang kiểm tra...";
 
-    let MASTER = [];
-    let LISTING_FEE = [];
-    let SEC_ORDERS = [];
-    let PROMOTIONS = [];
-    let AUDIT_DATA = [];
-    let SALES_TARGETS = {};
-
-    async function loadDataFromCloud() {
-      if (!supabaseClient) return;
       try {
+        if (!supabaseClient) throw new Error("Chưa kết nối Supabase");
         const { data, error } = await supabaseClient
-          .from('sales_data')
+          .from('app_users')
           .select('*')
-          .eq('id', 'CURRENT_DATA')
+          .eq('username', u)
+          .eq('password', p)
           .maybeSingle();
 
-        if (error) {
-          console.error("Lỗi Cloud:", error);
-          document.getElementById('lblLastUpdate').textContent = "Chưa kết nối Cloud";
+        if (error) throw error;
+        if (!data) {
+          alert("Sai tên đăng nhập hoặc mật khẩu!");
+          btn.textContent = "Đăng Nhập";
           return;
         }
 
-        if (data && data.updated_at) {
-          if (Array.isArray(data.master)) {
-            MASTER = data.master;
-            LISTING_FEE = data.listing || [];
-            AUDIT_DATA = data.audit || [];
-            SALES_TARGETS = data.targets || {};
-          } else if (data.master && typeof data.master === 'object') {
-            MASTER = data.master.toft || [];
-            LISTING_FEE = data.master.listing || [];
-            AUDIT_DATA = data.master.audit || data.audit || [];
-            SALES_TARGETS = data.master.targets || data.targets || {};
-          }
+        currentUser = data;
+        localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(data));
 
-          SEC_ORDERS = data.sec || [];
-          PROMOTIONS = data.promo || [];
-          if (!AUDIT_DATA || AUDIT_DATA.length === 0) {
-            AUDIT_DATA = data.audit || [];
-          }
-          if (!SALES_TARGETS || Object.keys(SALES_TARGETS).length === 0) {
-            SALES_TARGETS = data.targets || {};
-          }
-
-          try {
-            localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-            localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-            localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-            localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-            localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-            localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-            localStorage.setItem('UPDATE_TIME', data.updated_at);
-          } catch(e) {}
-
-          document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
-          document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
-          document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
-
-          if (AUDIT_DATA && AUDIT_DATA.length > 0) {
-            document.getElementById('auditStatusText').textContent = `(Đã có ${AUDIT_DATA.length} điểm)`;
-            document.getElementById('auditStatusText').className = "text-emerald-600 font-bold";
-          }
-
-          if (Object.keys(SALES_TARGETS).length > 0) {
-            document.getElementById('targetStatusText').textContent = `(Đã có ${Object.keys(SALES_TARGETS).length} SR)`;
-            document.getElementById('targetStatusText').className = "text-emerald-600 font-bold";
-          }
-
-          updateLatestOrderDateBanner();
-          populateDateFilter();
-          renderAll();
+        if (data.is_first_login || data.password === '123456') {
+          document.getElementById('changePasswordModal').classList.remove('hidden');
         } else {
-          document.getElementById('lblLastUpdate').textContent = "Chưa có dữ liệu trên Cloud";
+          applyUserPermissions();
         }
       } catch (err) {
-        console.error("Lỗi:", err);
+        alert("Lỗi đăng nhập: " + (err.message || err));
+      } finally {
+        btn.textContent = "Đăng Nhập";
       }
     }
 
-    function updateLatestOrderDateBanner() {
-      if (SEC_ORDERS && SEC_ORDERS.length > 0) {
-        const dates = SEC_ORDERS.map(o => o.date).filter(Boolean).sort().reverse();
-        if (dates.length > 0) {
-          const latest = dates[0];
-          document.getElementById('lblLatestOrderDate').textContent = latest;
-          document.getElementById('latestOrderBanner').classList.remove('hidden');
-          return latest;
-        }
-      }
-      return null;
-    }
+    async function handleChangePassword(e) {
+      e.preventDefault();
+      const p1 = document.getElementById('newPassword').value.trim();
+      const p2 = document.getElementById('confirmNewPassword').value.trim();
 
-    window.addEventListener('DOMContentLoaded', () => {
+      if (p1 !== p2) {
+        alert("Mật khẩu xác nhận không khớp!");
+        return;
+      }
+      if (p1 === '123456') {
+        alert("Vui lòng đặt mật khẩu khác mật khẩu mặc định 123456!");
+        return;
+      }
+
       try {
-        const localMaster = localStorage.getItem('MASTER_DATA');
-        const localListing = localStorage.getItem('LISTING_DATA');
-        const localSec = localStorage.getItem('SEC_DATA');
-        const localPromo = localStorage.getItem('PROMO_DATA');
-        const localAudit = localStorage.getItem('AUDIT_DATA');
-        const localTargets = localStorage.getItem('SALES_TARGETS');
-        const localTime = localStorage.getItem('UPDATE_TIME');
+        const { error } = await supabaseClient
+          .from('app_users')
+          .update({ password: p1, is_first_login: false })
+          .eq('id', currentUser.id);
 
-        if (localMaster) MASTER = JSON.parse(localMaster);
-        if (localListing) LISTING_FEE = JSON.parse(localListing);
-        if (localSec) SEC_ORDERS = JSON.parse(localSec);
-        if (localPromo) PROMOTIONS = JSON.parse(localPromo);
-        if (localAudit) AUDIT_DATA = JSON.parse(localAudit);
-        if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
-        if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
+        if (error) throw error;
 
-        const savedSR = localStorage.getItem('SAVED_SR');
-        if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
-          document.getElementById('srFilter').value = savedSR;
+        currentUser.password = p1;
+        currentUser.is_first_login = false;
+        localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
+        document.getElementById('changePasswordModal').classList.add('hidden');
+        alert("Đổi mật khẩu thành công!");
+        applyUserPermissions();
+      } catch (err) {
+        alert("Lỗi đổi mật khẩu: " + err.message);
+      }
+    }
+
+    function handleLogout() {
+      if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+        localStorage.removeItem('CURRENT_AUTH_USER');
+        currentUser = null;
+        isManagerVerified = false;
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('loginPassword').value = '';
+      }
+    }
+
+    function applyUserPermissions() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      const role = currentUser.role;
+
+      const srSelectEl = document.getElementById('srFilter');
+      const srContainer = document.getElementById('srFilterContainer');
+      const btnAdminUser = document.getElementById('btnAdminUserManage');
+
+      if (role === 'ADMIN') {
+        isManagerVerified = true;
+        btnAdminUser.classList.remove('hidden');
+        srContainer.classList.remove('hidden');
+        srSelectEl.disabled = false;
+      } else if (role === 'ASM') {
+        isManagerVerified = true;
+        btnAdminUser.classList.add('hidden');
+        srContainer.classList.remove('hidden');
+        srSelectEl.disabled = false;
+      } else if (role === 'SS') {
+        isManagerVerified = true;
+        btnAdminUser.classList.add('hidden');
+        srContainer.classList.remove('hidden');
+        srSelectEl.disabled = false;
+      } else if (role === 'SR') {
+        isManagerVerified = false;
+        btnAdminUser.classList.add('hidden');
+        // Khóa cố định SR vào tên của mình
+        if (currentUser.sr_key) {
+          srSelectEl.value = currentUser.sr_key;
+          srSelectEl.disabled = true;
+          srContainer.classList.add('hidden'); // Ẩn ô chọn để không làm phiền SR
         }
-      } catch(e) {}
+      }
 
-      updateLatestOrderDateBanner();
-      populateDateFilter();
       renderAll();
+    }
 
+    function openAdminUserModal() {
+      if (currentUser?.role !== 'ADMIN') return;
+      document.getElementById('adminUserModal').classList.remove('hidden');
+      loadAdminUserList();
+    }
+
+    function closeAdminUserModal() {
+      document.getElementById('adminUserModal').classList.add('hidden');
+    }
+
+    function onRoleSelectChange() {
+      const r = document.getElementById('newRole').value;
+      const box = document.getElementById('boxSelectSrKey');
+      if (r === 'SR') box.classList.remove('hidden');
+      else box.classList.add('hidden');
+    }
+
+    async function handleCreateUser(e) {
+      e.preventDefault();
+      const username = document.getElementById('newUsername').value.trim();
+      const fullname = document.getElementById('newFullname').value.trim();
+      const role = document.getElementById('newRole').value;
+      const sr_key = (role === 'SR') ? document.getElementById('newSrKey').value : null;
+
+      try {
+        const { error } = await supabaseClient
+          .from('app_users')
+          .insert([{ username, fullname, role, sr_key, password: '123456', is_first_login: true }]);
+
+        if (error) throw error;
+        alert("Tạo tài khoản thành công! Pass mặc định: 123456");
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newFullname').value = '';
+        loadAdminUserList();
+      } catch (err) {
+        alert("Lỗi tạo user: " + err.message);
+      }
+    }
+
+    async function loadAdminUserList() {
+      const container = document.getElementById('adminUserListContainer');
+      container.innerHTML = '<p class="text-center text-xs text-gray-400 py-3">Đang tải danh sách...</p>';
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('app_users')
+          .select('*')
+          .order('role', { ascending: true });
+
+        if (error) throw error;
+
+        container.innerHTML = '';
+        data.forEach(u => {
+          const div = document.createElement('div');
+          div.className = "p-2 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs";
+          div.innerHTML = `
+            <div>
+              <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
+              <div class="text-[10px] text-gray-400">ID: <b>${u.username}</b> • Pass: <span class="font-mono">${u.password}</span></div>
+            </div>
+            <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px]">Reset 123456</button>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        container.innerHTML = '<p class="text-xs text-rose-500 text-center">Lỗi: ' + err.message + '</p>';
+      }
+    }
+
+    async function resetUserPassword(id, uname) {
+      if (!confirm(`Reset mật khẩu của tài khoản ${uname} về mặc định '123456'?`)) return;
+      try {
+        const { error } = await supabaseClient
+          .from('app_users')
+          .update({ password: '123456', is_first_login: true })
+          .eq('id', id);
+
+        if (error) throw error;
+        alert("Đã reset mật khẩu thành công!");
+        loadAdminUserList();
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      }
+    }
+
+    async function exportUsersToExcel() {
+      try {
+        const { data, error } = await supabaseClient.from('app_users').select('*');
+        if (error) throw error;
+        const exportData = data.map(u => ({
+          "Tên Đăng Nhập": u.username,
+          "Mật Khẩu": u.password,
+          "Họ Và Tên": u.fullname,
+          "Vai Trò": u.role,
+          "Ánh Xạ SR": u.sr_key || "",
+          "Lần Đầu Đăng Nhập": u.is_first_login ? "Có" : "Không",
+          "Ngày Tạo": u.created_at
+        }));
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Danh Sách User");
+        XLSX.writeFile(wb, `Danh_Sach_User_${new Date().toISOString().slice(0,10)}.xlsx`);
+      } catch (err) {
+        alert("Lỗi xuất file: " + err.message);
+      }
+    }
+
+    // ==========================================
+    // KHỞI ĐỘNG VÀ TỰ ĐỘNG LƯU PHIÊN ĐĂNG NHẬP
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
+      if (savedUserStr) {
+        try {
+          currentUser = JSON.parse(savedUserStr);
+          applyUserPermissions();
+        } catch (e) {
+          localStorage.removeItem('CURRENT_AUTH_USER');
+        }
+      }
       loadDataFromCloud();
     });
 
-    function onSRChange() {
-      const selected = document.getElementById('srFilter').value;
-      try { localStorage.setItem('SAVED_SR', selected); } catch(e) {}
-      renderAll();
-    }
-
-    function toggleAdminModal() {
-      document.getElementById('adminModal').classList.toggle('hidden');
-    }
-
-    function verifyPin() {
-      const pin = document.getElementById('inputPin').value;
-      if (pin === ADMIN_PIN) {
-        isManagerVerified = true;
-        document.getElementById('pinBox').classList.add('hidden');
-        document.getElementById('uploadBox').classList.remove('hidden');
-      } else {
-        alert("Mã PIN không đúng!");
-        document.getElementById('inputPin').value = '';
-      }
-    }
-
-    function toggleTBLevel(lvl) {
-      if (currentTBLevel === lvl && lvl !== 'ALL') {
-        currentTBLevel = 'ALL';
-      } else {
-        currentTBLevel = lvl;
-      }
-      renderAll();
-    }
-
-    function toggleLFChannel(chan) {
-      if (currentLFChannel === chan) {
-        currentLFChannel = 'ALL';
-      } else {
-        currentLFChannel = chan;
-      }
-      renderAll();
-    }
-
-    function filterLFChannel(chan) {
-      currentLFChannel = chan;
-      renderAll();
-    }
-
-    function setAuditStatusFilter(st) {
-      if (currentAuditStatus === st && st !== 'ALL') {
-        currentAuditStatus = 'ALL';
-      } else {
-        currentAuditStatus = st;
-      }
-      renderAll();
-    }
-
-    function promptDailyOrdersModal() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
-        if (pin === ADMIN_PIN) {
-          isManagerVerified = true;
-        } else if (pin !== null) {
-          alert("Mã PIN không chính xác!");
-          return;
-        } else {
-          return;
-        }
-      }
-
-      openDailyOrdersModal();
-    }
-
-    function openDailyOrdersModal() {
-      currentModalFilter = 'ALL';
-      const dateSelect = document.getElementById('modalOrderDateSelect');
-      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
-      
-      dateSelect.innerHTML = '';
-      if (dates.length === 0) {
-        dateSelect.innerHTML = '<option value="">Chưa có đơn hàng nào</option>';
-      } else {
-        dates.forEach(d => {
-          const opt = document.createElement('option');
-          opt.value = d;
-          opt.textContent = `Ngày ${d}`;
-          dateSelect.appendChild(opt);
-        });
-      }
-
-      renderDailyOrdersModalContent();
-      document.getElementById('dailyOrdersModal').classList.remove('hidden');
-    }
-
-    function closeDailyOrdersModal() {
-      document.getElementById('dailyOrdersModal').classList.add('hidden');
-    }
-
-    let currentModalFilter = 'ALL';
-
-    function setModalFilter(filter) {
-      currentModalFilter = filter;
-      renderDailyOrdersModalContent();
-    }
-
-    function renderDailyOrdersModalContent() {
-      const selectedDate = document.getElementById('modalOrderDateSelect').value;
-      const listContainer = document.getElementById('modalSRListContainer');
-      listContainer.innerHTML = '';
-
-      const cardAll = document.getElementById('cardFilterAll');
-      const cardHas = document.getElementById('cardFilterHasOrder');
-      const cardNo = document.getElementById('cardFilterNoOrder');
-
-      const inactiveBase = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
-      cardAll.className = inactiveBase + " bg-blue-50/60 border-blue-200 hover:bg-blue-100/70";
-      cardHas.className = inactiveBase + " bg-emerald-50/60 border-emerald-200 hover:bg-emerald-100/70";
-      cardNo.className = inactiveBase + " bg-rose-50/60 border-rose-200 hover:bg-rose-100/70";
-
-      if (currentModalFilter === 'ALL') {
-        cardAll.className = inactiveBase + " bg-blue-50 border-blue-300 ring-2 ring-blue-500 shadow-sm";
-        document.getElementById('modalFilterLabel').textContent = "Hiển thị: Tất cả SR";
-      } else if (currentModalFilter === 'HAS_ORDER') {
-        cardHas.className = inactiveBase + " bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500 shadow-sm";
-        document.getElementById('modalFilterLabel').textContent = "Hiển thị: SR ĐÃ CÓ ĐƠN";
-      } else if (currentModalFilter === 'NO_ORDER') {
-        cardNo.className = inactiveBase + " bg-rose-50 border-rose-300 ring-2 ring-rose-500 shadow-sm";
-        document.getElementById('modalFilterLabel').textContent = "Hiển thị: SR CHƯA CÓ ĐƠN";
-      }
-
-      if (!selectedDate) {
-        listContainer.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có dữ liệu đơn hàng.</p>';
-        return;
-      }
-
-      const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
-      let totalDayHL = 0;
-      let totalDayQty = 0;
-      let hasOrderCount = 0;
-      let noOrderCount = 0;
-
-      const srSalesMap = {};
-      TEAM_SRS.forEach(k => {
-        srSalesMap[k] = { vol: 0, cases: 0, outlets: new Map() };
-      });
-
-      dayOrders.forEach(o => {
-        if (srSalesMap[o.sr]) {
-          srSalesMap[o.sr].vol += o.vol;
-          srSalesMap[o.sr].cases += Math.round(o.vol / CASE_VOLUME);
-          totalDayHL += o.vol;
-          totalDayQty += o.qty;
-
-          if (!srSalesMap[o.sr].outlets.has(o.code)) {
-            srSalesMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
-          }
-          srSalesMap[o.sr].outlets.get(o.code).vol += o.vol;
-        }
-      });
-
-      const renderedSRs = [];
-      TEAM_SRS.forEach(k => {
-        const name = TEAM_SR_MAP[k];
-        const data = srSalesMap[k];
-        const hasOrder = data.vol > 0.001;
-
-        if (hasOrder) hasOrderCount++;
-        else noOrderCount++;
-
-        if (currentModalFilter === 'HAS_ORDER' && !hasOrder) return;
-        if (currentModalFilter === 'NO_ORDER' && hasOrder) return;
-
-        renderedSRs.push({ key: k, name, data, hasOrder });
-      });
-
-      renderedSRs.sort((a, b) => b.data.vol - a.data.vol);
-
-      document.getElementById('modalCountBadge').textContent = `${renderedSRs.length} bạn`;
-
-      if (renderedSRs.length === 0) {
-        listContainer.innerHTML = `<div class="p-4 text-center text-gray-400 bg-gray-50 rounded-2xl border border-gray-100 text-xs">Không có SR nào thuộc nhóm này trong ngày ${selectedDate}.</div>`;
-      } else {
-        renderedSRs.forEach(({ name, data, hasOrder }) => {
-          const card = document.createElement('div');
-          card.className = `p-3 rounded-2xl border text-xs shadow-sm transition-all ${hasOrder ? 'bg-emerald-50/60 border-emerald-200/90' : 'bg-gray-50/80 border-gray-200'}`;
-
-          let outletDetailsHtml = '';
-          if (hasOrder && data.outlets.size > 0) {
-            data.outlets.forEach((otData, otCode) => {
-              outletDetailsHtml += `
-                <div class="flex justify-between items-center py-1 border-b border-emerald-100/50 last:border-0 text-[10px] text-gray-700">
-                  <span class="truncate pr-1.5 font-medium">• ${otData.name}</span>
-                  <span class="font-extrabold text-emerald-800 whitespace-nowrap">${otData.vol.toFixed(2)} HL</span>
-                </div>
-              `;
-            });
-          }
-
-          card.innerHTML = `
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-[13px] ${hasOrder ? 'text-gray-900' : 'text-gray-500'}">${name}</span>
-              <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide ${hasOrder ? 'bg-emerald-500 text-white shadow-xs' : 'bg-rose-100 text-rose-700'}">
-                ${hasOrder ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}
-              </span>
-            </div>
-            <div class="mt-1.5 pt-1.5 border-t ${hasOrder ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-xs">
-              <span class="text-gray-500 font-medium">Sản lượng duyệt:</span>
-              <span class="font-black ${hasOrder ? 'text-emerald-700 text-sm' : 'text-gray-400'}">
-                ${data.vol.toFixed(2)} HL <span class="font-semibold text-[11px] text-gray-500">(${data.cases} th)</span>
-              </span>
-            </div>
-            ${hasOrder ? `
-              <details class="mt-1.5 pt-1 border-t border-emerald-100/70">
-                <summary class="cursor-pointer text-[10px] font-bold text-emerald-800 hover:text-emerald-950 flex justify-between items-center select-none py-0.5">
-                  <span>📍 Xem ${data.outlets.size} điểm chốt đơn</span>
-                  <span>▼</span>
-                </summary>
-                <div class="mt-1 space-y-0.5 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-xs">
-                  ${outletDetailsHtml}
-                </div>
-              </details>
-            ` : ''}
-          `;
-          listContainer.appendChild(card);
-        });
-      }
-
-      document.getElementById('modalSummaryTotalHL').textContent = `${totalDayHL.toFixed(2)} HL`;
-      document.getElementById('modalSummaryTotalCases').textContent = `${Math.round(totalDayHL / CASE_VOLUME)} th`;
-      document.getElementById('modalSummaryHasOrder').textContent = `${hasOrderCount}/9 SR`;
-      document.getElementById('modalSummaryNoOrder').textContent = `${noOrderCount}/9 SR`;
-
-      const copyBtn = document.getElementById('btnCopyModalReport');
-      if (copyBtn) {
-        if (currentModalFilter === 'NO_ORDER') {
-          copyBtn.className = "w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
-          copyBtn.innerHTML = `📢 Sao chép nhắc nhở ${noOrderCount} bạn chưa có đơn`;
-        } else if (currentModalFilter === 'HAS_ORDER') {
-          copyBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
-          copyBtn.innerHTML = `👏 Sao chép biểu dương ${hasOrderCount} bạn có đơn`;
-        } else {
-          copyBtn.className = "w-full py-2 bg-[#1F4E79] hover:bg-blue-900 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all";
-          copyBtn.innerHTML = `📋 Sao chép tổng hợp đơn ngày (${hasOrderCount} có / ${noOrderCount} chưa)`;
-        }
-      }
-    }
-
-    function copyManagerReminderReport() {
-      const selectedDate = document.getElementById('modalOrderDateSelect').value;
-      if (!selectedDate) {
-        alert("Chưa có ngày đơn để sao chép!");
-        return;
-      }
-
-      const dayOrders = SEC_ORDERS.filter(o => o.date === selectedDate);
-      let totalDayHL = 0;
-      const srSalesMap = {};
-      TEAM_SRS.forEach(k => { srSalesMap[k] = 0; });
-      dayOrders.forEach(o => {
-        if (srSalesMap[o.sr] !== undefined) {
-          srSalesMap[o.sr] += o.vol;
-          totalDayHL += o.vol;
-        }
-      });
-
-      const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
-      const hasList = [];
-      const noList = [];
-
-      TEAM_SRS.forEach(k => {
-        const name = TEAM_SR_MAP[k];
-        const vol = srSalesMap[k];
-        if (vol > 0.001) {
-          hasList.push({ name, vol, cases: Math.round(vol / CASE_VOLUME) });
-        } else {
-          noList.push(name);
-        }
-      });
-
-      hasList.sort((a,b) => b.vol - a.vol);
-
-      let msg = "";
-      if (currentModalFilter === 'NO_ORDER') {
-        msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG\n📅 Ngày duyệt: ${selectedDate}\n\n⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:\n`;
-        noList.forEach((n, i) => { msg += `${i + 1}. ${n}\n`; });
-        msg += `\n👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
-      } else if (currentModalFilter === 'HAS_ORDER') {
-        msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:\n`;
-        hasList.forEach((item, i) => {
-          msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
-        });
-        msg += `\n👉 Anh em tiếp tục giữ vững phong độ bám số hôm nay nhé!`;
-      } else {
-        msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR ĐÃ CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
-        hasList.forEach((item, i) => {
-          msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`;
-        });
-
-        if (noList.length > 0) {
-          msg += `\n⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):\n`;
-          noList.forEach((n, i) => { msg += `  ${i + 1}. ${n}\n`; });
-          msg += `\n👉 Các bạn chưa có đơn kiểm tra lại tuyến hôm qua có vướng mắc gì báo SS hỗ trợ nhé!`;
-        } else {
-          msg += `\n🎉 Xuất sắc: 100% nhân sự đều có đơn trong ngày!`;
-        }
-      }
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
-    function promptExportFiles() {
-      const pin = prompt("Nhập mật khẩu mở khóa tải file:");
-      if (pin === EXPORT_PIN) {
-        document.getElementById('exportActionBox').classList.remove('hidden');
-        alert("Mở khóa thành công! Bạn có thể chọn file để tải về máy.");
-      } else if (pin !== null) {
-        alert("Mật khẩu không chính xác!");
-      }
-    }
-
-    function downloadCloudFile(type) {
-      if (type === 'TRACKING') {
-        if (!MASTER || MASTER.length === 0) { alert("Không có dữ liệu Trưng bày trên Cloud!"); return; }
-        const exportData = MASTER.map(m => ({
-          "Mã Chương Trình": m.prog, "Mã Điểm Bán": m.code, "Tên Điểm Bán": m.name, "SR Quản Lý": m.sr, "Level": m.level, "Target Huda (HL)": m.tarHuda, "Target Premium (HL)": m.tarPre, "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
-        }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Display TOFT");
-        XLSX.writeFile(wb, `Tracking_TrungBay_${new Date().toISOString().slice(0,10)}.xlsx`);
-      } else if (type === 'LF') {
-        if (!LISTING_FEE || LISTING_FEE.length === 0) { alert("Không có dữ liệu Listing Fee trên Cloud!"); return; }
-        const exportData = LISTING_FEE.map(l => ({
-          "CODE DRAGON": l.code, "Tên Điểm Bán": l.name, "SR": l.sr, "Kênh Phân Loại": l.channelType, "Mô Tả Kênh": l.channelDesc, "Huyện": l.district, "Target Thùng": l.tarCases, "Target HL": l.tarHL
-        }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Listing Fee");
-        XLSX.writeFile(wb, `Listing_Fee_${new Date().toISOString().slice(0,10)}.xlsx`);
-      } else if (type === 'SEC') {
-        if (!SEC_ORDERS || SEC_ORDERS.length === 0) { alert("Không có dữ liệu đơn SEC-06 trên Cloud!"); return; }
-        const exportData = SEC_ORDERS.map(s => ({
-          "Ngày Đặt": s.date, "SR": s.sr, "Mã Điểm Bán": s.code, "Tên Điểm Bán": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Phân Loại": s.category, "Sản Lượng (HL)": s.vol, "Số Thùng": s.qty
-        }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "SEC-06 Detail");
-        XLSX.writeFile(wb, `SEC06_Daily_${new Date().toISOString().slice(0,10)}.xlsx`);
-      }
-    }
-
-    // HÀM ĐỌC NGÀY CHUẨN XÁC
+    // ==========================================
+    // CÁC HÀM XỬ LÝ VÀ HIỂN THỊ (GIỮ NGUYÊN BẢN CHUẨN 1)
+    // ==========================================
     function parseExcelDate(val) {
       if (!val) return '';
       const s = String(val).trim();
@@ -1391,7 +1026,7 @@
     }
 
     // ==========================================
-    // XỬ LÝ NẠP FILE (DÒ HEADER CHUẨN XÁC, AN TOÀN BỘ NHỚ)
+    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, FIT-10)
     // ==========================================
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
@@ -1413,12 +1048,10 @@
       await new Promise(r => setTimeout(r, 40));
 
       try {
-        // 1. FILE TRACKING MASTER
         if (fTrack) {
           const bTrack = await fTrack.arrayBuffer();
           const wbTrack = XLSX.read(bTrack, { dense: false });
 
-          // 1.1 Sheet Trưng bày TOFT
           const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
           if (wbTrack.Sheets[sTrack]) {
             const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
@@ -1462,7 +1095,6 @@
             }
           }
 
-          // 1.2 Sheet Listing Fee
           const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
           if (sLFName && wbTrack.Sheets[sLFName]) {
             const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1, defval: "" });
@@ -1508,7 +1140,6 @@
           }
         }
 
-        // 2. FILE SEC-06 HÀNG NGÀY
         if (fSec) {
           const bSec = await fSec.arrayBuffer();
           const wbSec = XLSX.read(bSec, { dense: false });
@@ -1565,41 +1196,23 @@
             const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
             if (promoName && isReward) {
               PROMOTIONS.push({
-                sr: srName,
-                date: dateStr,
-                outletCode: ocode,
-                outletName: oname,
-                promoName: promoName,
-                rewardItem: prod,
-                qty: qty
+                sr: srName, date: dateStr, outletCode: ocode, outletName: oname, promoName: promoName, rewardItem: prod, qty: qty
               });
             }
 
-            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
+            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
 
             let cat = "Other";
             const pLower = prod.toLowerCase();
-            if (pLower.includes("huda") || pLower.includes("halida")) {
-              cat = "Mainstream";
-            } else {
-              cat = "Premium";
-            }
+            if (pLower.includes("huda") || pLower.includes("halida")) cat = "Mainstream";
+            else cat = "Premium";
 
             SEC_ORDERS.push({
-              date: dateStr,
-              sr: srName,
-              code: ocode,
-              name: oname,
-              brand: detectBrand(brand, prod),
-              product: prod,
-              category: cat,
-              vol: vol,
-              qty: qty
+              date: dateStr, sr: srName, code: ocode, name: oname, brand: detectBrand(brand, prod), product: prod, category: cat, vol: vol, qty: qty
             });
           }
         }
 
-        // 3. FILE CHỤP TB DIP-01
         if (fAudit) {
           const bAudit = await fAudit.arrayBuffer();
           const wbAudit = XLSX.read(bAudit, { dense: false });
@@ -1644,7 +1257,6 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // 4. FILE SALES TARGET & INCENTIVE FIT-10
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1719,12 +1331,7 @@
 
         const payload = {
           id: 'CURRENT_DATA',
-          master: {
-            toft: MASTER,
-            listing: LISTING_FEE,
-            audit: AUDIT_DATA,
-            targets: SALES_TARGETS
-          },
+          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS },
           sec: SEC_ORDERS,
           promo: PROMOTIONS,
           updated_at: nowStr
@@ -1741,10 +1348,7 @@
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-          const errText = await res.text();
-          throw new Error("Lỗi lưu Cloud: " + errText);
-        }
+        if (!res.ok) throw new Error("Lỗi lưu Cloud: " + (await res.text()));
 
         try {
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
@@ -1754,9 +1358,7 @@
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
           localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
           localStorage.setItem('UPDATE_TIME', nowStr);
-        } catch (storageErr) {
-          console.warn("Bộ nhớ máy đầy, dữ liệu đã lưu an toàn trên Cloud Supabase.");
-        }
+        } catch (storageErr) {}
 
         document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
         toggleAdminModal();
@@ -1764,7 +1366,7 @@
         updateLatestOrderDateBanner();
         populateDateFilter();
         renderAll();
-        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target.`);
+        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target & Total KPI.`);
       } catch (err) {
         console.error("Lỗi cập nhật:", err);
         alert("Lỗi khi xử lý file: " + (err.message || err));
@@ -1786,19 +1388,10 @@
       document.getElementById('tabBtn3').className = inactiveClass;
       document.getElementById('tabBtn4').className = inactiveClass;
 
-      if (tab === 1) {
-        document.getElementById('tab1Content').classList.remove('hidden');
-        document.getElementById('tabBtn1').className = activeClass;
-      } else if (tab === 2) {
-        document.getElementById('tab2Content').classList.remove('hidden');
-        document.getElementById('tabBtn2').className = activeClass;
-      } else if (tab === 3) {
-        document.getElementById('tab3Content').classList.remove('hidden');
-        document.getElementById('tabBtn3').className = activeClass;
-      } else if (tab === 4) {
-        document.getElementById('tab4Content').classList.remove('hidden');
-        document.getElementById('tabBtn4').className = activeClass;
-      }
+      if (tab === 1) { document.getElementById('tab1Content').classList.remove('hidden'); document.getElementById('tabBtn1').className = activeClass; }
+      else if (tab === 2) { document.getElementById('tab2Content').classList.remove('hidden'); document.getElementById('tabBtn2').className = activeClass; }
+      else if (tab === 3) { document.getElementById('tab3Content').classList.remove('hidden'); document.getElementById('tabBtn3').className = activeClass; }
+      else if (tab === 4) { document.getElementById('tab4Content').classList.remove('hidden'); document.getElementById('tabBtn4').className = activeClass; }
     }
 
     function setTBStatusFilter(status) {
@@ -1821,18 +1414,12 @@
       renderAll();
     }
 
-    // ================= TRUNG TÂM BÁO CÁO SS BẢO MẬT (PIN: 6868) =================
     function copyZaloReport() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
-        if (pin === ADMIN_PIN) {
-          isManagerVerified = true;
-        } else if (pin !== null) {
-          alert("Mã PIN không chính xác!");
-          return;
-        } else {
-          return;
-        }
+        if (pin === ADMIN_PIN) isManagerVerified = true;
+        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; }
+        else return;
       }
       document.getElementById('reportHubModal').classList.remove('hidden');
     }
@@ -1843,20 +1430,18 @@
 
     function triggerCopyReport(type) {
       closeReportHubModal();
-      if (type === 'TEAM_SUMMARY') {
-        executeCopyTeamReport();
-      } else if (type === 'INDIVIDUAL_SR') {
+      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
+      else if (type === 'INDIVIDUAL_SR') {
         const curSR = document.getElementById('srFilter').value;
         if (curSR === 'ALL') {
           alert("Bạn đang chọn '-- Toàn bộ Team --'.\nVui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang trước khi lấy báo cáo riêng nhé!");
           return;
         }
         executeCopyIndividualReport();
-      } else if (type === 'INCENTIVE_TEAM') {
-        executeCopyIncentiveTeamReport();
-      } else if (type === 'AUDIT_TB') {
-        executeCopyAuditReport();
-      } else if (type === 'NO_ORDER_REMIND') {
+      }
+      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
+      else if (type === 'AUDIT_TB') executeCopyAuditReport();
+      else if (type === 'NO_ORDER_REMIND') {
         openDailyOrdersModal();
         setModalFilter('NO_ORDER');
         copyManagerReminderReport();
@@ -1895,11 +1480,14 @@
         const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
         const actTot = actH + actP;
-        const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
-        if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
-          tbPass++;
-        }
+
+        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
+        const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
+        const effectiveTarTot = m.tarHuda + effectiveTarPre;
+
+        const condStandard = (actH >= (m.tarHuda - 0.005)) && (actP >= (effectiveTarPre - 0.005));
+        const condPreDominant = (actTot >= (effectiveTarTot - 0.005)) && (effectiveTarTot > 0) && ((actP / actTot) >= 0.5);
+        if (condStandard || condPreDominant) tbPass++;
       });
 
       let lfPass = 0;
@@ -1975,11 +1563,14 @@
         const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
         const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
         const actTot = actH + actP;
-        const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
-        if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
-          tbPass++;
-        }
+
+        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
+        const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
+        const effectiveTarTot = m.tarHuda + effectiveTarPre;
+
+        const condStandard = (actH >= (m.tarHuda - 0.005)) && (actP >= (effectiveTarPre - 0.005));
+        const condPreDominant = (actTot >= (effectiveTarTot - 0.005)) && (effectiveTarTot > 0) && ((actP / actTot) >= 0.5);
+        if (condStandard || condPreDominant) tbPass++;
       });
 
       const listSRLF = LISTING_FEE.filter(l => l.sr === selectedSR);
@@ -2109,7 +1700,6 @@
         else document.getElementById('btnClearSearch').classList.add('hidden');
       }
 
-      // XỬ LÝ SẢN LƯỢNG LŨY KẾ CẢ THÁNG (MTD)
       let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let monthHudaHL = 0, monthPreHL = 0;
       const preBrandMap = {};
@@ -2124,7 +1714,6 @@
       });
       const monthTotalHL = monthHudaHL + monthPreHL;
 
-      // XỬ LÝ TARGET & INCENTIVE THÁNG
       let targetVol = 0, targetPrem = 0;
       if (selectedSR === "ALL") {
         TEAM_SRS.forEach(srKey => {
@@ -2145,13 +1734,11 @@
       const pctTargetMain = targetMain > 0 ? Math.round((monthHudaHL / targetMain) * 100) : 0;
       const pctTargetPrem = targetPrem > 0 ? Math.round((monthPreHL / targetPrem) * 100) : 0;
 
-      // HIỂN THỊ KHỐI TIẾN ĐỘ THÁNG & TARGET DUY NHẤT
       document.getElementById('txtTargetPercent').textContent = `${pctTargetVol}%`;
       document.getElementById('txtTargetAchieved').textContent = `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`;
       document.getElementById('txtTargetCases').textContent = `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`;
       document.getElementById('barTargetVol').style.width = `${Math.min(100, pctTargetVol)}%`;
 
-      // CẬP NHẬT 2 THẺ MAINSTREAM VÀ PREMIUM CÂN ĐỐI
       document.getElementById('badgeMainPct').textContent = `${pctTargetMain}%`;
       document.getElementById('valMainAct').innerHTML = `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`;
       document.getElementById('valMainTar').textContent = `${targetMain.toFixed(2)} HL`;
@@ -2162,7 +1749,7 @@
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT KHỐI THƯỞNG INCENTIVE & POPUP TOTAL KPI (ĐÃ FIX LỖI CPD, VOR & LÀM TRÒN ĐẸP MẮT)
+      // CẬP NHẬT INCENTIVE & TOTAL KPI (SỬA LỖI CPD, VOR & LÀM TRÒN GỌN GÀNG)
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
@@ -2202,7 +1789,6 @@
         const pctAllFit = avgFitTarPct > 0 ? Math.round((avgFitActPct / avgFitTarPct) * 100) : 0;
         const pctAllVor = sumVorTarLượt > 0 ? Math.round((sumVorActLượt / sumVorTarLượt) * 100) : 0;
 
-        // Card Incentive
         document.getElementById('txtTotalIncentiveDisplay').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ`;
         document.getElementById('incVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
         document.getElementById('incVolAch').textContent = `${pctAllVol}%`;
@@ -2221,7 +1807,6 @@
         document.getElementById('incFitVal').textContent = `${sumFitInc.toLocaleString('vi-VN')} đ`;
         document.getElementById('incTotalVal').textContent = `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`;
 
-        // Popup Total KPI Modal (Toàn đội)
         document.getElementById('kpiVolRatio').textContent = `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`;
         document.getElementById('kpiVolPct').textContent = `${pctAllVol}%`;
         document.getElementById('kpiSkuRatio').textContent = `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`;
@@ -2246,18 +1831,17 @@
         const cTar = d.cov_tar || 0, cAct = d.cov_act || 0, cAch = cTar > 0 ? Math.round((cAct / cTar) * 100) : 0;
         const spTar = d.sku_pri_tar || 0, spAct = d.sku_pri_act || 0, spAch = spTar > 0 ? Math.round((spAct / spTar) * 100) : 0;
         const fitTarPct = Math.round((d.fit_tar || 0) * 100), fitActPct = Math.round((d.fit_act || 0) * 100), fAch = Math.round((d.fit_ach || 0) * 100);
-        
-        // FIX CALL PER DAY: Tính % thực tế Act / Tar (ví dụ 15.4 / 16.0 = 96%)
+
+        // Tính tỷ lệ % thực tế cho Call Per Day
         const cpdTar = (d.cpd_tar || 0).toFixed(1), cpdAct = (d.cpd_act || 0).toFixed(1);
         const cpdAch = parseFloat(cpdTar) > 0 ? Math.round((parseFloat(cpdAct) / parseFloat(cpdTar)) * 100) : 0;
 
-        // FIX VISIT ON ROUTE: Hiển thị số lượt (ví dụ 102 / 119 lượt, 86%)
+        // Hiển thị số lượt đúng tuyến thay vì %
         const vorTarLượt = Math.round(d.vor_tar || 0), vorActLượt = Math.round(d.vor_act || 0);
         const vorAch = vorTarLượt > 0 ? Math.round((vorActLượt / vorTarLượt) * 100) : 0;
 
         const tot = d.total_inc || 0;
 
-        // Card Incentive
         document.getElementById('txtTotalIncentiveDisplay').textContent = `${tot.toLocaleString('vi-VN')} đ`;
         document.getElementById('incVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
         document.getElementById('incVolAch').textContent = `${vAch}%`;
@@ -2276,7 +1860,6 @@
         document.getElementById('incFitVal').textContent = `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`;
         document.getElementById('incTotalVal').textContent = `${tot.toLocaleString('vi-VN')} đ`;
 
-        // Popup Total KPI Modal (Cá nhân SR)
         document.getElementById('kpiVolRatio').textContent = `${vAct.toFixed(2)} / ${vTar.toFixed(2)} HL`;
         document.getElementById('kpiVolPct').textContent = `${vAch}%`;
         document.getElementById('kpiSkuRatio').textContent = `${pAct.toFixed(2)} / ${pTar.toFixed(2)} HL`;
@@ -2295,7 +1878,6 @@
         document.getElementById('kpiVorPct').textContent = `${vorAch}%`;
       }
 
-      // ĐỔ DỮ LIỆU BRAND PREMIUM
       const preBox = document.getElementById('preBrandBreakdown');
       preBox.innerHTML = '';
       if (Object.keys(preBrandMap).length === 0) {
@@ -2309,7 +1891,6 @@
         });
       }
 
-      // XỬ LÝ BỘ LỌC NGÀY LẺ
       const boxDate = document.getElementById('boxSpecificDateSales');
       let listFiltered = listMonth;
       if (selectedDate !== "ALL") {
@@ -2329,16 +1910,11 @@
         boxDate.classList.add('hidden');
       }
 
-      // GOM NHÓM ĐIỂM BÁN
       const outletGroup = {};
       listFiltered.forEach(o => {
-        if (!outletGroup[o.code]) {
-          outletGroup[o.code] = { code: o.code, name: o.name, totalVol: 0, products: {} };
-        }
+        if (!outletGroup[o.code]) outletGroup[o.code] = { code: o.code, name: o.name, totalVol: 0, products: {} };
         outletGroup[o.code].totalVol += o.vol;
-        if (!outletGroup[o.code].products[o.product]) {
-          outletGroup[o.code].products[o.product] = { vol: 0, qty: 0 };
-        }
+        if (!outletGroup[o.code].products[o.product]) outletGroup[o.code].products[o.product] = { vol: 0, qty: 0 };
         outletGroup[o.code].products[o.product].vol += o.vol;
         outletGroup[o.code].products[o.product].qty += o.qty;
       });
@@ -2385,9 +1961,7 @@
       });
 
       let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
-      if (selectedDate !== "ALL") {
-        promoList = promoList.filter(p => p.date === selectedDate);
-      }
+      if (selectedDate !== "ALL") promoList = promoList.filter(p => p.date === selectedDate);
 
       const promoBox = document.getElementById('promoListContent');
       promoBox.innerHTML = '';
@@ -2414,9 +1988,7 @@
               <div class="font-bold text-gray-800 text-[11px]">${k}</div>
               <div class="text-[10px] text-gray-400 mt-0.5">${item.rewardName} • Áp dụng ${item.outlets.size} điểm</div>
             </div>
-            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">
-              ${item.count} suất
-            </span>
+            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span>
           `;
           promoBox.appendChild(div);
         });
@@ -2425,21 +1997,6 @@
       // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA (CHUẨN HÓA LEVEL: LV1: 5 th, LV2: 3 th, LV3: 2 th)
       // ==========================================
-      const salesByOutlet = {};
-      const salesHudaCan20ByOutlet = {};
-
-      SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") {
-          salesByOutlet[o.code].huda += o.vol;
-          salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
-        }
-        if (o.category === "Premium") {
-          salesByOutlet[o.code].pre += o.vol;
-        }
-        salesByOutlet[o.code].total += o.vol;
-      });
-
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
@@ -2453,18 +2010,11 @@
         const actTot = actH + actP;
 
         // Chuẩn hóa định mức Pre theo Level (LV1: 5th, LV2: 3th, LV3: 2th)
-        let minPreCases = 2;
-        if (m.level === "LV1") minPreCases = 5;
-        else if (m.level === "LV2") minPreCases = 3;
-        else if (m.level === "LV3") minPreCases = 2;
-
+        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
         const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
         const effectiveTarHuda = m.tarHuda;
         const effectiveTarTot = effectiveTarHuda + effectiveTarPre;
 
-        // ĐIỀU KIỆN ĐẠT CHUẨN:
-        // 1. Đạt cả 2 nhánh Huda & Pre
-        // 2. Hoặc tổng HL đạt và Pre chiếm >= 50%
         const condStandard = (actH >= (effectiveTarHuda - 0.005)) && (actP >= (effectiveTarPre - 0.005));
         const condPreDominant = (actTot >= (effectiveTarTot - 0.005)) && (effectiveTarTot > 0) && ((actP / actTot) >= 0.5);
         const isPass = condStandard || condPreDominant;
@@ -2608,7 +2158,7 @@
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
       // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE (CHUẨN HÓA THEO HL)
+      // 3. RENDER TAB 3: OLS LISTING FEE
       // ==========================================
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
@@ -2768,10 +2318,7 @@
       // ==========================================
       const baseAuditList = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
 
-      let cntAuditDone = 0;
-      let cntAuditNeed2 = 0;
-      let cntAuditNone = 0;
-
+      let cntAuditDone = 0, cntAuditNeed2 = 0, cntAuditNone = 0;
       baseAuditList.forEach(a => {
         if (a.count >= 2) cntAuditDone++;
         else if (a.count === 1) cntAuditNeed2++;
@@ -2813,13 +2360,9 @@
       }
 
       let filteredAuditList = baseAuditList;
-      if (currentAuditStatus === 'DONE') {
-        filteredAuditList = filteredAuditList.filter(a => a.count >= 2);
-      } else if (currentAuditStatus === 'NEED_SECOND') {
-        filteredAuditList = filteredAuditList.filter(a => a.count === 1);
-      } else if (currentAuditStatus === 'NONE') {
-        filteredAuditList = filteredAuditList.filter(a => a.count === 0);
-      }
+      if (currentAuditStatus === 'DONE') filteredAuditList = filteredAuditList.filter(a => a.count >= 2);
+      else if (currentAuditStatus === 'NEED_SECOND') filteredAuditList = filteredAuditList.filter(a => a.count === 1);
+      else if (currentAuditStatus === 'NONE') filteredAuditList = filteredAuditList.filter(a => a.count === 0);
 
       if (searchKeyword) {
         filteredAuditList = filteredAuditList.filter(a => a.name.toLowerCase().includes(searchKeyword) || a.code.toLowerCase().includes(searchKeyword));
@@ -2838,13 +2381,9 @@
           card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
 
           let badgeHtml = '';
-          if (a.count >= 2) {
-            badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-800">ĐỦ 2 LẦN</span>`;
-          } else if (a.count === 1) {
-            badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-amber-100 text-amber-800">THIẾU LẦN 2</span>`;
-          } else {
-            badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700">CHƯA CHẤM</span>`;
-          }
+          if (a.count >= 2) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-800">ĐỦ 2 LẦN</span>`;
+          else if (a.count === 1) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-amber-100 text-amber-800">THIẾU LẦN 2</span>`;
+          else badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700">CHƯA CHẤM</span>`;
 
           let auditDetailsHtml = '';
           if (a.count === 0) {
