@@ -217,12 +217,13 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 4 TAB -->
-    <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
+    <!-- THANH CHUYỂN 5 TAB (TÍCH HỢP TAB COVERAGE MỚI) -->
+    <div class="grid grid-cols-5 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[10px] sm:text-[11px] font-extrabold gap-1 shadow-sm">
       <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">📊 SỐ BÁN</button>
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">🎯 DISPLAY</button>
       <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">💰 LF</button>
       <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📸 CHỤP TB</button>
+      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📍 COV</button>
     </div>
 
     <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
@@ -572,6 +573,54 @@
       </div>
       <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
+
+    <!-- ================= TAB 5: COVERAGE L28D (ĐỘ PHỦ 28 NGÀY - TÍCH HỢP MỚI) ================= -->
+    <div id="tab5Content" class="hidden space-y-3">
+      <!-- Thẻ Tổng quan Coverage -->
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📍 TỔNG ĐIỂM BÁN ACTIVE (L28D)</span>
+          <span id="txtCovRate" class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">0% Đạt</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtCovActiveTotal" class="text-2xl font-black text-[#1F4E79]">0 điểm Active</span>
+          <span id="txtCovLapsedSummary" class="text-xs font-bold text-rose-600">0 Lapsed (Rớt)</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barCovRate" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <!-- 2 Card Kênh: TONT vs TOFT -->
+        <div class="grid grid-cols-2 gap-2 pt-1 select-none">
+          <div onclick="filterCovChannel('TONT')" id="cardCovTont" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
+            <span class="text-[10px] font-bold text-amber-800 block">🍻 KÊNH TONT (Quán nhậu)</span>
+            <span id="lblCovTontCount" class="text-sm font-black text-amber-950 block mt-0.5">0 điểm</span>
+            <span id="lblCovTontLapsed" class="text-[10px] text-amber-700 font-semibold block mt-0.5">0 Lapsed</span>
+          </div>
+          <div onclick="filterCovChannel('TOFT')" id="cardCovToft" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+            <span class="text-[10px] font-bold text-emerald-800 block">🛒 KÊNH TOFT (Tạp hóa)</span>
+            <span id="lblCovToftCount" class="text-sm font-black text-emerald-950 block mt-0.5">0 điểm</span>
+            <span id="lblCovToftLapsed" class="text-[10px] text-emerald-700 font-semibold block mt-0.5">0 Lapsed</span>
+          </div>
+        </div>
+
+        <!-- Bộ lọc Trạng thái Coverage: Tất cả / Lapsed / Existed / New -->
+        <div class="pt-2 border-t border-gray-100 space-y-1.5">
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[10px] sm:text-[11px] font-bold gap-1">
+            <button id="btnCovStAll" onclick="setCovStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
+            <button id="btnCovStLapsed" onclick="setCovStatusFilter('Lapsed')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">⚠️ Lapsed</button>
+            <button id="btnCovStExisted" onclick="setCovStatusFilter('Existed')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">✅ Đang phủ</button>
+            <button id="btnCovStNew" onclick="setCovStatusFilter('New')" class="flex-1 py-1.5 rounded-lg text-blue-600 text-center">⭐ Mới</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán Coverage</span>
+        <span id="txtCovListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+      <div id="covOutletList" class="space-y-2.5"></div>
+    </div>
   </div>
 
   <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU (IR, SAT, MEP & ROUTE) ================= -->
@@ -596,7 +645,6 @@
         <div class="space-y-1.5">
           <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
           
-          <!-- 1. IR Product -->
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-purple-950 text-[11px] block">1. IR Product (Nhận diện sản phẩm)</span>
@@ -605,7 +653,6 @@
             <span id="kpiIrProdPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 2. IR Visibility -->
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện trưng bày)</span>
@@ -614,7 +661,6 @@
             <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 3. SAT Scanned (Tủ lạnh) -->
           <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Kiểm toán tủ lạnh)</span>
@@ -623,7 +669,6 @@
             <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 4. Điểm FIT Score tổng hợp -->
           <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score tổng hợp</span>
@@ -637,7 +682,6 @@
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
           
-          <!-- 5. Độ phủ Coverage -->
           <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-teal-950 text-[11px] block">5. Độ Phủ (Coverage điểm bán)</span>
@@ -646,7 +690,6 @@
             <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 6. SKU Ưu tiên -->
           <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-emerald-950 text-[11px] block">6. Chỉ Tiêu SKU Ưu Tiên</span>
@@ -655,7 +698,6 @@
             <span id="kpiSkuPriPct" class="px-2 py-0.5 bg-emerald-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 7. Tổng MP -->
           <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-emerald-950 text-[11px] block">7. Chỉ Tiêu MP (Tổng thực thi)</span>
@@ -669,7 +711,6 @@
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
           
-          <!-- 8. Call Per Day -->
           <div class="p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-amber-950 text-[11px] block">8. Call Per Day (Ghé thăm/ngày)</span>
@@ -678,7 +719,6 @@
             <span id="kpiCpdPct" class="px-2 py-0.5 bg-amber-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
-          <!-- 9. Visit On Route -->
           <div class="p-2.5 rounded-2xl bg-rose-50/70 border border-rose-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-rose-950 text-[11px] block">9. Visit On Route (Đúng tuyến MCP)</span>
@@ -824,7 +864,7 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng. Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong!
+          💡 <b>Mẹo:</b> File Tracking Master, Target và Coverage chỉ cần nạp đầu tháng/định kỳ. Hằng ngày chỉ cần chọn file <b>SEC-06</b> và <b>Chụp TB</b> rồi bấm xác nhận là xong!
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
@@ -841,6 +881,10 @@
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
           <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">5. FILE COVERAGE L28D SEC-19 (.xlsx) <span id="covStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+          <input type="file" id="fileCov" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
         <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
           ⚡ XÁC NHẬN CẬP NHẬT
@@ -865,7 +909,7 @@
     </div>
   </div>
 
-  <!-- ================= LOGIC JAVASCRIPT TINH GỌN (SAFE & OPTIMIZED) ================= -->
+  <!-- ================= LOGIC JAVASCRIPT TOÀN DIỆN & TỐI ƯU ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -882,14 +926,15 @@
     const TEAM_SRS = Object.keys(TEAM_SR_MAP);
 
     let currentLFChannel = "ALL", currentTBStatus = "ALL", currentLFStatus = "ALL", currentTBLevel = "ALL", currentAuditStatus = "ALL";
+    let currentCovChannel = "ALL", currentCovStatus = "ALL";
     let isManagerVerified = false, currentUser = null;
 
-    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {};
+    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = [], COVERAGE_DATA = [];
 
     let supabaseClient = null;
     try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
 
-    // HELPER GÁN GIAO DIỆN AN TOÀN TUYỆT ĐỐI (CHỐNG NULL)
+    // HELPER AN TOÀN CHỐNG NULL DOM
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
@@ -928,11 +973,11 @@
       return 'Premium Khác';
     }
 
-    // ================= CHUYỂN TAB & BỘ LỌC =================
+    // ================= CHUYỂN 5 TAB & BỘ LỌC =================
     function switchTab(tab) {
-      [1, 2, 3, 4].forEach(i => {
-        const c = document.getElementById(`tab1Content`.replace('1', i));
-        const b = document.getElementById(`tabBtn1`.replace('1', i));
+      [1, 2, 3, 4, 5].forEach(i => {
+        const c = document.getElementById(`tab${i}Content`);
+        const b = document.getElementById(`tabBtn${i}`);
         if (c) c.classList.toggle('hidden', i !== tab);
         if (b) b.className = (i === tab) ? "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center" : "py-2.5 rounded-xl text-gray-600 transition-all text-center";
       });
@@ -960,6 +1005,23 @@
       document.getElementById('btnFilterLFAll').className = (status === 'ALL') ? act : inact;
       document.getElementById('btnFilterLFFail').className = (status === 'FAIL') ? (act + " text-rose-600") : inact;
       document.getElementById('btnFilterLFPass').className = (status === 'PASS') ? (act + " text-emerald-600") : inact;
+      renderAll();
+    }
+
+    // Bộ lọc chuyên sâu cho Tab Coverage
+    function filterCovChannel(chan) {
+      currentCovChannel = (currentCovChannel === chan) ? 'ALL' : chan;
+      renderAll();
+    }
+
+    function setCovStatusFilter(status) {
+      currentCovStatus = status;
+      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
+      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
+      document.getElementById('btnCovStAll').className = (status === 'ALL') ? act : inact;
+      document.getElementById('btnCovStLapsed').className = (status === 'Lapsed') ? (act + " text-rose-600") : inact;
+      document.getElementById('btnCovStExisted').className = (status === 'Existed') ? (act + " text-emerald-600") : inact;
+      document.getElementById('btnCovStNew').className = (status === 'New') ? (act + " text-blue-600") : inact;
       renderAll();
     }
 
@@ -1140,7 +1202,7 @@
       } catch (err) { alert("Lỗi xuất file: " + err.message); }
     }
 
-    // ================= TẢI DỮ LIỆU TỪ SUPABASE =================
+    // ================= TẢI DỮ LIỆU TỪ SUPABASE (BẢO TOÀN CLOUD) =================
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
       try {
@@ -1148,9 +1210,9 @@
         if (error || !data || !data.updated_at) { setText('lblLastUpdate', "Chưa có dữ liệu Cloud"); return; }
 
         if (Array.isArray(data.master)) {
-          MASTER = data.master; LISTING_FEE = data.listing || []; AUDIT_DATA = data.audit || []; SALES_TARGETS = data.targets || {};
+          MASTER = data.master; LISTING_FEE = data.listing || []; AUDIT_DATA = data.audit || []; SALES_TARGETS = data.targets || {}; COVERAGE_DATA = data.coverage || [];
         } else if (data.master && typeof data.master === 'object') {
-          MASTER = data.master.toft || []; LISTING_FEE = data.master.listing || []; AUDIT_DATA = data.master.audit || data.audit || []; SALES_TARGETS = data.master.targets || data.targets || {};
+          MASTER = data.master.toft || []; LISTING_FEE = data.master.listing || []; AUDIT_DATA = data.master.audit || data.audit || []; SALES_TARGETS = data.master.targets || data.targets || {}; COVERAGE_DATA = data.master.coverage || data.coverage || [];
         }
         SEC_ORDERS = data.sec || []; PROMOTIONS = data.promo || [];
 
@@ -1158,6 +1220,7 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA));
           localStorage.setItem('UPDATE_TIME', data.updated_at);
         } catch(e) {}
 
@@ -1166,6 +1229,7 @@
         document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
         if (AUDIT_DATA.length > 0) setText('auditStatusText', `(Đã có ${AUDIT_DATA.length} điểm)`);
         if (Object.keys(SALES_TARGETS).length > 0) setText('targetStatusText', `(Đã có ${Object.keys(SALES_TARGETS).length} SR)`);
+        if (COVERAGE_DATA.length > 0) setText('covStatusText', `(Đã có ${COVERAGE_DATA.length} điểm Active)`);
 
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
       } catch (err) {}
@@ -1185,8 +1249,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       try {
-        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lu = localStorage.getItem('UPDATE_TIME');
-        if (lm) MASTER = JSON.parse(lm); if (ll) LISTING_FEE = JSON.parse(ll); if (ls) SEC_ORDERS = JSON.parse(ls); if (lp) PROMOTIONS = JSON.parse(lp); if (la) AUDIT_DATA = JSON.parse(la); if (lt) SALES_TARGETS = JSON.parse(lt); if (lu) setText('lblLastUpdate', `Cập nhật: ${lu}`);
+        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lc = localStorage.getItem('COVERAGE_DATA'), lu = localStorage.getItem('UPDATE_TIME');
+        if (lm) MASTER = JSON.parse(lm); if (ll) LISTING_FEE = JSON.parse(ll); if (ls) SEC_ORDERS = JSON.parse(ls); if (lp) PROMOTIONS = JSON.parse(lp); if (la) AUDIT_DATA = JSON.parse(la); if (lt) SALES_TARGETS = JSON.parse(lt); if (lc) COVERAGE_DATA = JSON.parse(lc); if (lu) setText('lblLastUpdate', `Cập nhật: ${lu}`);
 
         const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
         if (savedUserStr) { currentUser = JSON.parse(savedUserStr); applyUserPermissions(); }
@@ -1259,9 +1323,10 @@
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0], fSec = document.getElementById('fileSec').files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0], fTarget = document.getElementById('fileTarget')?.files[0];
+      const fCov = document.getElementById('fileCov')?.files[0];
 
       if (!fTrack && MASTER.length === 0) { alert("Chưa có file Tracking Master!"); return; }
-      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
+      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget && !fCov) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
 
       const btn = document.getElementById('btnSaveData');
       btn.textContent = "Đang xử lý dữ liệu...";
@@ -1390,7 +1455,6 @@
           AUDIT_DATA = Object.values(aMap);
         }
 
-        // 4. ĐỌC SHEET FIT-10 (CHỤP ĐỦ IR PRODUCT, IR VISIBILITY, SAT SCANNED VÀ CÁC CHỈ TIÊU)
         if (fTarget) {
           const wb = XLSX.read(await fTarget.arrayBuffer(), { dense: false });
           const sTar = wb.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wb.SheetNames[0];
@@ -1441,13 +1505,51 @@
           }
         }
 
+        // 5. NẠP FILE COVERAGE L28D (SEC-19) - CHỈ LẤY ACTIVE (APPROVED)
+        if (fCov) {
+          const wbCov = XLSX.read(await fCov.arrayBuffer(), { dense: false });
+          const sCov = wbCov.SheetNames.find(s => s.toLowerCase().includes('coverage') || s.toLowerCase().includes('outlet')) || wbCov.SheetNames[0];
+          if (wbCov.Sheets[sCov]) {
+            const rawCov = XLSX.utils.sheet_to_json(wbCov.Sheets[sCov], { header: 1 });
+            COVERAGE_DATA = [];
+            for (let r = 2; r < rawCov.length; r++) {
+              const row = rawCov[r];
+              if (!row || !row[5]) continue;
+              const status = String(row[7] || '').trim();
+              if (status.toLowerCase() !== 'approved') continue; // LỌC ĐIỂM ACTIVE
+
+              const srName = normalizeSR(row[11]);
+              if (!TEAM_SRS.includes(srName)) continue; // LỌC 9 SR TRONG TEAM
+
+              COVERAGE_DATA.push({
+                code: String(row[5]).trim(),
+                name: String(row[6] || '').trim(),
+                sr: srName,
+                channel: String(row[9] || '').trim().toUpperCase(),
+                outletType: String(row[10] || '').trim(),
+                lastVisit: row[8] ? formatAuditDate(row[8]) : 'Chưa ghé',
+                covNote: String(row[14] || '').trim(), // 'Existed', 'Lapsed', 'New'
+                blancNote: String(row[17] || '').trim(),
+                carlsbergNote: String(row[20] || '').trim(),
+                tuborgNote: String(row[23] || '').trim(),
+                somersbyNote: String(row[26] || '').trim(),
+                hudaNote: String(row[29] || '').trim()
+              });
+            }
+          }
+        }
+
         const nowStr = new Date().toLocaleString('vi-VN');
         btn.textContent = "Đang gửi lên Cloud...";
 
         const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-          body: JSON.stringify({ id: 'CURRENT_DATA', master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS }, sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr })
+          body: JSON.stringify({
+            id: 'CURRENT_DATA',
+            master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
+            sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
+          })
         });
         if (!res.ok) throw new Error(await res.text());
 
@@ -1455,6 +1557,7 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA));
           localStorage.setItem('UPDATE_TIME', nowStr);
         } catch (e) {}
 
@@ -1462,7 +1565,8 @@
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} đơn và ${Object.keys(SALES_TARGETS).length} SR Target.`);
+        alert(`Đồng bộ thành công!
+SEC-06: ${SEC_ORDERS.length} dòng • Coverage: ${COVERAGE_DATA.length} điểm Active.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
@@ -1521,7 +1625,7 @@
       setText('valPreTar', `${targetPrem.toFixed(2)} HL`);
       setStyleWidth('barPreMini', `${Math.min(100, pctTargetPrem)}%`);
 
-      // 3. INCENTIVE (TIỀN THƯỞNG) & MODAL TOTAL KPI (CHUYÊN SÂU CHẤT LƯỢNG THỰC ĐỊA & KỶ LUẬT)
+      // 3. INCENTIVE & MODAL TOTAL KPI CHUYÊN SÂU
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0, sumMepTar = 0, sumMepAct = 0;
@@ -1570,7 +1674,7 @@
         setText('incFitRatio', `${avgFA}% / ${avgFT}%`); setText('incFitAch', `${pF}%`); setText('incFitVal', `${sumFitInc.toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`);
 
-        // Popup Total KPI Modal: 3 Khối chuyên sâu (Không trùng sản lượng)
+        // Popup Total KPI Modal: 3 Khối chuyên sâu (IR, SAT, MEP & Route)
         setText('kpiIrProdRatio', `${Math.round(sumIrProd)} / ${Math.round(sumTotVisit)} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${Math.round(sumIrVisib)} / ${Math.round(sumTotVisib)} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${Math.round(sumSatScan)} / ${Math.round(sumTotSat)} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1804,6 +1908,94 @@
         aBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${a.name}</div></div><div><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${a.count >= 2 ? 'bg-emerald-100 text-emerald-800' : (a.count === 1 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700')}">${a.count >= 2 ? 'ĐỦ 2 LẦN' : (a.count === 1 ? 'THIẾU LẦN 2' : 'CHƯA CHẤM')}</span></div></div><div class="pt-1.5 border-t border-gray-100">${detHTML}</div></div>`;
       });
       setText('txtAuditListCount', `${fAudit.length} điểm bán`);
+
+      // 7. TAB 5: COVERAGE L28D (ĐỘ PHỦ 28 NGÀY - TÍCH HỢP MỚI)
+      const baseCov = (selectedSR === "ALL") ? COVERAGE_DATA.filter(c => TEAM_SRS.includes(c.sr)) : COVERAGE_DATA.filter(c => c.sr === selectedSR);
+      const totalActive = baseCov.length;
+      const lapsedCount = baseCov.filter(c => c.covNote === 'Lapsed').length;
+      const existedCount = baseCov.filter(c => c.covNote === 'Existed').length;
+      const newCount = baseCov.filter(c => c.covNote === 'New').length;
+      const coveredCount = existedCount + newCount;
+      const covPct = totalActive > 0 ? Math.round((coveredCount / totalActive) * 100) : 0;
+
+      const tontTotal = baseCov.filter(c => c.channel === 'TONT').length;
+      const tontLapsed = baseCov.filter(c => c.channel === 'TONT' && c.covNote === 'Lapsed').length;
+      const toftTotal = baseCov.filter(c => c.channel === 'TOFT').length;
+      const toftLapsed = baseCov.filter(c => c.channel === 'TOFT' && c.covNote === 'Lapsed').length;
+
+      setText('txtCovRate', `${covPct}% Đạt`);
+      setText('txtCovActiveTotal', `${totalActive} điểm Active`);
+      setText('txtCovLapsedSummary', `${lapsedCount} Lapsed (Rớt)`);
+      setStyleWidth('barCovRate', `${Math.min(100, covPct)}%`);
+
+      setText('lblCovTontCount', `${tontTotal} điểm`);
+      setText('lblCovTontLapsed', `${tontLapsed} Lapsed (${tontTotal > 0 ? Math.round(tontLapsed/tontTotal*100) : 0}%)`);
+      setText('lblCovToftCount', `${toftTotal} điểm`);
+      setText('lblCovToftLapsed', `${toftLapsed} Lapsed (${toftTotal > 0 ? Math.round(toftLapsed/toftTotal*100) : 0}%)`);
+
+      const cardCovTont = document.getElementById('cardCovTont');
+      const cardCovToft = document.getElementById('cardCovToft');
+      const baseCardClass = "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all";
+      cardCovTont.className = (currentCovChannel === 'TONT') ? `${baseCardClass} bg-amber-100 border-amber-400 ring-2 ring-amber-500 shadow-xs` : `${baseCardClass} bg-amber-50/70 border-amber-200`;
+      cardCovToft.className = (currentCovChannel === 'TOFT') ? `${baseCardClass} bg-emerald-100 border-emerald-400 ring-2 ring-emerald-500 shadow-xs` : `${baseCardClass} bg-emerald-50/70 border-emerald-200`;
+
+      let filteredCov = baseCov;
+      if (currentCovChannel !== 'ALL') filteredCov = filteredCov.filter(c => c.channel === currentCovChannel);
+      if (currentCovStatus !== 'ALL') filteredCov = filteredCov.filter(c => c.covNote === currentCovStatus);
+      if (searchKeyword) filteredCov = filteredCov.filter(c => c.name.toLowerCase().includes(searchKeyword) || c.code.toLowerCase().includes(searchKeyword));
+
+      // Ưu tiên hiển thị điểm Lapsed (cần cứu) lên đầu danh sách!
+      filteredCov.sort((a, b) => {
+        if (a.covNote === b.covNote) return 0;
+        if (a.covNote === 'Lapsed') return -1;
+        if (b.covNote === 'Lapsed') return 1;
+        return 0;
+      });
+
+      const covBox = document.getElementById('covOutletList');
+      covBox.innerHTML = '';
+      if (filteredCov.length === 0) {
+        covBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu điểm bán Coverage phù hợp.</div>`;
+      } else {
+        filteredCov.forEach(c => {
+          const isLapsed = (c.covNote === 'Lapsed');
+          const isNew = (c.covNote === 'New');
+
+          let badgeHtml = '';
+          if (isLapsed) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700 animate-pulse">⚠️ LAPSED</span>`;
+          else if (isNew) badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-blue-100 text-blue-700">⭐ MỚI</span>`;
+          else badgeHtml = `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-800">✅ EXISTED</span>`;
+
+          // Tóm tắt các nhãn hàng tại điểm
+          const brandItems = [];
+          if (c.hudaNote && c.hudaNote !== 'None') brandItems.push(`Huda: <b>${c.hudaNote}</b>`);
+          if (c.tuborgNote && c.tuborgNote !== 'None') brandItems.push(`Tuborg: <b>${c.tuborgNote}</b>`);
+          if (c.blancNote && c.blancNote !== 'None') brandItems.push(`Blanc: <b>${c.blancNote}</b>`);
+          if (c.carlsbergNote && c.carlsbergNote !== 'None') brandItems.push(`Carlsberg: <b>${c.carlsbergNote}</b>`);
+
+          covBox.innerHTML += `
+            <div class="bg-white rounded-2xl p-3.5 card-shadow border ${isLapsed ? 'border-rose-200 bg-rose-50/20' : 'border-gray-100'} space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-[10px] font-bold text-gray-400 tracking-wide">${c.code} • ${TEAM_SR_MAP[c.sr] || c.sr} • <span class="${c.channel === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${c.channel}</span> <span class="text-gray-400 font-normal">(${c.outletType})</span></div>
+                  <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${c.name}</div>
+                </div>
+                <div>${badgeHtml}</div>
+              </div>
+              <div class="pt-1.5 border-t border-gray-100 flex justify-between items-center text-[10px]">
+                <span class="text-gray-500">Ghé thăm gần nhất: <b class="${isLapsed ? 'text-rose-600' : 'text-gray-700'}">${c.lastVisit}</b></span>
+                <span class="${isLapsed ? 'text-rose-600 font-extrabold' : 'text-emerald-700 font-semibold'}">${isLapsed ? '⚠️ Cần ghé cứu điểm' : '✓ Ổn định'}</span>
+              </div>
+              ${brandItems.length > 0 ? `
+                <div class="pt-1 border-t border-gray-50 text-[10px] text-gray-500 space-x-2">
+                  <span>${brandItems.join(' • ')}</span>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      }
+      setText('txtCovListCount', `${filteredCov.length} điểm bán`);
     }
 
     // ================= BÁO CÁO ZALO & SOI ĐƠN =================
@@ -1835,8 +2027,19 @@
       SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
         tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
       });
-      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
-      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
+      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `
+  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
+      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM
+📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})
+
+1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):
+• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)
+${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}
+
+2️⃣ LŨY KẾ THÁNG (MTD):
+• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)
+
+👉 Anh em bám sát web để về số đúng tiến độ!`;
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Báo cáo Team!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -1844,13 +2047,20 @@
       const sr = document.getElementById('srFilter').value, name = document.getElementById('srFilter').options[document.getElementById('srFilter').selectedIndex].text;
       const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
       let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
-      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
+      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}
+📅 Đơn duyệt: ${dt}
+• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)
+• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)
+💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
       navigator.clipboard.writeText(msg).then(() => alert(`Đã sao chép báo cáo ${name}!`)).catch(e => alert("Lỗi: " + e));
     }
 
     function executeCopyIncentiveTeamReport() {
       const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
+      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)
+
+` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('
+');
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Bảng thưởng Team!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -1858,7 +2068,10 @@
       const sr = document.getElementById('srFilter').value;
       const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
       const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
-      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
+      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)
+• Hoàn thành (2/2 lần): ${done}/${list.length}
+• Thiếu lần 2: ${n2} điểm
+• Chưa chụp: ${none} điểm`;
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép báo cáo Chụp TB!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -1923,7 +2136,10 @@
       const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
       SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
       const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
-      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
+      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}
+⚠️ Các bạn chưa có đơn duyệt:
+` + noList.join('
+');
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép nhắc nhở!")).catch(e => alert("Lỗi: " + e));
     }
 
