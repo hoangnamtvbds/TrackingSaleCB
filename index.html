@@ -286,7 +286,7 @@
         </details>
       </div>
 
-      <!-- Khối Thưởng Incentive -->
+      <!-- Khối Thưởng Incentive (4 Trụ cột thu nhập chuẩn xác) -->
       <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
         <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
           <div class="flex items-center gap-2">
@@ -305,7 +305,7 @@
         <div id="boxIncentiveDetail" class="hidden pt-2 border-t border-amber-200/60 space-y-2 text-xs">
           <div class="bg-white/80 p-2.5 rounded-xl border border-blue-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">📦 1. Sản Lượng Total</span>
+              <span class="text-gray-800 font-bold block">📦 1. Thưởng Sản Lượng Total</span>
               <span id="incVolRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
             </div>
             <div class="text-right">
@@ -316,8 +316,8 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
-              <span id="incSkuRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+              <span class="text-gray-800 font-bold block">👑 2. Thưởng Dòng Bia Premium</span>
+              <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
             </div>
             <div class="text-right">
               <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
@@ -327,7 +327,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">🎯 3. Chỉ Tiêu MP</span>
+              <span class="text-gray-800 font-bold block">🎯 3. Thưởng Chỉ Tiêu MEP</span>
               <span id="incMepRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
             </div>
             <div class="text-right">
@@ -338,7 +338,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">📸 4. Điểm FIT</span>
+              <span class="text-gray-800 font-bold block">📸 4. Thưởng Điểm FIT Score</span>
               <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0% / 0%</span>
             </div>
             <div class="text-right">
@@ -574,88 +574,124 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TOTAL KPI ================= -->
+  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU (IR, SAT, MEP & ROUTE) ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
           <div>
             <h3 class="text-sm font-black text-[#1F4E79] tracking-tight">TIẾN ĐỘ TOTAL KPI (FIT-10)</h3>
-            <p class="text-[10px] text-gray-400 font-semibold" id="lblKpiModalSubtitle">Tiến độ chi tiết từng chỉ số</p>
+            <p class="text-[10px] text-gray-400 font-semibold" id="lblKpiModalSubtitle">Chi tiết chất lượng thực địa & đi tuyến</p>
           </div>
         </div>
         <button onclick="closeTotalKpiModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
-      <div class="space-y-2 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        <div class="p-2.5 rounded-2xl bg-gray-50/80 border border-gray-200/70 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-gray-800 text-[11px] flex items-center gap-1.5">📦 1. Sản Lượng Total</span>
-            <span id="kpiVolRatio" class="text-[10px] text-gray-500 font-semibold mt-0.5 block">0.00 / 0.00 HL</span>
+      <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
+        
+        <!-- KHỐI 1: CHẤT LƯỢNG HÌNH ẢNH IR & TỦ LẠNH SAT -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
+          
+          <!-- 1. IR Product -->
+          <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-purple-950 text-[11px] block">1. IR Product (Nhận diện sản phẩm)</span>
+              <span id="kpiIrProdRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 lượt đạt</span>
+            </div>
+            <span id="kpiIrProdPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
-          <span id="kpiVolPct" class="px-2.5 py-1 bg-blue-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
+
+          <!-- 2. IR Visibility -->
+          <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện trưng bày)</span>
+              <span id="kpiIrVisRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 điểm đạt</span>
+            </div>
+            <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
+
+          <!-- 3. SAT Scanned (Tủ lạnh) -->
+          <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Kiểm toán tủ lạnh)</span>
+              <span id="kpiSatRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0 / 0 tủ quét</span>
+            </div>
+            <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
+
+          <!-- 4. Điểm FIT Score tổng hợp -->
+          <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score tổng hợp</span>
+              <span id="kpiFitRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0% / 0%</span>
+            </div>
+            <span id="kpiFitPct" class="px-2 py-0.5 bg-indigo-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
         </div>
 
-        <div class="p-2.5 rounded-2xl bg-amber-50/60 border border-amber-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-amber-950 text-[11px] flex items-center gap-1.5">👑 2. Sản Lượng Premium</span>
-            <span id="kpiSkuRatio" class="text-[10px] text-amber-700 font-semibold mt-0.5 block">0.00 / 0.00 HL</span>
+        <!-- KHỐI 2: ĐỘ PHỦ & THỰC THI THÁNG (MEP) -->
+        <div class="space-y-1.5 pt-1 border-t border-gray-100">
+          <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
+          
+          <!-- 5. Độ phủ Coverage -->
+          <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-teal-950 text-[11px] block">5. Độ Phủ (Coverage điểm bán)</span>
+              <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
+            </div>
+            <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
-          <span id="kpiSkuPct" class="px-2.5 py-1 bg-amber-500 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
+
+          <!-- 6. SKU Ưu tiên -->
+          <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-emerald-950 text-[11px] block">6. Chỉ Tiêu SKU Ưu Tiên</span>
+              <span id="kpiSkuPriRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
+            </div>
+            <span id="kpiSkuPriPct" class="px-2 py-0.5 bg-emerald-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
+
+          <!-- 7. Tổng MP -->
+          <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-emerald-950 text-[11px] block">7. Chỉ Tiêu MP (Tổng thực thi)</span>
+              <span id="kpiMpRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
+            </div>
+            <span id="kpiMpPct" class="px-2 py-0.5 bg-emerald-700 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
         </div>
 
-        <div class="p-2.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-emerald-950 text-[11px] flex items-center gap-1.5">🎯 3. Chỉ Tiêu MP (Tổng thực thi)</span>
-            <span id="kpiMpRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
+        <!-- KHỐI 3: KỶ LUẬT ĐI TUYẾN MCP -->
+        <div class="space-y-1.5 pt-1 border-t border-gray-100">
+          <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
+          
+          <!-- 8. Call Per Day -->
+          <div class="p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-amber-950 text-[11px] block">8. Call Per Day (Ghé thăm/ngày)</span>
+              <span id="kpiCpdRatio" class="text-[10px] text-amber-700 font-semibold mt-0.5 block">0.0 / 0.0 cuộc</span>
+            </div>
+            <span id="kpiCpdPct" class="px-2 py-0.5 bg-amber-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
-          <span id="kpiMpPct" class="px-2.5 py-1 bg-emerald-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
+
+          <!-- 9. Visit On Route -->
+          <div class="p-2.5 rounded-2xl bg-rose-50/70 border border-rose-200/70 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-rose-950 text-[11px] block">9. Visit On Route (Đúng tuyến MCP)</span>
+              <span id="kpiVorRatio" class="text-[10px] text-rose-700 font-semibold mt-0.5 block">0 / 0 lượt</span>
+            </div>
+            <span id="kpiVorPct" class="px-2 py-0.5 bg-rose-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
+          </div>
         </div>
 
-        <div class="p-2.5 rounded-2xl bg-teal-50/60 border border-teal-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-teal-950 text-[11px] flex items-center gap-1.5">📍 4. Độ Phủ (Coverage)</span>
-            <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-          </div>
-          <span id="kpiCovPct" class="px-2.5 py-1 bg-teal-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <div class="p-2.5 rounded-2xl bg-indigo-50/60 border border-indigo-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-indigo-950 text-[11px] flex items-center gap-1.5">🍺 5. Chỉ Tiêu SKU Ưu Tiên</span>
-            <span id="kpiSkuPriRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-          </div>
-          <span id="kpiSkuPriPct" class="px-2.5 py-1 bg-indigo-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <div class="p-2.5 rounded-2xl bg-purple-50/60 border border-purple-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-purple-950 text-[11px] flex items-center gap-1.5">📸 6. Điểm FIT (Hình ảnh / TB)</span>
-            <span id="kpiFitRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0% / 0%</span>
-          </div>
-          <span id="kpiFitPct" class="px-2.5 py-1 bg-purple-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <div class="p-2.5 rounded-2xl bg-sky-50/60 border border-sky-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-sky-950 text-[11px] flex items-center gap-1.5">🚶‍♂️ 7. Call Per Day</span>
-            <span id="kpiCpdRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0.0 / 0.0 cuộc</span>
-          </div>
-          <span id="kpiCpdPct" class="px-2.5 py-1 bg-sky-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
-
-        <div class="p-2.5 rounded-2xl bg-rose-50/60 border border-rose-200/60 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-rose-950 text-[11px] flex items-center gap-1.5">🗺️ 8. Visit On Route (Đúng tuyến)</span>
-            <span id="kpiVorRatio" class="text-[10px] text-rose-700 font-semibold mt-0.5 block">0 / 0 lượt</span>
-          </div>
-          <span id="kpiVorPct" class="px-2.5 py-1 bg-rose-600 text-white font-black rounded-xl text-[11px] shadow-xs">0%</span>
-        </div>
       </div>
 
       <div class="pt-2 border-t border-gray-100">
-        <button onclick="closeTotalKpiModal()" class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 font-extrabold rounded-2xl text-xs transition-all">
+        <button onclick="closeTotalKpiModal()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 font-extrabold rounded-xl text-xs transition-all">
           Đóng cửa sổ
         </button>
       </div>
@@ -853,7 +889,7 @@
     let supabaseClient = null;
     try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
 
-    // HELPER GÁN GIAO DIỆN AN TOÀN TUYỆT ĐỐI (KHÔNG BAO GIỜ BỊ LỖI NULL)
+    // HELPER GÁN GIAO DIỆN AN TOÀN TUYỆT ĐỐI (CHỐNG NULL)
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
@@ -1219,7 +1255,7 @@
       setText('iconIncentiveToggle', isH ? '▼' : '▲'); setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-    // ================= XỬ LÝ NẠP FILE =================
+    // ================= XỬ LÝ NẠP FILE (DÒ HEADER & TÍNH TOÁN CHUẨN) =================
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0], fSec = document.getElementById('fileSec').files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0], fTarget = document.getElementById('fileTarget')?.files[0];
@@ -1354,6 +1390,7 @@
           AUDIT_DATA = Object.values(aMap);
         }
 
+        // 4. ĐỌC SHEET FIT-10 (CHỤP ĐỦ IR PRODUCT, IR VISIBILITY, SAT SCANNED VÀ CÁC CHỈ TIÊU)
         if (fTarget) {
           const wb = XLSX.read(await fTarget.arrayBuffer(), { dense: false });
           const sTar = wb.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wb.SheetNames[0];
@@ -1371,6 +1408,7 @@
                   let skuTarSum = 0, skuActSum = 0;
                   for (let sc = 25; sc <= 35; sc++) skuTarSum += (parseFloat(row[sc + offset]) || 0);
                   for (let sc = 38; sc <= 48; sc++) skuActSum += (parseFloat(row[sc + offset]) || 0);
+
                   SALES_TARGETS[norm] = {
                     cpd_tar: parseFloat(row[7 + offset]) || 0, cpd_act: parseFloat(row[8 + offset]) || 0, cpd_ach: parseFloat(row[9 + offset]) || 0,
                     vor_tar: parseFloat(row[10 + offset]) || 0, vor_act: parseFloat(row[11 + offset]) || 0, vor_ach: parseFloat(row[12 + offset]) || 0,
@@ -1379,6 +1417,20 @@
                     mep_tar: parseFloat(row[23 + offset]) || 0, cov_tar: parseFloat(row[24 + offset]) || 0, sku_pri_tar: skuTarSum,
                     mep_act: parseFloat(row[36 + offset]) || 0, cov_act: parseFloat(row[37 + offset]) || 0, sku_pri_act: skuActSum,
                     mep_ach: parseFloat(row[49 + offset]) || 0, mep_inc: parseFloat(row[50 + offset]) || 0,
+
+                    // Bổ sung IR Visit & SAT Scanned chính xác theo index
+                    ir_visit_tar: parseFloat(row[51 + offset]) || 0,
+                    total_visit: parseFloat(row[52 + offset]) || 0,
+                    ir_product: parseFloat(row[53 + offset]) || 0,
+                    total_visibility: parseFloat(row[54 + offset]) || 0,
+                    ir_visibility: parseFloat(row[55 + offset]) || 0,
+                    ir_act: parseFloat(row[56 + offset]) || 0,
+                    ir_ach: parseFloat(row[57 + offset]) || 0,
+
+                    total_sat: parseFloat(row[58 + offset]) || 0,
+                    sat_scanned: parseFloat(row[59 + offset]) || 0,
+                    sat_act: parseFloat(row[60 + offset]) || 0,
+
                     fit_tar: parseFloat(row[61 + offset]) || 0, fit_act: parseFloat(row[62 + offset]) || 0, fit_ach: parseFloat(row[63 + offset]) || 0, fit_inc: parseFloat(row[64 + offset]) || 0,
                     total_inc: parseFloat(row[67 + offset]) || 0
                   };
@@ -1469,12 +1521,13 @@
       setText('valPreTar', `${targetPrem.toFixed(2)} HL`);
       setStyleWidth('barPreMini', `${Math.min(100, pctTargetPrem)}%`);
 
-      // 3. INCENTIVE & TOTAL KPI
+      // 3. INCENTIVE (TIỀN THƯỞNG) & MODAL TOTAL KPI (CHUYÊN SÂU CHẤT LƯỢNG THỰC ĐỊA & KỶ LUẬT)
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0, sumMepTar = 0, sumMepAct = 0;
         let sumCovTar = 0, sumCovAct = 0, sumSkuPriTar = 0, sumSkuPriAct = 0, sumCpdTar = 0, sumCpdAct = 0;
-        let sumFitTarPct = 0, sumFitActPct = 0, sumVorTar = 0, sumVorAct = 0, cnt = 0;
+        let sumFitTarPct = 0, sumFitActPct = 0, sumVorTar = 0, sumVorAct = 0;
+        let sumTotVisit = 0, sumIrProd = 0, sumTotVisib = 0, sumIrVisib = 0, sumTotSat = 0, sumSatScan = 0, cnt = 0;
 
         TEAM_SRS.forEach(k => {
           const d = SALES_TARGETS[k] || {}; cnt++;
@@ -1486,6 +1539,11 @@
           sumCpdTar += (d.cpd_tar || 0); sumCpdAct += (d.cpd_act || 0);
           sumFitTarPct += Math.round((d.fit_tar || 0) * 100); sumFitActPct += Math.round((d.fit_act || 0) * 100);
           sumVorTar += (d.vor_tar || 0); sumVorAct += (d.vor_act || 0);
+
+          sumTotVisit += (d.total_visit || 0); sumIrProd += (d.ir_product || 0);
+          sumTotVisib += (d.total_visibility || 0); sumIrVisib += (d.ir_visibility || 0);
+          sumTotSat += (d.total_sat || 0); sumSatScan += (d.sat_scanned || 0);
+
           sumVolInc += (d.vol_inc || 0); sumSkuInc += (d.sku_inc || 0);
           sumMepInc += (d.mep_inc || 0); sumFitInc += (d.fit_inc || 0); sumTotInc += (d.total_inc || 0);
         });
@@ -1500,6 +1558,11 @@
         const pF = avgFT > 0 ? Math.round((avgFA / avgFT) * 100) : 0;
         const pVOR = sumVorTar > 0 ? Math.round((sumVorAct / sumVorTar) * 100) : 0;
 
+        const pIrProd = sumTotVisit > 0 ? Math.round((sumIrProd / sumTotVisit) * 100) : 0;
+        const pIrVis = sumTotVisib > 0 ? Math.round((sumIrVisib / sumTotVisib) * 100) : 0;
+        const pSat = sumTotSat > 0 ? Math.round((sumSatScan / sumTotSat) * 100) : 0;
+
+        // Card Incentive ngoài màn hình (Ví tiền SR)
         setText('txtTotalIncentiveDisplay', `${sumTotInc.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`); setText('incVolAch', `${pV}%`); setText('incVolVal', `${sumVolInc.toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`); setText('incSkuAch', `${pP}%`); setText('incSkuVal', `${sumSkuInc.toLocaleString('vi-VN')} đ`);
@@ -1507,12 +1570,16 @@
         setText('incFitRatio', `${avgFA}% / ${avgFT}%`); setText('incFitAch', `${pF}%`); setText('incFitVal', `${sumFitInc.toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`);
 
-        setText('kpiVolRatio', `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`); setText('kpiVolPct', `${pV}%`);
-        setText('kpiSkuRatio', `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`); setText('kpiSkuPct', `${pP}%`);
-        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${pM}%`);
+        // Popup Total KPI Modal: 3 Khối chuyên sâu (Không trùng sản lượng)
+        setText('kpiIrProdRatio', `${Math.round(sumIrProd)} / ${Math.round(sumTotVisit)} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
+        setText('kpiIrVisRatio', `${Math.round(sumIrVisib)} / ${Math.round(sumTotVisib)} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
+        setText('kpiSatRatio', `${Math.round(sumSatScan)} / ${Math.round(sumTotSat)} tủ quét`); setText('kpiSatPct', `${pSat}%`);
+        setText('kpiFitRatio', `${avgFA}% / ${avgFT}%`); setText('kpiFitPct', `${pF}%`);
+
         setText('kpiCovRatio', `${sumCovAct.toFixed(1)} / ${sumCovTar.toFixed(1)} điểm`); setText('kpiCovPct', `${pC}%`);
         setText('kpiSkuPriRatio', `${sumSkuPriAct.toFixed(1)} / ${sumSkuPriTar.toFixed(1)} điểm`); setText('kpiSkuPriPct', `${pS}%`);
-        setText('kpiFitRatio', `${avgFA}% / ${avgFT}%`); setText('kpiFitPct', `${pF}%`);
+        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${pM}%`);
+
         setText('kpiCpdRatio', `${(sumCpdAct/cnt).toFixed(1)} / ${(sumCpdTar/cnt).toFixed(1)} cuộc`); setText('kpiCpdPct', `${pCPD}%`);
         setText('kpiVorRatio', `${Math.round(sumVorAct)} / ${Math.round(sumVorTar)} lượt`); setText('kpiVorPct', `${pVOR}%`);
       } else {
@@ -1525,8 +1592,19 @@
         const fTP = Math.round((d.fit_tar || 0) * 100), fAP = Math.round((d.fit_act || 0) * 100), fAch = Math.round((d.fit_ach || 0) * 100);
         const cpdT = (d.cpd_tar || 0).toFixed(1), cpdA = (d.cpd_act || 0).toFixed(1), cpdAch = parseFloat(cpdT) > 0 ? Math.round((parseFloat(cpdA) / parseFloat(cpdT)) * 100) : 0;
         const vorT = Math.round(d.vor_tar || 0), vorA = Math.round(d.vor_act || 0), vorAch = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
+
+        const totVis = Math.round(d.total_visit || 0), irProd = Math.round(d.ir_product || 0);
+        const pIrProd = totVis > 0 ? Math.round((irProd / totVis) * 100) : 0;
+
+        const totVisib = Math.round(d.total_visibility || 0), irVisib = Math.round(d.ir_visibility || 0);
+        const pIrVis = totVisib > 0 ? Math.round((irVisib / totVisib) * 100) : 0;
+
+        const totSat = Math.round(d.total_sat || 0), satScan = Math.round(d.sat_scanned || 0);
+        const pSat = totSat > 0 ? Math.round((satScan / totSat) * 100) : 0;
+
         const tot = d.total_inc || 0;
 
+        // Card Incentive ngoài màn hình
         setText('txtTotalIncentiveDisplay', `${tot.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${vA.toFixed(2)} / ${vT.toFixed(2)} HL`); setText('incVolAch', `${vAch}%`); setText('incVolVal', `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${pA.toFixed(2)} / ${pT.toFixed(2)} HL`); setText('incSkuAch', `${pAch}%`); setText('incSkuVal', `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`);
@@ -1534,12 +1612,16 @@
         setText('incFitRatio', `${fAP}% / ${fTP}%`); setText('incFitAch', `${fAch}%`); setText('incFitVal', `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${tot.toLocaleString('vi-VN')} đ`);
 
-        setText('kpiVolRatio', `${vA.toFixed(2)} / ${vT.toFixed(2)} HL`); setText('kpiVolPct', `${vAch}%`);
-        setText('kpiSkuRatio', `${pA.toFixed(2)} / ${pT.toFixed(2)} HL`); setText('kpiSkuPct', `${pAch}%`);
-        setText('kpiMpRatio', `${mA.toFixed(1)} / ${mT.toFixed(1)} điểm`); setText('kpiMpPct', `${mAch}%`);
+        // Popup Total KPI Modal: 3 Khối chuyên sâu
+        setText('kpiIrProdRatio', `${irProd} / ${totVis} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
+        setText('kpiIrVisRatio', `${irVisib} / ${totVisib} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
+        setText('kpiSatRatio', `${satScan} / ${totSat} tủ quét`); setText('kpiSatPct', `${pSat}%`);
+        setText('kpiFitRatio', `${fAP}% / ${fTP}%`); setText('kpiFitPct', `${fAch}%`);
+
         setText('kpiCovRatio', `${cA} / ${cT} điểm`); setText('kpiCovPct', `${cAch}%`);
         setText('kpiSkuPriRatio', `${spA.toFixed(1)} / ${spT.toFixed(1)} điểm`); setText('kpiSkuPriPct', `${spAch}%`);
-        setText('kpiFitRatio', `${fAP}% / ${fTP}%`); setText('kpiFitPct', `${fAch}%`);
+        setText('kpiMpRatio', `${mA.toFixed(1)} / ${mT.toFixed(1)} điểm`); setText('kpiMpPct', `${mAch}%`);
+
         setText('kpiCpdRatio', `${cpdA} / ${cpdT} cuộc`); setText('kpiCpdPct', `${cpdAch}%`);
         setText('kpiVorRatio', `${vorA} / ${vorT} lượt`); setText('kpiVorPct', `${vorAch}%`);
       }
