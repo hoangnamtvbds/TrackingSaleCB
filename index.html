@@ -223,7 +223,7 @@
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">🎯 DISPLAY</button>
       <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">💰 LF</button>
       <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📸 CHỤP TB</button>
-      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📍 ĐỘ PHỦ</button>
+      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📍 COVERAGE</button>
     </div>
 
     <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
@@ -317,7 +317,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">👑 2. Thưởng Dòng Bia Premium</span>
+              <span class="text-gray-800 font-bold block">👑 2. Thưởng Premium</span>
               <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
             </div>
             <div class="text-right">
@@ -328,7 +328,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">🎯 3. Thưởng Chỉ Tiêu MEP</span>
+              <span class="text-gray-800 font-bold block">🎯 3. Thưởng Chỉ Tiêu MP</span>
               <span id="incMepRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
             </div>
             <div class="text-right">
@@ -339,7 +339,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">📸 4. Thưởng Điểm FIT Score</span>
+              <span class="text-gray-800 font-bold block">📸 4. Thưởng FIT Score</span>
               <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0% / 0%</span>
             </div>
             <div class="text-right">
@@ -369,7 +369,7 @@
           <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
             <div>
               <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
-              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700">(0 th)</span></div>
+              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
             </div>
             <div class="text-right text-[11px] space-y-0.5">
               <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
@@ -430,17 +430,17 @@
           </div>
           <div class="grid grid-cols-3 gap-2 text-center select-none">
             <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
-              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1 (≥5 th Pre)</span>
+              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
               <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
               <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2 (≥3 th Pre)</span>
+              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
               <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
               <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
-              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3 (≥2 th Pre)</span>
+              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
               <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
               <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
@@ -574,7 +574,7 @@
       <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
 
-    <!-- ================= TAB 5: ĐỘ PHỦ COVERAGE L28D (MỚI) ================= -->
+    <!-- ================= TAB 5: COVERAGE (L28D) ================= -->
     <div id="tab5Content" class="hidden space-y-3">
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
@@ -598,31 +598,32 @@
           <div class="p-2 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
             <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐANG PHỦ</span>
             <span id="covCoveredCount" class="text-sm font-black text-emerald-950 mt-0.5 block">0</span>
-            <span id="covCoveredBreakdown" class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
+            <span class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
           </div>
           <div class="p-2 rounded-2xl bg-rose-50/70 border border-rose-200/80">
             <span class="text-[9px] font-bold text-rose-700 block uppercase">BỊ LAPSED</span>
             <span id="covLapsedCount" class="text-sm font-black text-rose-950 mt-0.5 block">0</span>
-            <span id="covLapsedBreakdown" class="text-[9px] text-rose-700 font-semibold block">>28 ngày chưa đi</span>
+            <span class="text-[9px] text-rose-700 font-semibold block">>28 ngày chưa đi</span>
           </div>
         </div>
 
+        <!-- Bộ lọc trạng thái Coverage với touch feedback rõ ràng -->
         <div class="pt-2 border-t border-gray-100 space-y-1.5">
           <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-            <button id="btnCovStatusAll" onclick="setCovStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
-            <button id="btnCovStatusLapsed" onclick="setCovStatusFilter('LAPSED')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">⚠️ Bị Lapsed</button>
-            <button id="btnCovStatusCovered" onclick="setCovStatusFilter('COVERED')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">✓ Đang phủ</button>
+            <button id="btnCovStatusAll" onclick="setCovStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center transition-all">Tất cả</button>
+            <button id="btnCovStatusLapsed" onclick="setCovStatusFilter('LAPSED')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">⚠️ Bị Lapsed</button>
+            <button id="btnCovStatusCovered" onclick="setCovStatusFilter('COVERED')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">✓ Đang phủ</button>
           </div>
           <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
-            <button id="btnCovChannelAll" onclick="setCovChannelFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
-            <button id="btnCovChannelTont" onclick="setCovChannelFilter('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán)</button>
-            <button id="btnCovChannelToft" onclick="setCovChannelFilter('TOFT')" class="flex-1 py-1.5 rounded-lg text-emerald-700 text-center">TOFT (Tạp hóa)</button>
+            <button id="btnCovChannelAll" onclick="setCovChannelFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center transition-all">Tất cả kênh</button>
+            <button id="btnCovChannelTont" onclick="setCovChannelFilter('TONT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">TONT (Quán)</button>
+            <button id="btnCovChannelToft" onclick="setCovChannelFilter('TOFT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center transition-all">TOFT (Tạp hóa)</button>
           </div>
         </div>
       </div>
 
       <div class="flex justify-between items-center mb-1 px-1">
-        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán Coverage L28D</span>
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách điểm bán Coverage</span>
         <span id="txtCovListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
       </div>
       <div id="covOutletList" class="space-y-2.5"></div>
@@ -645,7 +646,6 @@
       </div>
 
       <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        <!-- Khối 1: IR / SAT -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
           
@@ -659,7 +659,7 @@
 
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện trưng bày)</span>
+              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện biển hiệu)</span>
               <span id="kpiIrVisRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 điểm đạt</span>
             </div>
             <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -667,7 +667,7 @@
 
           <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Kiểm toán tủ lạnh)</span>
+              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Quét tủ lạnh)</span>
               <span id="kpiSatRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0 / 0 tủ quét</span>
             </div>
             <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -675,20 +675,19 @@
 
           <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score tổng hợp</span>
+              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score</span>
               <span id="kpiFitRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0% / 0%</span>
             </div>
             <span id="kpiFitPct" class="px-2 py-0.5 bg-indigo-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
         </div>
 
-        <!-- Khối 2: MEP -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
           
           <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-teal-950 text-[11px] block">5. Độ Phủ (Coverage điểm bán)</span>
+              <span class="font-bold text-teal-950 text-[11px] block">5. Tổng Coverage</span>
               <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
             </div>
             <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -711,7 +710,6 @@
           </div>
         </div>
 
-        <!-- Khối 3: Route -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
           
@@ -850,7 +848,7 @@
     </div>
   </div>
 
-  <!-- MODAL ADMIN CẬP NHẬT (CÓ THÊM MỤC NẠP FILE COVERAGE L28D) -->
+  <!-- MODAL ADMIN CẬP NHẬT -->
   <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
       <div class="flex justify-between items-center">
@@ -1012,21 +1010,11 @@
 
     function setCovStatusFilter(status) {
       currentCovStatus = status;
-      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
-      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
-      document.getElementById('btnCovStatusAll').className = (status === 'ALL') ? act : inact;
-      document.getElementById('btnCovStatusLapsed').className = (status === 'LAPSED') ? (act + " text-rose-600") : inact;
-      document.getElementById('btnCovStatusCovered').className = (status === 'COVERED') ? (act + " text-emerald-600") : inact;
       renderAll();
     }
 
     function setCovChannelFilter(chan) {
       currentCovChannel = chan;
-      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
-      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
-      document.getElementById('btnCovChannelAll').className = (chan === 'ALL') ? act : inact;
-      document.getElementById('btnCovChannelTont').className = (chan === 'TONT') ? (act + " text-amber-700") : inact;
-      document.getElementById('btnCovChannelToft').className = (chan === 'TOFT') ? (act + " text-emerald-700") : inact;
       renderAll();
     }
 
@@ -1412,7 +1400,7 @@
             if (hd === 'brand' || hd.includes('nhãn hiệu')) colBrand = idx;
             if (hd.includes('volume')) colVol = idx;
             if (hd === 'quantity' || hd === 'qty' || hd.includes('số lượng')) colQty = idx;
-            if (hd === 'price' || hd.includes('đơn giá')) colPrice = idx;
+            if (hd === 'price' || hd === 'đơn giá')) colPrice = idx;
             if (hd === 'revenue' || hd.includes('doanh thu')) colRev = idx;
             if (hd.includes('cvtcsr') || hd.includes('fullname') || hd === 'sr') colSr = idx;
             if (hd.includes('outletcode')) colOCode = idx;
@@ -1510,7 +1498,7 @@
           }
         }
 
-        // 5. ĐỌC FILE MỚI: COVERAGE OUTLETS BY SR L28D (SEC-19) - ĐÃ FIX CHUẨN CỘT
+        // 5. FILE COVERAGE L28D SEC-19
         if (fCov) {
           const wb = XLSX.read(await fCov.arrayBuffer(), { dense: false });
           const sCovName = wb.SheetNames.find(s => s.toLowerCase().includes('coverage')) || wb.SheetNames[0];
@@ -1542,10 +1530,10 @@
             for (let r = hIdx + 1; r < raw.length; r++) {
               const row = raw[r]; if (!row || !row[colCode]) continue;
               const status = String(row[colStatus] || '').trim();
-              if (status.toLowerCase() !== 'approved') continue; // CHỈ LẤY ĐIỂM ACTIVE
+              if (status.toLowerCase() !== 'approved') continue;
 
               const srNorm = normalizeSR(row[colSr]);
-              if (!TEAM_SRS.includes(srNorm)) continue; // CHỈ LẤY 9 SR TRONG TEAM
+              if (!TEAM_SRS.includes(srNorm)) continue;
 
               const code = String(row[colCode]).trim();
               const name = String(row[colName] || '').trim();
@@ -1598,7 +1586,7 @@
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
+        alert(`Đồng bộ thành công!\nĐã cập nhật ${COVERAGE_DATA.length} điểm Coverage và toàn bộ chỉ tiêu hệ thống.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
@@ -1698,7 +1686,6 @@
         const pIrVis = sumTotVisib > 0 ? Math.round((sumIrVisib / sumTotVisib) * 100) : 0;
         const pSat = sumTotSat > 0 ? Math.round((sumSatScan / sumTotSat) * 100) : 0;
 
-        // Card Incentive ngoài màn hình (Ví tiền SR)
         setText('txtTotalIncentiveDisplay', `${sumTotInc.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`); setText('incVolAch', `${pV}%`); setText('incVolVal', `${sumVolInc.toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`); setText('incSkuAch', `${pP}%`); setText('incSkuVal', `${sumSkuInc.toLocaleString('vi-VN')} đ`);
@@ -1706,7 +1693,6 @@
         setText('incFitRatio', `${avgFA}% / ${avgFT}%`); setText('incFitAch', `${pF}%`); setText('incFitVal', `${sumFitInc.toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`);
 
-        // Popup Total KPI Modal: 3 Khối chuyên sâu (Không trùng sản lượng)
         setText('kpiIrProdRatio', `${Math.round(sumIrProd)} / ${Math.round(sumTotVisit)} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${Math.round(sumIrVisib)} / ${Math.round(sumTotVisib)} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${Math.round(sumSatScan)} / ${Math.round(sumTotSat)} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1714,7 +1700,7 @@
 
         setText('kpiCovRatio', `${sumCovAct.toFixed(1)} / ${sumCovTar.toFixed(1)} điểm`); setText('kpiCovPct', `${pC}%`);
         setText('kpiSkuPriRatio', `${sumSkuPriAct.toFixed(1)} / ${sumSkuPriTar.toFixed(1)} điểm`); setText('kpiSkuPriPct', `${pS}%`);
-        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${mAch}%`);
+        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${pM}%`);
 
         setText('kpiCpdRatio', `${(sumCpdAct/cnt).toFixed(1)} / ${(sumCpdTar/cnt).toFixed(1)} cuộc`); setText('kpiCpdPct', `${pCPD}%`);
         setText('kpiVorRatio', `${Math.round(sumVorAct)} / ${Math.round(sumVorTar)} lượt`); setText('kpiVorPct', `${pVOR}%`);
@@ -1740,7 +1726,6 @@
 
         const tot = d.total_inc || 0;
 
-        // Card Incentive ngoài màn hình
         setText('txtTotalIncentiveDisplay', `${tot.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${vA.toFixed(2)} / ${vT.toFixed(2)} HL`); setText('incVolAch', `${vAch}%`); setText('incVolVal', `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${pA.toFixed(2)} / ${pT.toFixed(2)} HL`); setText('incSkuAch', `${pAch}%`); setText('incSkuVal', `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`);
@@ -1748,7 +1733,6 @@
         setText('incFitRatio', `${fAP}% / ${fTP}%`); setText('incFitAch', `${fAch}%`); setText('incFitVal', `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${tot.toLocaleString('vi-VN')} đ`);
 
-        // Popup Total KPI Modal: 3 Khối chuyên sâu
         setText('kpiIrProdRatio', `${irProd} / ${totVis} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${irVisib} / ${totVisib} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${satScan} / ${totSat} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1930,7 +1914,7 @@
 
       const aBox = document.getElementById('auditOutletList'); aBox.innerHTML = '';
       fAudit.forEach(a => {
-        let detHTML = a.count === 0 ? `<div class="text-[11px] text-rose-500 font-semibold italic">Chưa ghi nhận lượt chấm nào trong tháng</div>` : '';
+        let detHTML = a.count === 0 ? `<div class="text-[11px] font-semibold text-rose-500 italic">Chưa ghi nhận lượt chấm nào trong tháng</div>` : '';
         if (a.count > 0) {
           a.audits.forEach((aud, i) => {
             detHTML += `<div class="flex justify-between items-center text-[10px] py-0.5 border-b border-gray-50 last:border-0"><span class="text-gray-600">Lần ${i + 1}: <b class="text-gray-800">${aud.date}</b></span><span class="${aud.result.includes('Đạt') ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold'}">${aud.result}</span></div>`;
@@ -1941,7 +1925,7 @@
       });
       setText('txtAuditListCount', `${fAudit.length} điểm bán`);
 
-      // 7. TAB 5: ĐỘ PHỦ COVERAGE L28D (MỚI TÍCH HỢP)
+      // 7. TAB 5: COVERAGE (ĐÃ TỐI ƯU TRẠNG THÁNG CHẠM ĐỂ LỌC TRỰC QUAN & CHUẨN BASE 3)
       const baseCov = (selectedSR === "ALL") ? COVERAGE_DATA.filter(c => TEAM_SRS.includes(c.sr)) : COVERAGE_DATA.filter(c => c.sr === selectedSR);
       let covActive = baseCov.length;
       let covTont = 0, covToft = 0, covExisted = 0, covNew = 0, covLapsed = 0;
@@ -1967,6 +1951,24 @@
       setText('covCoveredCount', covCovered);
       setText('covLapsedCount', covLapsed);
 
+      // Cập nhật giao diện trạng thái nút bấm lọc (Touch Feedback cực rõ)
+      const actBtnSt = "flex-1 py-1.5 rounded-lg bg-blue-600 text-white font-black shadow-sm text-center transition-all";
+      const inactBtnSt = "flex-1 py-1.5 rounded-lg bg-gray-50 text-gray-600 font-bold text-center transition-all hover:bg-gray-100";
+
+      const btnAll = document.getElementById('btnCovStatusAll');
+      const btnLap = document.getElementById('btnCovStatusLapsed');
+      const btnCov = document.getElementById('btnCovStatusCovered');
+      if (btnAll) btnAll.className = (currentCovStatus === 'ALL') ? actBtnSt : inactBtnSt;
+      if (btnLap) btnLap.className = (currentCovStatus === 'LAPSED') ? "flex-1 py-1.5 rounded-lg bg-rose-600 text-white font-black shadow-sm text-center transition-all" : inactBtnSt;
+      if (btnCov) btnCov.className = (currentCovStatus === 'COVERED') ? "flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-black shadow-sm text-center transition-all" : inactBtnSt;
+
+      const btnCAll = document.getElementById('btnCovChannelAll');
+      const btnCTont = document.getElementById('btnCovChannelTont');
+      const btnCToft = document.getElementById('btnCovChannelToft');
+      if (btnCAll) btnCAll.className = (currentCovChannel === 'ALL') ? actBtnSt : inactBtnSt;
+      if (btnCTont) btnCTont.className = (currentCovChannel === 'TONT') ? actBtnSt : inactBtnSt;
+      if (btnCToft) btnCToft.className = (currentCovChannel === 'TOFT') ? actBtnSt : inactBtnSt;
+
       let fCovList = baseCov;
       if (currentCovStatus === 'LAPSED') fCovList = fCovList.filter(c => c.covNote === 'Lapsed');
       else if (currentCovStatus === 'COVERED') fCovList = fCovList.filter(c => c.covNote !== 'Lapsed');
@@ -1983,204 +1985,58 @@
       });
 
       const covBox = document.getElementById('covOutletList');
-      covBox.innerHTML = '';
+      if (covBox) {
+        covBox.innerHTML = '';
+        if (fCovList.length === 0) {
+          covBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Coverage phù hợp hoặc chưa nạp file SEC-19.</div>`;
+        } else {
+          fCovList.forEach(c => {
+            const isLapsed = (c.covNote === 'Lapsed');
+            const isNew = (c.covNote === 'New');
+            let noteBadge = isLapsed 
+              ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700 shadow-xs">⚠️ LAPSED (>28D)</span>`
+              : (isNew ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-blue-100 text-blue-700 shadow-xs">✨ NEW</span>` 
+                       : `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-700 shadow-xs">✓ EXISTED</span>`);
 
-      if (fCovList.length === 0) {
-        covBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Coverage phù hợp hoặc chưa nạp file SEC-19.</div>`;
-      } else {
-        fCovList.forEach(c => {
-          const isLapsed = (c.covNote === 'Lapsed');
-          const isNew = (c.covNote === 'New');
-          let noteBadge = isLapsed 
-            ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700 shadow-xs">⚠️ LAPSED (>28D)</span>`
-            : (isNew ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-blue-100 text-blue-700 shadow-xs">✨ NEW</span>` 
-                     : `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-700 shadow-xs">✓ EXISTED</span>`);
+            let brandPills = '';
+            const br = c.brands || {};
+            const brKeys = [
+              { k: 'tuborg', label: 'Tuborg' }, { k: 'huda', label: 'Huda' },
+              { k: 'blanc', label: 'Blanc' }, { k: 'carlsberg', label: 'Carlsberg' }, { k: 'somersby', label: 'Somersby' }
+            ];
+            brKeys.forEach(item => {
+              const st = br[item.k] || '-';
+              let color = "text-gray-400 bg-gray-50 border-gray-100";
+              if (st === 'Existed') color = "text-emerald-700 bg-emerald-50 border-emerald-200 font-bold";
+              else if (st === 'Lapsed') color = "text-rose-600 bg-rose-50 border-rose-200 font-bold";
+              else if (st === 'New') color = "text-blue-700 bg-blue-50 border-blue-200 font-bold";
 
-          let brandPills = '';
-          const br = c.brands || {};
-          const brKeys = [
-            { k: 'tuborg', label: 'Tuborg' }, { k: 'huda', label: 'Huda' },
-            { k: 'blanc', label: 'Blanc' }, { k: 'carlsberg', label: 'Carlsberg' }, { k: 'somersby', label: 'Somersby' }
-          ];
-          brKeys.forEach(item => {
-            const st = br[item.k] || '-';
-            let color = "text-gray-400 bg-gray-50 border-gray-100";
-            if (st === 'Existed') color = "text-emerald-700 bg-emerald-50 border-emerald-200 font-bold";
-            else if (st === 'Lapsed') color = "text-rose-600 bg-rose-50 border-rose-200 font-bold";
-            else if (st === 'New') color = "text-blue-700 bg-blue-50 border-blue-200 font-bold";
+              brandPills += `<span class="px-1.5 py-0.5 rounded border text-[9px] ${color}">${item.label}: ${st}</span>`;
+            });
 
-            brandPills += `<span class="px-1.5 py-0.5 rounded border text-[9px] ${color}">${item.label}: ${st}</span>`;
-          });
-
-          covBox.innerHTML += `
-            <div class="bg-white rounded-2xl p-3.5 card-shadow border ${isLapsed ? 'border-rose-200/80 bg-rose-50/20' : 'border-gray-100'} space-y-2">
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="text-[10px] font-bold text-gray-400 tracking-wide">
-                    ${c.code} • ${TEAM_SR_MAP[c.sr] || c.sr} • <span class="${c.channel === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${c.channel}</span> <span class="text-gray-400 font-normal">(${c.outletType})</span>
+            covBox.innerHTML += `
+              <div class="bg-white rounded-2xl p-3.5 card-shadow border ${isLapsed ? 'border-rose-200/80 bg-rose-50/20' : 'border-gray-100'} space-y-2">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-[10px] font-bold text-gray-400 tracking-wide">
+                      ${c.code} • ${TEAM_SR_MAP[c.sr] || c.sr} • <span class="${c.channel === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${c.channel}</span> <span class="text-gray-400 font-normal">(${c.outletType})</span>
+                    </div>
+                    <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${c.name}</div>
                   </div>
-                  <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${c.name}</div>
+                  <div>${noteBadge}</div>
                 </div>
-                <div>${noteBadge}</div>
-              </div>
 
-              <div class="pt-1 border-t border-gray-100 flex justify-between items-center text-[10px]">
-                <span class="text-gray-500">Ghé cuối: <b class="${isLapsed ? 'text-rose-600' : 'text-gray-700'}">${c.lastVisit || 'Chưa ghé'}</b></span>
-                <span class="${isLapsed ? 'text-rose-600 font-bold' : 'text-emerald-600 font-medium'}">${isLapsed ? 'Cần ghé ngay' : 'Đang duy trì'}</span>
-              </div>
+                <div class="pt-1 border-t border-gray-100 flex justify-between items-center text-[10px]">
+                  <span class="text-gray-500">Ghé cuối: <b class="${isLapsed ? 'text-rose-600' : 'text-gray-700'}">${c.lastVisit || 'Chưa ghé'}</b></span>
+                  <span class="${isLapsed ? 'text-rose-600 font-bold' : 'text-emerald-600 font-medium'}">${isLapsed ? 'Cần ghé ngay' : 'Đang duy trì'}</span>
+                </div>
 
-              <div class="pt-1 border-t border-gray-100 flex flex-wrap gap-1">
-                ${brandPills}
-              </div>
-            </div>`;
-        });
+                <div class="pt-1 border-t border-gray-100 flex flex-wrap gap-1">
+                  ${brandPills}
+                </div>
+              </div>`;
+          });
+        }
       }
       setText('txtCovListCount', `${fCovList.length} điểm bán`);
     }
-
-    // ================= BÁO CÁO ZALO & SOI ĐƠN =================
-    function copyZaloReport() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
-        if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
-      }
-      document.getElementById('reportHubModal').classList.remove('hidden');
-    }
-    function closeReportHubModal() { document.getElementById('reportHubModal').classList.add('hidden'); }
-
-    function triggerCopyReport(type) {
-      closeReportHubModal();
-      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
-      else if (type === 'INDIVIDUAL_SR') {
-        if (document.getElementById('srFilter').value === 'ALL') { alert("Vui lòng chọn 1 SR cụ thể!"); return; }
-        executeCopyIndividualReport();
-      }
-      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
-      else if (type === 'AUDIT_TB') executeCopyAuditReport();
-      else if (type === 'NO_ORDER_REMIND') { openDailyOrdersModal(); setModalFilter('NO_ORDER'); copyManagerReminderReport(); }
-    }
-
-    function executeCopyTeamReport() {
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", ut = localStorage.getItem('UPDATE_TIME') || "";
-      let tM = 0, tD = 0, sMap = {};
-      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
-        tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
-      });
-      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
-      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Báo cáo Team!")).catch(e => alert("Lỗi: " + e));
-    }
-
-    function executeCopyIndividualReport() {
-      const sr = document.getElementById('srFilter').value, name = document.getElementById('srFilter').options[document.getElementById('srFilter').selectedIndex].text;
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
-      let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
-      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
-      navigator.clipboard.writeText(msg).then(() => alert(`Đã sao chép báo cáo ${name}!`)).catch(e => alert("Lỗi: " + e));
-    }
-
-    function executeCopyIncentiveTeamReport() {
-      const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Bảng thưởng Team!")).catch(e => alert("Lỗi: " + e));
-    }
-
-    function executeCopyAuditReport() {
-      const sr = document.getElementById('srFilter').value;
-      const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
-      const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
-      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép báo cáo Chụp TB!")).catch(e => alert("Lỗi: " + e));
-    }
-
-    function promptDailyOrdersModal() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
-        if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
-      }
-      openDailyOrdersModal();
-    }
-
-    function openDailyOrdersModal() {
-      currentModalFilter = 'ALL';
-      const sel = document.getElementById('modalOrderDateSelect');
-      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
-      sel.innerHTML = dates.length ? dates.map(d => `<option value="${d}">Ngày ${d}</option>`).join('') : '<option value="">Chưa có đơn hàng</option>';
-      renderDailyOrdersModalContent();
-      document.getElementById('dailyOrdersModal').classList.remove('hidden');
-    }
-    function closeDailyOrdersModal() { document.getElementById('dailyOrdersModal').classList.add('hidden'); }
-    function setModalFilter(f) { currentModalFilter = f; renderDailyOrdersModalContent(); }
-
-    function renderDailyOrdersModalContent() {
-      const dt = document.getElementById('modalOrderDateSelect').value, listC = document.getElementById('modalSRListContainer');
-      listC.innerHTML = '';
-      if (!dt) { listC.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có đơn hàng.</p>'; return; }
-
-      const dOrders = SEC_ORDERS.filter(o => o.date === dt);
-      let tHL = 0, hCount = 0, nCount = 0, sMap = {};
-      TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
-      dOrders.forEach(o => {
-        if (sMap[o.sr]) {
-          sMap[o.sr].vol += o.vol; sMap[o.sr].cases += Math.round(o.vol / CASE_VOLUME); tHL += o.vol;
-          if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
-          sMap[o.sr].outlets.get(o.code).vol += o.vol;
-        }
-      });
-
-      const rend = [];
-      TEAM_SRS.forEach(k => {
-        const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
-        if (currentModalFilter === 'HAS_ORDER' && !has) return;
-        if (currentModalFilter === 'NO_ORDER' && has) return;
-        rend.push({ key: k, name: TEAM_SR_MAP[k], data: sMap[k], has });
-      });
-      rend.sort((a,b) => b.data.vol - a.data.vol);
-      setText('modalCountBadge', `${rend.length} bạn`);
-
-      rend.forEach(r => {
-        let otHTML = '';
-        if (r.has) r.data.outlets.forEach(ot => { otHTML += `<div class="flex justify-between items-center py-1 border-b border-emerald-100/50 last:border-0 text-[10px] text-gray-700"><span class="truncate pr-1.5">• ${ot.name}</span><span class="font-extrabold text-emerald-800 whitespace-nowrap">${ot.vol.toFixed(2)} HL</span></div>`; });
-        listC.innerHTML += `<div class="p-3 rounded-2xl border text-xs shadow-sm transition-all ${r.has ? 'bg-emerald-50/60 border-emerald-200/90' : 'bg-gray-50/80 border-gray-200'}"><div class="flex justify-between items-center"><span class="font-bold text-[13px] ${r.has ? 'text-gray-900' : 'text-gray-500'}">${r.name}</span><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${r.has ? 'bg-emerald-500 text-white' : 'bg-rose-100 text-rose-700'}">${r.has ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}</span></div><div class="mt-1.5 pt-1.5 border-t ${r.has ? 'border-emerald-100' : 'border-gray-200'} flex justify-between items-center text-xs"><span class="text-gray-500">Sản lượng:</span><span class="font-black ${r.has ? 'text-emerald-700 text-sm' : 'text-gray-400'}">${r.data.vol.toFixed(2)} HL (${r.data.cases} th)</span></div>${r.has ? `<details class="mt-1.5 pt-1 border-t border-emerald-100/70"><summary class="cursor-pointer text-[10px] font-bold text-emerald-800 flex justify-between items-center select-none py-0.5"><span>📍 Xem ${r.data.outlets.size} điểm chốt đơn</span><span>▼</span></summary><div class="mt-1 space-y-0.5 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-xs">${otHTML}</div></details>` : ''}</div>`;
-      });
-
-      setText('modalSummaryTotalHL', `${tHL.toFixed(2)} HL`); setText('modalSummaryTotalCases', `${Math.round(tHL / CASE_VOLUME)} th`);
-      setText('modalSummaryHasOrder', `${hCount}/9 SR`); setText('modalSummaryNoOrder', `${nCount}/9 SR`);
-    }
-
-    function copyManagerReminderReport() {
-      const dt = document.getElementById('modalOrderDateSelect').value; if (!dt) return;
-      const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
-      SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
-      const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
-      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép nhắc nhở!")).catch(e => alert("Lỗi: " + e));
-    }
-
-    function promptExportFiles() {
-      if (prompt("Nhập mật khẩu mở khóa tải file:") === EXPORT_PIN) {
-        document.getElementById('exportActionBox').classList.remove('hidden'); alert("Mở khóa thành công!");
-      } else alert("Mật khẩu không chính xác!");
-    }
-
-    function downloadCloudFile(type) {
-      let data = [], fn = "";
-      if (type === 'TRACKING' && MASTER.length) {
-        data = MASTER.map(m => ({ "Mã CT": m.prog, "Mã Điểm": m.code, "Tên Điểm": m.name, "SR": m.sr, "Level": m.level, "Target Huda": m.tarHuda, "Target Pre": m.tarPre, "Target Tổng": Number((m.tarHuda + m.tarPre).toFixed(2)) }));
-        fn = "Tracking_Display";
-      } else if (type === 'LF' && LISTING_FEE.length) {
-        data = LISTING_FEE.map(l => ({ "Mã Điểm": l.code, "Tên Điểm": l.name, "SR": l.sr, "Kênh": l.channelType, "Target Thùng": l.tarCases, "Target HL": l.tarHL }));
-        fn = "Listing_Fee";
-      } else if (type === 'SEC' && SEC_ORDERS.length) {
-        data = SEC_ORDERS.map(s => ({ "Ngày": s.date, "SR": s.sr, "Mã Điểm": s.code, "Tên Điểm": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Loại": s.category, "Sản Lượng (HL)": s.vol, "Thùng": s.qty }));
-        fn = "SEC06_Daily";
-      }
-      if (!data.length) { alert("Không có dữ liệu để tải!"); return; }
-      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Data");
-      XLSX.writeFile(wb, `${fn}_${new Date().toISOString().slice(0,10)}.xlsx`);
-    }
-  </script>
-</body>
-</html>
