@@ -17,7 +17,7 @@
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
-  <!-- Header & Chữ ký LHN (Cân đối 100%, không lệch) -->
+  <!-- Header & Chữ ký LHN -->
   <div class="mb-2.5 px-0.5">
     <div class="flex justify-between items-center mb-2">
       <div>
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <!-- 3 Nút chức năng dàn đều 3 cột cực kỳ ngay ngắn -->
+    <!-- 3 Nút chức năng -->
     <div class="grid grid-cols-3 gap-2">
       <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1">
         📦 Đơn ngày
@@ -45,7 +45,7 @@
       </button>
     </div>
 
-    <!-- Dòng hiển thị ngày đơn gần nhất (Độ trễ duyệt T+1) -->
+    <!-- Banner ngày đơn gần nhất -->
     <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
       <span class="text-blue-900 font-semibold flex items-center gap-1">
         📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <!-- BỘ LỌC TÊN SR (Tự động ghi nhớ cho từng nhân viên) -->
+  <!-- BỘ LỌC TÊN SR -->
   <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
     <div class="flex justify-between items-center mb-1">
       <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
@@ -74,7 +74,7 @@
     </select>
   </div>
 
-  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN (SEARCH BAR) -->
+  <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
   <div class="mb-3">
     <div class="relative">
       <input type="text" id="searchInput" oninput="renderAll()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
@@ -84,7 +84,7 @@
     </div>
   </div>
 
-  <!-- THANH CHUYỂN 4 TAB (Khung viền nổi bật, sắc nét) -->
+  <!-- THANH CHUYỂN 4 TAB -->
   <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
     <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">
       📊 SỐ BÁN
@@ -116,7 +116,7 @@
         <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI HOÀN HẢO -->
+      <!-- 2 CỘT MAINSTREAM VÀ PREMIUM CÂN ĐỐI -->
       <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
         <!-- Cột Mainstream -->
         <div class="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100/90 space-y-1">
@@ -235,7 +235,7 @@
       </div>
     </div>
 
-    <!-- 2. BỘ LỌC NGÀY (GỌN GÀNG, CHỈ HIỆN KHI CHỌN NGÀY CỤ THỂ) -->
+    <!-- 2. BỘ LỌC NGÀY -->
     <div class="bg-white rounded-2xl card-shadow border border-gray-100 p-3">
       <div class="flex gap-2 items-center">
         <div class="flex-1">
@@ -304,7 +304,7 @@
         </div>
       </div>
 
-      <!-- CARD LEVEL 1, 2, 3: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
+      <!-- CARD LEVEL 1, 2, 3 -->
       <div class="pt-2 border-t border-gray-100">
         <div class="flex justify-between items-center mb-1.5">
           <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ (Chạm để lọc):</span>
@@ -389,11 +389,11 @@
         </div>
       </div>
 
-      <!-- CARD TONT & TOFT: CHẠM ĐỂ LỌC VÀ CÓ DÒNG TIẾN ĐỘ NHỎ -->
+      <!-- CARD TONT & TOFT -->
       <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
         <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
           <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
-          <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Premium</span>
+          <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
           <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
         </div>
         <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
@@ -426,7 +426,7 @@
         <div id="barAudit" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
       </div>
 
-      <!-- BỘ LỌC CHẠM CARD: 2 LẦN / THIẾU LẦN 2 / CHƯA CHẤM -->
+      <!-- BỘ LỌC CHẠM CARD -->
       <div class="pt-2 border-t border-gray-100">
         <div class="flex justify-between items-center mb-1.5">
           <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm (Chạm để lọc):</span>
@@ -472,7 +472,7 @@
         <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
-      <!-- Danh sách 5 tùy chọn báo cáo chuyên nghiệp -->
+      <!-- Danh sách 5 tùy chọn báo cáo -->
       <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
         <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
           <div class="flex justify-between items-center">
@@ -530,14 +530,12 @@
         <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
       </div>
 
-      <!-- Chọn ngày muốn xem -->
       <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
         <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
         <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
         </select>
       </div>
 
-      <!-- 3 Card tương tác: Bấm để lọc trực tiếp -->
       <div class="grid grid-cols-3 gap-2 text-center select-none">
         <div id="cardFilterAll" onclick="setModalFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50 border-blue-200 ring-2 ring-blue-500 shadow-sm">
           <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG SẢN LƯỢNG</span>
@@ -556,18 +554,15 @@
         </div>
       </div>
 
-      <!-- Header danh sách hiển thị trạng thái lọc & Nút sao chép nhắc nhở -->
       <div class="flex justify-between items-center px-1 pt-0.5">
         <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
         <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
       </div>
 
-      <!-- Nút sao chép tin nhắn gửi nhóm Zalo linh hoạt theo bộ lọc -->
       <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
         📢 Sao chép nhắc nhở các bạn chưa có đơn
       </button>
 
-      <!-- Danh sách 9 bạn SR cuộn mượt -->
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
       </div>
     </div>
@@ -634,7 +629,6 @@
             </button>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -763,13 +757,15 @@
             SALES_TARGETS = data.targets || {};
           }
 
-          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-          localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-          localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-          localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('UPDATE_TIME', data.updated_at);
+          try {
+            localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+            localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
+            localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+            localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+            localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
+            localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+            localStorage.setItem('UPDATE_TIME', data.updated_at);
+          } catch(e) {}
 
           document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
           document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
@@ -810,26 +806,28 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const localMaster = localStorage.getItem('MASTER_DATA');
-      const localListing = localStorage.getItem('LISTING_DATA');
-      const localSec = localStorage.getItem('SEC_DATA');
-      const localPromo = localStorage.getItem('PROMO_DATA');
-      const localAudit = localStorage.getItem('AUDIT_DATA');
-      const localTargets = localStorage.getItem('SALES_TARGETS');
-      const localTime = localStorage.getItem('UPDATE_TIME');
+      try {
+        const localMaster = localStorage.getItem('MASTER_DATA');
+        const localListing = localStorage.getItem('LISTING_DATA');
+        const localSec = localStorage.getItem('SEC_DATA');
+        const localPromo = localStorage.getItem('PROMO_DATA');
+        const localAudit = localStorage.getItem('AUDIT_DATA');
+        const localTargets = localStorage.getItem('SALES_TARGETS');
+        const localTime = localStorage.getItem('UPDATE_TIME');
 
-      if (localMaster) MASTER = JSON.parse(localMaster);
-      if (localListing) LISTING_FEE = JSON.parse(localListing);
-      if (localSec) SEC_ORDERS = JSON.parse(localSec);
-      if (localPromo) PROMOTIONS = JSON.parse(localPromo);
-      if (localAudit) AUDIT_DATA = JSON.parse(localAudit);
-      if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
-      if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
+        if (localMaster) MASTER = JSON.parse(localMaster);
+        if (localListing) LISTING_FEE = JSON.parse(localListing);
+        if (localSec) SEC_ORDERS = JSON.parse(localSec);
+        if (localPromo) PROMOTIONS = JSON.parse(localPromo);
+        if (localAudit) AUDIT_DATA = JSON.parse(localAudit);
+        if (localTargets) SALES_TARGETS = JSON.parse(localTargets);
+        if (localTime) document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${localTime}`;
 
-      const savedSR = localStorage.getItem('SAVED_SR');
-      if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
-        document.getElementById('srFilter').value = savedSR;
-      }
+        const savedSR = localStorage.getItem('SAVED_SR');
+        if (savedSR && document.getElementById('srFilter').querySelector(`option[value="${savedSR}"]`)) {
+          document.getElementById('srFilter').value = savedSR;
+        }
+      } catch(e) {}
 
       updateLatestOrderDateBanner();
       populateDateFilter();
@@ -840,7 +838,7 @@
 
     function onSRChange() {
       const selected = document.getElementById('srFilter').value;
-      localStorage.setItem('SAVED_SR', selected);
+      try { localStorage.setItem('SAVED_SR', selected); } catch(e) {}
       renderAll();
     }
 
@@ -1117,12 +1115,9 @@
       hasList.sort((a,b) => b.vol - a.vol);
 
       let msg = "";
-
       if (currentModalFilter === 'NO_ORDER') {
         msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG\n📅 Ngày duyệt: ${selectedDate}\n\n⚠️ Ghi nhận ${noList.length} bạn chưa có đơn duyệt trong ngày:\n`;
-        noList.forEach((n, i) => {
-          msg += `${i + 1}. ${n}\n`;
-        });
+        noList.forEach((n, i) => { msg += `${i + 1}. ${n}\n`; });
         msg += `\n👉 Nhờ các bạn kiểm tra lại tuyến bán hàng hôm qua có khó khăn gì không? Đơn đã key hết lên hệ thống chưa báo lại SS để hỗ trợ kịp thời nhé!`;
       } else if (currentModalFilter === 'HAS_ORDER') {
         msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn thành công:\n`;
@@ -1138,9 +1133,7 @@
 
         if (noList.length > 0) {
           msg += `\n⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):\n`;
-          noList.forEach((n, i) => {
-            msg += `  ${i + 1}. ${n}\n`;
-          });
+          noList.forEach((n, i) => { msg += `  ${i + 1}. ${n}\n`; });
           msg += `\n👉 Các bạn chưa có đơn kiểm tra lại tuyến hôm qua có vướng mắc gì báo SS hỗ trợ nhé!`;
         } else {
           msg += `\n🎉 Xuất sắc: 100% nhân sự đều có đơn trong ngày!`;
@@ -1149,9 +1142,7 @@
 
       navigator.clipboard.writeText(msg).then(() => {
         alert("Đã sao chép báo cáo vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
+      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function promptExportFiles() {
@@ -1166,58 +1157,27 @@
 
     function downloadCloudFile(type) {
       if (type === 'TRACKING') {
-        if (!MASTER || MASTER.length === 0) {
-          alert("Không có dữ liệu Trưng bày trên Cloud!");
-          return;
-        }
+        if (!MASTER || MASTER.length === 0) { alert("Không có dữ liệu Trưng bày trên Cloud!"); return; }
         const exportData = MASTER.map(m => ({
-          "Mã Chương Trình": m.prog,
-          "Mã Điểm Bán": m.code,
-          "Tên Điểm Bán": m.name,
-          "SR Quản Lý": m.sr,
-          "Level": m.level,
-          "Target Huda (HL)": m.tarHuda,
-          "Target Premium (HL)": m.tarPre,
-          "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
+          "Mã Chương Trình": m.prog, "Mã Điểm Bán": m.code, "Tên Điểm Bán": m.name, "SR Quản Lý": m.sr, "Level": m.level, "Target Huda (HL)": m.tarHuda, "Target Premium (HL)": m.tarPre, "Target Tổng (HL)": Number((m.tarHuda + m.tarPre).toFixed(2))
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Display TOFT");
         XLSX.writeFile(wb, `Tracking_TrungBay_${new Date().toISOString().slice(0,10)}.xlsx`);
       } else if (type === 'LF') {
-        if (!LISTING_FEE || LISTING_FEE.length === 0) {
-          alert("Không có dữ liệu Listing Fee trên Cloud!");
-          return;
-        }
+        if (!LISTING_FEE || LISTING_FEE.length === 0) { alert("Không có dữ liệu Listing Fee trên Cloud!"); return; }
         const exportData = LISTING_FEE.map(l => ({
-          "CODE DRAGON": l.code,
-          "Tên Điểm Bán": l.name,
-          "SR": l.sr,
-          "Kênh Phân Loại": l.channelType,
-          "Mô Tả Kênh": l.channelDesc,
-          "Huyện": l.district,
-          "Target Thùng": l.tarCases,
-          "Target HL": l.tarHL
+          "CODE DRAGON": l.code, "Tên Điểm Bán": l.name, "SR": l.sr, "Kênh Phân Loại": l.channelType, "Mô Tả Kênh": l.channelDesc, "Huyện": l.district, "Target Thùng": l.tarCases, "Target HL": l.tarHL
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Listing Fee");
         XLSX.writeFile(wb, `Listing_Fee_${new Date().toISOString().slice(0,10)}.xlsx`);
       } else if (type === 'SEC') {
-        if (!SEC_ORDERS || SEC_ORDERS.length === 0) {
-          alert("Không có dữ liệu đơn SEC-06 trên Cloud!");
-          return;
-        }
+        if (!SEC_ORDERS || SEC_ORDERS.length === 0) { alert("Không có dữ liệu đơn SEC-06 trên Cloud!"); return; }
         const exportData = SEC_ORDERS.map(s => ({
-          "Ngày Đặt": s.date,
-          "SR": s.sr,
-          "Mã Điểm Bán": s.code,
-          "Tên Điểm Bán": s.name,
-          "Brand": s.brand,
-          "Sản Phẩm": s.product,
-          "Phân Loại": s.category,
-          "Sản Lượng (HL)": s.vol,
-          "Số Thùng": s.qty
+          "Ngày Đặt": s.date, "SR": s.sr, "Mã Điểm Bán": s.code, "Tên Điểm Bán": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Phân Loại": s.category, "Sản Lượng (HL)": s.vol, "Số Thùng": s.qty
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -1226,10 +1186,21 @@
       }
     }
 
-    function parseExcelDate(serial) {
-      if (!serial) return '';
-      if (typeof serial === 'string' && serial.includes('-')) return serial.substring(0, 10);
-      const num = parseFloat(serial);
+    // HÀM ĐỌC NGÀY CHUẨN XÁC XỬ LÝ ĐƯỢC CẢ YYYY-MM-DD, DD/MM/YYYY VÀ SERIAL EXCEL
+    function parseExcelDate(val) {
+      if (!val) return '';
+      const s = String(val).trim();
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0, 10);
+      if (s.includes('/')) {
+        const parts = s.split(' ')[0].split('/');
+        if (parts.length === 3 && parts[2].length === 4) {
+          const d = parts[0].padStart(2, '0');
+          const m = parts[1].padStart(2, '0');
+          const y = parts[2];
+          return `${y}-${m}-${d}`;
+        }
+      }
+      const num = parseFloat(s);
       if (!isNaN(num) && num > 30000) {
         const utc_days = Math.floor(num - 25569);
         const date = new Date(utc_days * 86400 * 1000);
@@ -1238,7 +1209,7 @@
         const y = date.getFullYear();
         return `${y}-${m}-${d}`;
       }
-      return String(serial);
+      return s.substring(0, 10);
     }
 
     function formatAuditDate(serial) {
@@ -1302,7 +1273,9 @@
       }
     }
 
-    // XỬ LÝ NẠP FILE (TRACKING MASTER, SEC-06, CHỤP TB, VÀ SALES TARGET & INCENTIVE FIT-10)
+    // ==========================================
+    // XỬ LÝ NẠP FILE (TỰ ĐỘNG DÒ CỘT CHUẨN XÁC, AN TOÀN BỘ NHỚ)
+    // ==========================================
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0];
       const fSec = document.getElementById('fileSec').files[0];
@@ -1320,14 +1293,15 @@
 
       const btnSave = document.getElementById('btnSaveData');
       btnSave.textContent = "Đang xử lý dữ liệu...";
-      await new Promise(r => setTimeout(r, 30));
+      await new Promise(r => setTimeout(r, 40));
 
       try {
+        // 1. FILE TRACKING MASTER
         if (fTrack) {
           const bTrack = await fTrack.arrayBuffer();
-          const wbTrack = XLSX.read(bTrack, { sheets: [' Display TOFT', 'Listing Free'], dense: false });
+          const wbTrack = XLSX.read(bTrack, { dense: false });
 
-          // 1. ĐỌC SHEET TRƯNG BÀY
+          // 1.1 Sheet Trưng bày TOFT
           const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
           if (wbTrack.Sheets[sTrack]) {
             const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
@@ -1337,7 +1311,7 @@
               if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
             }
 
-            const h = rawTrack[hIdx].map(v => String(v || '').trim().toLowerCase());
+            const h = (rawTrack[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
             let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
             h.forEach((val, i) => {
               if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
@@ -1371,31 +1345,21 @@
             }
           }
 
-          // 2. ĐỌC SHEET LISTING FEE
+          // 1.2 Sheet Listing Fee
           const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
           if (sLFName && wbTrack.Sheets[sLFName]) {
-            const wsLF = wbTrack.Sheets[sLFName];
-            const rawLF = XLSX.utils.sheet_to_json(wsLF, { header: 1, range: 0, defval: "" });
+            const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1, defval: "" });
             LISTING_FEE = [];
 
             for (let r = 0; r < rawLF.length; r++) {
               const row = rawLF[r];
               if (!row || row.length === 0) continue;
 
-              let isHDL = false;
-              let dragonCode = "";
-              let rawSR = "";
-              let rawOutlet = "";
-              let onOff = "";
-              let kenhDesc = "";
-              let district = "";
-              let tarHL = 0;
+              let isHDL = false, dragonCode = "", rawSR = "", rawOutlet = "", onOff = "", kenhDesc = "", district = "", tarHL = 0;
 
               for (let c = 0; c < row.length; c++) {
                 const cell = String(row[c] || '').trim();
-                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) {
-                  isHDL = true;
-                }
+                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) isHDL = true;
                 if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
                   dragonCode = cell;
                   rawSR = String(row[c + 1] || '').trim();
@@ -1408,21 +1372,9 @@
               }
 
               if (isHDL && dragonCode) {
-                let channelType = "TONT";
-                if (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) {
-                  channelType = "TOFT";
-                } else {
-                  channelType = "TONT";
-                }
-
-                let tarCases = 15;
-                if (channelType === "TONT") {
-                  tarCases = Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15);
-                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
-                } else {
-                  tarCases = Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
-                  if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
-                }
+                let channelType = (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) ? "TOFT" : "TONT";
+                let tarCases = (channelType === "TONT") ? Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15) : Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
+                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
 
                 LISTING_FEE.push({
                   code: dragonCode,
@@ -1439,27 +1391,59 @@
           }
         }
 
+        // 2. FILE SEC-06 HÀNG NGÀY (DÒ TÌM HEADER BẤT KỂ ĐỊNH DẠNG)
         if (fSec) {
           const bSec = await fSec.arrayBuffer();
           const wbSec = XLSX.read(bSec, { dense: false });
           const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
-          const rawSec = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec]);
+          const rawSecRows = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec], { header: 1 });
+
+          let hSecIdx = 0;
+          for (let i = 0; i < Math.min(6, rawSecRows.length); i++) {
+            const rowStr = (rawSecRows[i] || []).join(' ').toLowerCase();
+            if (rowStr.includes('outletcode') || rowStr.includes('product') || rowStr.includes('volumehl')) {
+              hSecIdx = i;
+              break;
+            }
+          }
+
+          const secHeaders = (rawSecRows[hSecIdx] || []).map(v => String(v || '').trim().toLowerCase());
+          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1, colDate = -1;
+
+          secHeaders.forEach((hd, idx) => {
+            if (hd === 'product' || hd.includes('product name') || hd.includes('tên sản phẩm')) colProd = idx;
+            if (hd.includes('promotion') || hd.includes('khuyến mãi')) colPromo = idx;
+            if (hd === 'brand' || hd.includes('nhãn hiệu')) colBrand = idx;
+            if (hd.includes('volumehl') || hd.includes('volume') || hd.includes('sản lượng hl')) colVol = idx;
+            if (hd === 'quantity' || hd.includes('số lượng') || hd === 'qty') colQty = idx;
+            if (hd === 'price' || hd.includes('đơn giá')) colPrice = idx;
+            if (hd === 'revenue' || hd.includes('doanh thu')) colRev = idx;
+            if (hd.includes('cvtcsr') || hd.includes('fullname') || hd.includes('nhân viên') || hd === 'sr') colSr = idx;
+            if (hd.includes('outletcode') || hd.includes('mã khách') || hd.includes('mã điểm')) colOCode = idx;
+            if (hd.includes('outletname') || hd.includes('tên khách') || hd.includes('tên điểm')) colOName = idx;
+            if (hd.includes('ordereddate') || hd.includes('order date') || hd.includes('ngày đặt') || hd.includes('ngày')) colDate = idx;
+          });
 
           SEC_ORDERS = [];
           PROMOTIONS = [];
 
-          rawSec.forEach(r => {
-            const prod = String(r['Product'] || '').trim();
-            const promoName = String(r['Promotion Name'] || '').trim();
-            const brand = String(r['Brand'] || '').trim();
-            const vol = parseFloat(r['VolumeHL']) || 0;
-            const qty = parseInt(r['Quantity']) || 0;
-            const price = parseFloat(r['Price']) || 0;
-            const rev = parseFloat(r['Revenue']) || 0;
-            const srName = normalizeSR(r['CVTCSR'] || r['Fullname']);
-            const ocode = String(r['OutletCode'] || '').trim();
-            const oname = String(r['OutletName'] || '').trim();
-            const dateStr = parseExcelDate(r['OrderedDate']);
+          for (let r = hSecIdx + 1; r < rawSecRows.length; r++) {
+            const row = rawSecRows[r];
+            if (!row || row.length === 0) continue;
+
+            const prod = String(row[colProd] || '').trim();
+            const promoName = String(row[colPromo] || '').trim();
+            const brand = String(row[colBrand] || '').trim();
+            const vol = parseFloat(row[colVol]) || 0;
+            const qty = parseInt(row[colQty]) || 0;
+            const price = parseFloat(row[colPrice]) || 0;
+            const rev = parseFloat(row[colRev]) || 0;
+            const srName = normalizeSR(row[colSr]);
+            const ocode = String(row[colOCode] || '').trim();
+            const oname = String(row[colOName] || '').trim();
+            const dateStr = parseExcelDate(row[colDate]);
+
+            if (!ocode) continue;
 
             const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
             if (promoName && isReward) {
@@ -1474,7 +1458,7 @@
               });
             }
 
-            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) return;
+            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
 
             let cat = "Other";
             const pLower = prod.toLowerCase();
@@ -1495,9 +1479,10 @@
               vol: vol,
               qty: qty
             });
-          });
+          }
         }
 
+        // 3. FILE CHỤP TB DIP-01
         if (fAudit) {
           const bAudit = await fAudit.arrayBuffer();
           const wbAudit = XLSX.read(bAudit, { dense: false });
@@ -1542,7 +1527,7 @@
           AUDIT_DATA = Object.values(auditMap);
         }
 
-        // XỬ LÝ FILE 4: SALES TARGET & INCENTIVE FIT-10 (ĐỌC CHUẨN XÁC CẢ THỰC TẾ, CHỈ TIÊU & TIỀN THƯỞNG)
+        // 4. FILE SALES TARGET & INCENTIVE FIT-10
         if (fTarget) {
           const bTarget = await fTarget.arrayBuffer();
           const wbTarget = XLSX.read(bTarget, { dense: false });
@@ -1551,7 +1536,6 @@
             const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
             SALES_TARGETS = {};
 
-            // Xác định độ lệch cột do ô A1 trống
             let offset = 0;
             const r1 = rawTarget[1] || [];
             r1.forEach((val, idx) => {
@@ -1624,16 +1608,20 @@
 
         if (!res.ok) {
           const errText = await res.text();
-          throw new Error(errText);
+          throw new Error("Lỗi lưu Cloud: " + errText);
         }
 
-        localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-        localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-        localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-        localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-        localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-        localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-        localStorage.setItem('UPDATE_TIME', nowStr);
+        try {
+          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
+          localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
+          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
+          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
+          localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
+          localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+          localStorage.setItem('UPDATE_TIME', nowStr);
+        } catch (storageErr) {
+          console.warn("Bộ nhớ máy đầy, dữ liệu đã lưu an toàn trên Cloud Supabase.");
+        }
 
         document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
         toggleAdminModal();
@@ -1641,7 +1629,7 @@
         updateLatestOrderDateBanner();
         populateDateFilter();
         renderAll();
-        alert(`Đồng bộ thành công! Tìm thấy ${Object.keys(SALES_TARGETS).length} SR Target & Incentive.`);
+        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target.`);
       } catch (err) {
         console.error("Lỗi cập nhật:", err);
         alert("Lỗi khi xử lý file: " + (err.message || err));
@@ -1775,7 +1763,7 @@
         const actTot = actH + actP;
         const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
         if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) >= 0.5)) {
           tbPass++;
         }
       });
@@ -1783,8 +1771,8 @@
       let lfPass = 0;
       LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
         if (l.channelType === "TONT") {
-          const preQty = SEC_ORDERS.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
-          if (preQty >= l.tarCases) lfPass++;
+          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
+          if (preHL >= (l.tarHL - 0.001)) lfPass++;
         } else {
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
           if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
@@ -1806,9 +1794,7 @@
 
       navigator.clipboard.writeText(reportText).then(() => {
         alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
+      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function executeCopyIndividualReport() {
@@ -1830,7 +1816,6 @@
 
       const dayCases = Math.round(dayHL / CASE_VOLUME);
 
-      // Lấy Target & Incentive từ file FIT-10
       let tarVol = 0, tarPre = 0, totalInc = 0;
       if (SALES_TARGETS && SALES_TARGETS[selectedSR]) {
         tarVol = SALES_TARGETS[selectedSR].volume_target || 0;
@@ -1858,7 +1843,7 @@
         const actTot = actH + actP;
         const roundTarTot = Math.round((m.tarHuda + m.tarPre) * 100) / 100;
         if ((actH >= Math.round(m.tarHuda * 100) / 100 && actP >= Math.round(m.tarPre * 100) / 100) ||
-            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) > 0.5)) {
+            (actTot >= roundTarTot && roundTarTot > 0 && (actP / actTot) >= 0.5)) {
           tbPass++;
         }
       });
@@ -1867,8 +1852,8 @@
       let lfPass = 0;
       listSRLF.forEach(l => {
         if (l.channelType === "TONT") {
-          const preQty = listSRSec.filter(o => o.code === l.code && o.category === "Premium").reduce((acc, c) => acc + c.qty, 0);
-          if (preQty >= l.tarCases) lfPass++;
+          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
+          if (preHL >= (l.tarHL - 0.001)) lfPass++;
         } else {
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
           if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
@@ -1882,9 +1867,7 @@
 
       navigator.clipboard.writeText(reportText).then(() => {
         alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
+      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function executeCopyIncentiveTeamReport() {
@@ -1926,9 +1909,7 @@
 
       navigator.clipboard.writeText(msg).then(() => {
         alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!\nBạn có thể mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
+      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function executeCopyAuditReport() {
@@ -1944,7 +1925,6 @@
       const doneList = list.filter(a => a.count >= 2);
 
       let msg = "";
-
       if (selectedSR === "ALL") {
         msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
 
@@ -1967,17 +1947,13 @@
 
         if (noneList.length > 0) {
           msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
-          noneList.slice(0, 10).forEach((a, i) => {
-            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
-          });
+          noneList.slice(0, 10).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
           if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
         }
 
         if (need2List.length > 0) {
           msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
-          need2List.slice(0, 5).forEach((a, i) => {
-            msg += `  ${i + 1}. ${a.name} (${a.code})\n`;
-          });
+          need2List.slice(0, 5).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
           if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
         }
 
@@ -1986,9 +1962,7 @@
 
       navigator.clipboard.writeText(msg).then(() => {
         alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => {
-        alert("Lỗi sao chép: " + err);
-      });
+      }).catch(err => alert("Lỗi sao chép: " + err));
     }
 
     function renderAll() {
@@ -2136,7 +2110,7 @@
         });
       }
 
-      // XỬ LÝ BỘ LỌC NGÀY LẺ (CHỈ HIỆN CARD KHI CHỌN NGÀY CỤ THỂ)
+      // XỬ LÝ BỘ LỌC NGÀY LẺ
       const boxDate = document.getElementById('boxSpecificDateSales');
       let listFiltered = listMonth;
       if (selectedDate !== "ALL") {
@@ -2156,7 +2130,7 @@
         boxDate.classList.add('hidden');
       }
 
-      // GOM NHÓM ĐIỂM BÁN THEO BỘ LỌC ĐÃ CHỌN
+      // GOM NHÓM ĐIỂM BÁN
       const outletGroup = {};
       listFiltered.forEach(o => {
         if (!outletGroup[o.code]) {
@@ -2250,292 +2224,6 @@
       }
 
       // ==========================================
-      // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA
-      // ==========================================
-      const salesByOutlet = {};
-      const salesPreQtyByOutlet = {};
-      const salesHudaCan20ByOutlet = {};
-
-      SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") {
-          salesByOutlet[o.code].huda += o.vol;
-          salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
-        }
-        if (o.category === "Premium") {
-          salesPreQtyByOutlet[o.code] = (salesPreQtyByOutlet[o.code] || 0) + o.qty;
-        }
-        salesByOutlet[o.code].total += o.vol;
-      });
-
-      const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
-      let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
-      let cLV1 = 0, cLV2 = 0, cLV3 = 0;
-      let pLV1 = 0, pLV2 = 0, pLV3 = 0;
-
-      let preparedList = [];
-
-      listMaster.forEach(m => {
-        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-        const actTot = actH + actP;
-        const tarTot = m.tarHuda + m.tarPre;
-
-        const roundTarH = Math.round(m.tarHuda * 100) / 100;
-        const roundTarP = Math.round(m.tarPre * 100) / 100;
-        const roundTarTot = Math.round(tarTot * 100) / 100;
-
-        const condStandard = (actH >= roundTarH) && (actP >= roundTarP);
-        const condPreDominant = (actTot >= roundTarTot) && (roundTarTot > 0) && ((actP / actTot) > 0.5);
-        const isPass = condStandard || condPreDominant;
-
-        if (isPass) passCount++;
-
-        if (m.level === "LV1") { cLV1++; if (isPass) pLV1++; }
-        else if (m.level === "LV2") { cLV2++; if (isPass) pLV2++; }
-        else if (m.level === "LV3") { cLV3++; if (isPass) pLV3++; }
-
-        totTarH += m.tarHuda; totActH += actH;
-        totTarP += m.tarPre; totActP += actP;
-
-        const pctOutlet = tarTot > 0 ? Math.round((actTot / tarTot) * 100) : 0;
-
-        let missingNotice = '';
-        if (isPass) {
-          missingNotice = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctOutlet}%)</span>`;
-        } else {
-          const gapPreHL = Math.max(0, roundTarP - actP);
-          const gapPreCases = Math.ceil(gapPreHL / CASE_VOLUME);
-          
-          const gapHudaHL = Math.max(0, roundTarH - actH);
-          const safeHudaCases = Math.ceil(Math.round(gapHudaHL * 1000) / 1000 / HUDA_CAN20_VOL);
-
-          let missingParts = [];
-          if (safeHudaCases > 0) missingParts.push(`Thiếu <b>${safeHudaCases}</b> th Huda lon 20`);
-          if (gapPreCases > 0) missingParts.push(`Thiếu <b>${gapPreCases}</b> th Pre`);
-          missingNotice = `<span class="text-[11px] font-semibold text-rose-500">${missingParts.join(' • ')} (${pctOutlet}%)</span>`;
-        }
-
-        preparedList.push({
-          item: m,
-          actH: actH,
-          actP: actP,
-          isPass: isPass,
-          pct: pctOutlet,
-          missingNotice: missingNotice
-        });
-      });
-
-      if (currentTBLevel !== 'ALL') {
-        preparedList = preparedList.filter(p => p.item.level === currentTBLevel);
-      }
-
-      if (searchKeyword) {
-        preparedList = preparedList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
-      }
-
-      if (currentTBStatus === "FAIL") {
-        preparedList = preparedList.filter(p => !p.isPass);
-      } else if (currentTBStatus === "PASS") {
-        preparedList = preparedList.filter(p => p.isPass);
-      }
-
-      preparedList.sort((a, b) => {
-        if (a.isPass === b.isPass) return 0;
-        return a.isPass ? 1 : -1;
-      });
-
-      const outletBox = document.getElementById('outletList');
-      outletBox.innerHTML = '';
-
-      preparedList.forEach(({ item: m, actH, actP, isPass, pct, missingNotice }) => {
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <div class="text-[10px] font-bold text-gray-400 tracking-wide">${m.code} • ${m.sr} • <span class="text-blue-600 font-extrabold">${m.level}</span></div>
-              <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${m.name}</div>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
-              <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
-                ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
-              </span>
-            </div>
-          </div>
-
-          <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-            <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, pct)}%"></div>
-          </div>
-
-          <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
-            <div class="text-[11px] text-gray-500 space-x-2">
-              <span>Huda: <b>${actH.toFixed(2)}</b>/${m.tarHuda.toFixed(2)}</span>
-              <span>Pre: <b>${actP.toFixed(2)}</b>/${m.tarPre.toFixed(2)}</span>
-            </div>
-            <div>${missingNotice}</div>
-          </div>
-        `;
-        outletBox.appendChild(card);
-      });
-
-      document.getElementById('countLV1').textContent = cLV1;
-      document.getElementById('passLV1').textContent = `Đạt ${pLV1}/${cLV1} điểm`;
-
-      document.getElementById('countLV2').textContent = cLV2;
-      document.getElementById('passLV2').textContent = `Đạt ${pLV2}/${cLV2} điểm`;
-
-      document.getElementById('countLV3').textContent = cLV3;
-      document.getElementById('passLV3').textContent = `Đạt ${pLV3}/${cLV3} điểm`;
-
-      const cardLV1 = document.getElementById('cardLV1');
-      const cardLV2 = document.getElementById('cardLV2');
-      const cardLV3 = document.getElementById('cardLV3');
-      const btnResetLV = document.getElementById('btnResetTBLevel');
-
-      const baseLvlCard = "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all";
-      cardLV1.className = baseLvlCard + " bg-blue-50/70 border-blue-200";
-      cardLV2.className = baseLvlCard + " bg-emerald-50/70 border-emerald-200";
-      cardLV3.className = baseLvlCard + " bg-purple-50/70 border-purple-200";
-
-      if (currentTBLevel === 'LV1') {
-        cardLV1.className = baseLvlCard + " bg-blue-100/90 border-blue-300 ring-2 ring-blue-500 shadow-xs";
-        btnResetLV.classList.remove('hidden');
-      } else if (currentTBLevel === 'LV2') {
-        cardLV2.className = baseLvlCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
-        btnResetLV.classList.remove('hidden');
-      } else if (currentTBLevel === 'LV3') {
-        cardLV3.className = baseLvlCard + " bg-purple-100/90 border-purple-300 ring-2 ring-purple-500 shadow-xs";
-        btnResetLV.classList.remove('hidden');
-      } else {
-        btnResetLV.classList.add('hidden');
-      }
-
-      const pctPass = listMaster.length ? Math.round((passCount / listMaster.length) * 100) : 0;
-      document.getElementById('txtOutletPercent').textContent = `${pctPass}%`;
-      document.getElementById('txtOutletAchieved').textContent = `${passCount} / ${listMaster.length}`;
-      document.getElementById('barOutlet').style.width = `${Math.min(100, pctPass)}%`;
-
-      document.getElementById('txtVolHuda').textContent = `${totActH.toFixed(2)} / ${totTarH.toFixed(2)} HL`;
-      document.getElementById('barHuda').style.width = `${totTarH ? Math.min(100, Math.round((totActH / totTarH) * 100)) : 0}%`;
-
-      document.getElementById('txtVolPre').textContent = `${totActP.toFixed(2)} / ${totTarP.toFixed(2)} HL`;
-      document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
-      document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
-
-      // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE
-      // ==========================================
-      const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
-      
-      let cTONT = 0, pTONT = 0;
-      let cTOFT = 0, pTOFT = 0;
-
-      baseListLF.forEach(l => {
-        if (l.channelType === "TONT") {
-          cTONT++;
-          const preQty = salesPreQtyByOutlet[l.code] || 0;
-          if (preQty >= l.tarCases) pTONT++;
-        } else {
-          cTOFT++;
-          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          if (hudaHL >= (l.tarHL - 0.001)) pTOFT++;
-        }
-      });
-
-      document.getElementById('passLFTont').textContent = `Đạt ${pTONT}/${cTONT} điểm`;
-      document.getElementById('passLFToft').textContent = `Đạt ${pTOFT}/${cTOFT} điểm`;
-
-      const cardLFTont = document.getElementById('cardLFTont');
-      const cardLFToft = document.getElementById('cardLFToft');
-      const baseLFCard = "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all";
-
-      cardLFTont.className = baseLFCard + " bg-amber-50/70 border-amber-200";
-      cardLFToft.className = baseLFCard + " bg-emerald-50/70 border-emerald-200";
-
-      const actBtn = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
-      const inactBtn = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
-
-      document.getElementById('btnLFChannelAll').className = (currentLFChannel === 'ALL') ? actBtn : inactBtn;
-      document.getElementById('btnLFTont').className = (currentLFChannel === 'TONT') ? (actBtn + " text-amber-700") : inactBtn;
-      document.getElementById('btnLFToft').className = (currentLFChannel === 'TOFT') ? (actBtn + " text-emerald-700") : inactBtn;
-
-      if (currentLFChannel === 'TONT') {
-        cardLFTont.className = baseLFCard + " bg-amber-100/90 border-amber-300 ring-2 ring-amber-500 shadow-xs";
-      } else if (currentLFChannel === 'TOFT') {
-        cardLFToft.className = baseLFCard + " bg-emerald-100/90 border-emerald-300 ring-2 ring-emerald-500 shadow-xs";
-      }
-
-      let listLF = baseListLF;
-      if (currentLFChannel !== "ALL") {
-        listLF = listLF.filter(l => l.channelType === currentLFChannel);
-      }
-
-      let passLFCount = 0;
-      let preparedLFList = [];
-
-      listLF.forEach(l => {
-        let isPassLF = false;
-        let pctLF = 0;
-        let statusDisplay = "";
-        let missingNoticeLF = "";
-
-        if (l.channelType === "TONT") {
-          const actCount = salesPreQtyByOutlet[l.code] || 0;
-          isPassLF = actCount >= l.tarCases;
-          pctLF = l.tarCases > 0 ? Math.round((actCount / l.tarCases) * 100) : 0;
-
-          statusDisplay = `Thực bán: <b class="text-gray-900">${actCount}</b>/${l.tarCases} th Pre`;
-          if (isPassLF) {
-            missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
-          } else {
-            const gap = l.tarCases - actCount;
-            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${gap}</b> th Pre (${pctLF}%)</span>`;
-          }
-        } else {
-          const actHudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          const actCasesTC = Math.round((actHudaHL / CASE_VOLUME) * 10) / 10;
-          isPassLF = actHudaHL >= (l.tarHL - 0.001);
-          pctLF = l.tarHL > 0 ? Math.round((actHudaHL / l.tarHL) * 100) : 0;
-
-          statusDisplay = `Thực bán: <b class="text-gray-900">${actCasesTC}</b>/${l.tarCases} th Huda <span class="text-gray-400">(${actHudaHL.toFixed(2)} HL)</span>`;
-
-          if (isPassLF) {
-            missingNoticeLF = `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pctLF}%)</span>`;
-          } else {
-            const gapHL = Math.max(0, l.tarHL - actHudaHL);
-            const needCan20 = Math.ceil(gapHL / HUDA_CAN20_VOL);
-            missingNoticeLF = `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${needCan20}</b> th lon 20 (${pctLF}%)</span>`;
-          }
-        }
-
-        if (isPassLF) passLFCount++;
-
-        preparedLFList.push({
-          item: l,
-          isPass: isPassLF,
-          pct: pctLF,
-          statusDisplay: statusDisplay,
-          missingNotice: missingNoticeLF
-        });
-      });
-
-      if (searchKeyword) {
-        preparedLFList = preparedLFList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
-      }
-
-      if (currentLFStatus === "FAIL") {
-        preparedLFList = preparedLFList.filter(p => !p.isPass);
-      } else if (currentLFStatus === "PASS") {
-        preparedLFList = preparedLFList.filter(p => p.isPass);
-      }
-
-      preparedLFList.sort((a, b) => {
-        if (a.isPass === b.isPass) return 0;
-        return a.isPass ? 1 : -1;
-      });
-      // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA (TÍNH THEO HL CHUẨN)
       // ==========================================
       const salesByOutlet = {};
@@ -2571,9 +2259,9 @@
         const roundTarP = Math.round(m.tarPre * 100) / 100;
         const roundTarTot = Math.round(tarTot * 100) / 100;
 
-        // ĐIỀU KIỆN ĐẠT:
+        // ĐIỀU KIỆN ĐẠT THEO HL:
         // 1. Đạt cả 2 nhánh Huda và Pre theo HL cam kết
-        // 2. Hoặc Tổng bán vượt Target và Sản lượng Premium chiếm trên 50%
+        // 2. Hoặc Tổng bán vượt Target và Sản lượng Premium chiếm từ 50% trở lên
         const condStandard = (actH >= roundTarH - 0.001) && (actP >= roundTarP - 0.001);
         const condPreDominant = (actTot >= roundTarTot - 0.001) && (roundTarTot > 0) && ((actP / actTot) >= 0.5);
         const isPass = condStandard || condPreDominant;
@@ -2715,7 +2403,7 @@
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
       // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE (CHUẨN HÓA HL)
+      // 3. RENDER TAB 3: OLS LISTING FEE (CHUẨN HÓA THEO HL)
       // ==========================================
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
@@ -2726,12 +2414,10 @@
         if (l.channelType === "TONT") {
           cTONT++;
           const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          // TONT: Đạt theo Hectoliter chuẩn (15 thùng tiêu chuẩn = 1.188 HL)
           if (preHL >= (l.tarHL - 0.001)) pTONT++;
         } else {
           cTOFT++;
           const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          // TOFT: Đạt theo Hectoliter Huda cam kết
           if (hudaHL >= (l.tarHL - 0.001)) pTOFT++;
         }
       });
@@ -2814,6 +2500,63 @@
           missingNotice: missingNoticeLF
         });
       });
+
+      if (searchKeyword) {
+        preparedLFList = preparedLFList.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
+      }
+
+      if (currentLFStatus === "FAIL") {
+        preparedLFList = preparedLFList.filter(p => !p.isPass);
+      } else if (currentLFStatus === "PASS") {
+        preparedLFList = preparedLFList.filter(p => p.isPass);
+      }
+
+      preparedLFList.sort((a, b) => {
+        if (a.isPass === b.isPass) return 0;
+        return a.isPass ? 1 : -1;
+      });
+
+      const lfBox = document.getElementById('lfOutletList');
+      lfBox.innerHTML = '';
+
+      if (preparedLFList.length === 0) {
+        lfBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Listing Fee phù hợp.</div>`;
+      } else {
+        preparedLFList.forEach(({ item: l, isPass, pct, statusDisplay, missingNotice }) => {
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2";
+          card.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-[10px] font-bold text-gray-400 tracking-wide">${l.code} • ${l.sr} • <span class="${l.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${l.channelType}</span> <span class="text-gray-400 font-normal">(${l.channelDesc})</span></div>
+                <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${l.name}</div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-extrabold ${isPass ? 'text-emerald-600' : 'text-gray-400'}">${pct}%</span>
+                <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">
+                  ${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}
+                </span>
+              </div>
+            </div>
+
+            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div class="h-full rounded-full ${isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, pct)}%"></div>
+            </div>
+
+            <div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs">
+              <div class="text-[11px] text-gray-500">${statusDisplay}</div>
+              <div>${missingNotice}</div>
+            </div>
+          `;
+          lfBox.appendChild(card);
+        });
+      }
+
+      const pctLFPass = listLF.length ? Math.round((passLFCount / listLF.length) * 100) : 0;
+      document.getElementById('txtLFPercent').textContent = `${pctLFPass}%`;
+      document.getElementById('txtLFAchieved').textContent = `${passLFCount} / ${listLF.length}`;
+      document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
+      document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
 
       // ==========================================
       // 4. RENDER TAB 4: CHỤP TB
