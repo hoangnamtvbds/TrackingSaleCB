@@ -154,7 +154,6 @@
             <span class="font-bold text-gray-500 italic">by LHN</span>
           </div>
         </div>
-        <!-- Khu vực hiển thị Tên User & Thao tác quản trị -->
         <div class="flex items-center gap-1.5">
           <span id="lblUserBadge" class="text-[10px] font-bold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-xl truncate max-w-[140px]" title="Tài khoản hiện tại">
             👤 Đang tải...
@@ -330,7 +329,7 @@
           <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
             <div>
               <span class="text-gray-800 font-bold block">👑 2. Sản Lượng Premium</span>
-              <span id="incSkuRatio" class="text-[10px] text-gray-500 font-medium">0.00 / 0.00 HL</span>
+              <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
             </div>
             <div class="text-right">
               <span id="incSkuVal" class="text-amber-900 font-black block">0 đ</span>
@@ -1043,7 +1042,6 @@
       document.getElementById('loginScreen').classList.add('hidden');
       if (!currentUser) return;
 
-      // HIỂN THỊ TÊN VÀ VAI TRÒ CỦA USER
       const userBadge = document.getElementById('lblUserBadge');
       if (userBadge) {
         userBadge.textContent = `👤 ${currentUser.fullname} (${currentUser.role})`;
@@ -1214,7 +1212,7 @@
     }
 
     // ==========================================
-    // TẢI DỮ LIỆU TỪ SUPABASE (BẢO VỆ CHỐNG TRÀN BỘ NHỚ)
+    // TẢI DỮ LIỆU TỪ SUPABASE
     // ==========================================
     async function loadDataFromCloud() {
       if (!supabaseClient) return;
@@ -1257,9 +1255,7 @@
             localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
             localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
             localStorage.setItem('UPDATE_TIME', data.updated_at);
-          } catch(e) {
-            console.warn("Bộ nhớ máy đầy, tiếp tục dùng dữ liệu đám mây.");
-          }
+          } catch(e) {}
 
           document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${data.updated_at}`;
           document.getElementById('trackStatusText').textContent = `(Đã có ${MASTER.length} điểm TB, ${LISTING_FEE.length} điểm LF)`;
@@ -1740,670 +1736,8 @@
     }
 
     // ==========================================
-    // XỬ LÝ NẠP FILE (DÒ HEADER CHUẨN XÁC)
+    // HÀM HIỂN THỊ DỮ LIỆU CHUẨN XÁC TOÀN HỆ THỐNG
     // ==========================================
-    async function processAndSave() {
-      const fTrack = document.getElementById('fileTrack').files[0];
-      const fSec = document.getElementById('fileSec').files[0];
-      const fAudit = document.getElementById('fileAudit') ? document.getElementById('fileAudit').files[0] : null;
-      const fTarget = document.getElementById('fileTarget') ? document.getElementById('fileTarget').files[0] : null;
-
-      if (!fTrack && (!MASTER || MASTER.length === 0)) {
-        alert("Chưa có file Tracking Master! Vui lòng chọn file ít nhất 1 lần.");
-        return;
-      }
-      if (!fSec && (!SEC_ORDERS || SEC_ORDERS.length === 0) && !fAudit && !fTarget) {
-        alert("Vui lòng chọn ít nhất một file để cập nhật!");
-        return;
-      }
-
-      const btnSave = document.getElementById('btnSaveData');
-      btnSave.textContent = "Đang xử lý dữ liệu...";
-      await new Promise(r => setTimeout(r, 40));
-
-      try {
-        if (fTrack) {
-          const bTrack = await fTrack.arrayBuffer();
-          const wbTrack = XLSX.read(bTrack, { dense: false });
-
-          const sTrack = wbTrack.SheetNames.find(s => s.toLowerCase().includes('toft') || s.toLowerCase().includes('display')) || wbTrack.SheetNames[0];
-          if (wbTrack.Sheets[sTrack]) {
-            const rawTrack = XLSX.utils.sheet_to_json(wbTrack.Sheets[sTrack], { header: 1 });
-            let hIdx = 3;
-            for (let i = 0; i < Math.min(10, rawTrack.length); i++) {
-              const str = (rawTrack[i] || []).join(' ').toLowerCase();
-              if (str.includes('mã điểm bán') || str.includes('huyện')) { hIdx = i; break; }
-            }
-
-            const h = (rawTrack[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
-            let colProg = 3, colCode = 5, colName = 6, colSr = 8, colTarH = 10, colTarP = 13;
-            h.forEach((val, i) => {
-              if (val.includes('mã chương trình') || val.includes('mã ct')) colProg = i;
-              if (val.includes('mã điểm bán')) colCode = i;
-              if (val.includes('tên điểm bán')) colName = i;
-              if (val.includes('sr')) colSr = i;
-              if (val.includes('tar') && val.includes('huda')) colTarH = i;
-              if (val.includes('tar') && val.includes('pre')) colTarP = i;
-            });
-
-            MASTER = [];
-            for (let i = hIdx + 1; i < rawTrack.length; i++) {
-              const r = rawTrack[i];
-              if (!r || !r[colCode]) continue;
-
-              const progCode = String(r[colProg] || '').trim().toUpperCase();
-              let parsedLevel = "LV3";
-              if (progCode.includes("LV1")) parsedLevel = "LV1";
-              else if (progCode.includes("LV2")) parsedLevel = "LV2";
-              else if (progCode.includes("LV3")) parsedLevel = "LV3";
-
-              MASTER.push({
-                prog: progCode,
-                code: String(r[colCode]).trim(),
-                name: String(r[colName] || '').trim(),
-                sr: normalizeSR(r[colSr]),
-                level: parsedLevel,
-                tarHuda: parseFloat(r[colTarH]) || 0,
-                tarPre: parseFloat(r[colTarP]) || 0
-              });
-            }
-          }
-
-          const sLFName = wbTrack.SheetNames.find(s => s.toLowerCase().includes('listing') || s.toLowerCase().includes('fee') || s.toLowerCase().includes('free'));
-          if (sLFName && wbTrack.Sheets[sLFName]) {
-            const rawLF = XLSX.utils.sheet_to_json(wbTrack.Sheets[sLFName], { header: 1, defval: "" });
-            LISTING_FEE = [];
-
-            for (let r = 0; r < rawLF.length; r++) {
-              const row = rawLF[r];
-              if (!row || row.length === 0) continue;
-
-              let isHDL = false, dragonCode = "", rawSR = "", rawOutlet = "", onOff = "", kenhDesc = "", district = "", tarHL = 0;
-
-              for (let c = 0; c < row.length; c++) {
-                const cell = String(row[c] || '').trim();
-                if (cell.includes("Hồ Đức Lợi") || cell.includes("Ho Duc Loi")) isHDL = true;
-                if ((cell.startsWith('CB') || cell.startsWith('CD')) && cell.length >= 8 && cell.length <= 13) {
-                  dragonCode = cell;
-                  rawSR = String(row[c + 1] || '').trim();
-                  rawOutlet = String(row[c + 2] || '').trim();
-                  onOff = String(row[c + 3] || row[c + 4] || '').trim().toUpperCase();
-                  kenhDesc = String(row[c + 4] || row[c + 5] || '').trim();
-                  district = String(row[c + 5] || row[c + 6] || '').trim();
-                  tarHL = parseFloat(row[c + 6] || row[c + 7]) || 0;
-                }
-              }
-
-              if (isHDL && dragonCode) {
-                let channelType = (onOff === "OFF" || kenhDesc.toLowerCase().includes("tap hoa") || kenhDesc.toLowerCase().includes("grocery")) ? "TOFT" : "TONT";
-                let tarCases = (channelType === "TONT") ? Math.max(15, Math.round(tarHL / CASE_VOLUME) || 15) : Math.max(30, Math.round(tarHL / CASE_VOLUME) || 30);
-                if (tarHL <= 0) tarHL = tarCases * CASE_VOLUME;
-
-                LISTING_FEE.push({
-                  code: dragonCode,
-                  name: rawOutlet || dragonCode,
-                  sr: normalizeSR(rawSR),
-                  channelType: channelType,
-                  channelDesc: kenhDesc || (channelType === "TONT" ? "Quán nhậu" : "Tạp hóa"),
-                  district: district,
-                  tarCases: tarCases,
-                  tarHL: tarHL
-                });
-              }
-            }
-          }
-        }
-
-        if (fSec) {
-          const bSec = await fSec.arrayBuffer();
-          const wbSec = XLSX.read(bSec, { dense: false });
-          const sheetSec = wbSec.SheetNames.includes("Detail") ? "Detail" : wbSec.SheetNames[0];
-          const rawSecRows = XLSX.utils.sheet_to_json(wbSec.Sheets[sheetSec], { header: 1 });
-
-          let hSecIdx = 0;
-          for (let i = 0; i < Math.min(6, rawSecRows.length); i++) {
-            const rowStr = (rawSecRows[i] || []).join(' ').toLowerCase();
-            if (rowStr.includes('outletcode') || rowStr.includes('product') || rowStr.includes('volumehl')) {
-              hSecIdx = i;
-              break;
-            }
-          }
-
-          const secHeaders = (rawSecRows[hSecIdx] || []).map(v => String(v || '').trim().toLowerCase());
-          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1, colDate = -1;
-
-          secHeaders.forEach((hd, idx) => {
-            if (hd === 'product' || hd.includes('product name') || hd.includes('tên sản phẩm')) colProd = idx;
-            if (hd.includes('promotion') || hd.includes('khuyến mãi')) colPromo = idx;
-            if (hd === 'brand' || hd.includes('nhãn hiệu')) colBrand = idx;
-            if (hd.includes('volumehl') || hd.includes('volume') || hd.includes('sản lượng hl')) colVol = idx;
-            if (hd === 'quantity' || hd.includes('số lượng') || hd === 'qty') colQty = idx;
-            if (hd === 'price' || hd.includes('đơn giá')) colPrice = idx;
-            if (hd === 'revenue' || hd.includes('doanh thu')) colRev = idx;
-            if (hd.includes('cvtcsr') || hd.includes('fullname') || hd.includes('nhân viên') || hd === 'sr') colSr = idx;
-            if (hd.includes('outletcode') || hd.includes('mã khách') || hd.includes('mã điểm')) colOCode = idx;
-            if (hd.includes('outletname') || hd.includes('tên khách') || hd.includes('tên điểm')) colOName = idx;
-            if (hd.includes('ordereddate') || hd.includes('order date') || hd.includes('ngày đặt') || hd.includes('ngày')) colDate = idx;
-          });
-
-          SEC_ORDERS = [];
-          PROMOTIONS = [];
-
-          for (let r = hSecIdx + 1; r < rawSecRows.length; r++) {
-            const row = rawSecRows[r];
-            if (!row || row.length === 0) continue;
-
-            const prod = String(row[colProd] || '').trim();
-            const promoName = String(row[colPromo] || '').trim();
-            const brand = String(row[colBrand] || '').trim();
-            const vol = parseFloat(row[colVol]) || 0;
-            const qty = parseInt(row[colQty]) || 0;
-            const price = parseFloat(row[colPrice]) || 0;
-            const rev = parseFloat(row[colRev]) || 0;
-            const srName = normalizeSR(row[colSr]);
-            const ocode = String(row[colOCode] || '').trim();
-            const oname = String(row[colOName] || '').trim();
-            const dateStr = parseExcelDate(row[colDate]);
-
-            if (!ocode) continue;
-
-            const isReward = (price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm');
-            if (promoName && isReward) {
-              PROMOTIONS.push({
-                sr: srName, date: dateStr, outletCode: ocode, outletName: oname, promoName: promoName, rewardItem: prod, qty: qty
-              });
-            }
-
-            if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
-
-            let cat = "Other";
-            const pLower = prod.toLowerCase();
-            if (pLower.includes("huda") || pLower.includes("halida")) cat = "Mainstream";
-            else cat = "Premium";
-
-            SEC_ORDERS.push({
-              date: dateStr, sr: srName, code: ocode, name: oname, brand: detectBrand(brand, prod), product: prod, category: cat, vol: vol, qty: qty
-            });
-          }
-        }
-
-        if (fAudit) {
-          const bAudit = await fAudit.arrayBuffer();
-          const wbAudit = XLSX.read(bAudit, { dense: false });
-
-          const auditMap = {};
-          const sheetDetName = wbAudit.SheetNames.find(s => s.toLowerCase().includes('detail')) || wbAudit.SheetNames[1];
-          if (sheetDetName && wbAudit.Sheets[sheetDetName]) {
-            const rawAuditDetails = XLSX.utils.sheet_to_json(wbAudit.Sheets[sheetDetName]);
-            rawAuditDetails.forEach(r => {
-              const ssVal = String(r['SS'] || '');
-              const srNorm = normalizeSR(r['SR']);
-              if (ssVal.toLowerCase().includes('loi') || ssVal.toLowerCase().includes('lợi') || TEAM_SRS.includes(srNorm)) {
-                const ocode = String(r['Mã điểm bán'] || '').trim();
-                const oname = String(r['Tên điểm bán'] || '').trim();
-                const auditDateRaw = r['Ngày SR chấm'];
-                const auditDateFormatted = formatAuditDate(auditDateRaw);
-                const srResult = String(r['Kết quả SR'] || 'Đạt').trim();
-
-                if (!auditMap[ocode]) {
-                  auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
-                }
-                auditMap[ocode].count++;
-                auditMap[ocode].audits.push({ date: auditDateFormatted, result: srResult });
-              }
-            });
-          }
-
-          const sheetNoName = wbAudit.SheetNames.find(s => s.toLowerCase().includes('chưa chấm') || s.toLowerCase().includes('chua cham'));
-          if (sheetNoName && wbAudit.Sheets[sheetNoName]) {
-            const rawAuditNo = XLSX.utils.sheet_to_json(wbAudit.Sheets[sheetNoName]);
-            rawAuditNo.forEach(r => {
-              const srNorm = normalizeSR(r['SR']);
-              if (TEAM_SRS.includes(srNorm)) {
-                const ocode = String(r['Mã điểm bán'] || '').trim();
-                const oname = String(r['Tên điểm bán'] || '').trim();
-                if (!auditMap[ocode]) {
-                  auditMap[ocode] = { code: ocode, name: oname, sr: srNorm, count: 0, audits: [] };
-                }
-              }
-            });
-          }
-          AUDIT_DATA = Object.values(auditMap);
-        }
-
-        if (fTarget) {
-          const bTarget = await fTarget.arrayBuffer();
-          const wbTarget = XLSX.read(bTarget, { dense: false });
-          const sheetTargetName = wbTarget.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wbTarget.SheetNames[0];
-          if (wbTarget.Sheets[sheetTargetName]) {
-            const rawTarget = XLSX.utils.sheet_to_json(wbTarget.Sheets[sheetTargetName], { header: 1 });
-            SALES_TARGETS = {};
-
-            let offset = 0;
-            const r1 = rawTarget[1] || [];
-            r1.forEach((val, idx) => {
-              if (String(val || '').trim().toLowerCase() === 'cvtcsr') {
-                offset = (idx === 4) ? -1 : 0;
-              }
-            });
-
-            rawTarget.forEach(row => {
-              if (!row || row.length < 10) return;
-              for (let c = 0; c < Math.min(8, row.length); c++) {
-                const norm = normalizeSR(row[c]);
-                if (TEAM_SRS.includes(norm)) {
-                  let skuTarSum = 0, skuActSum = 0;
-                  for (let sc = 25; sc <= 35; sc++) skuTarSum += (parseFloat(row[sc + offset]) || 0);
-                  for (let sc = 38; sc <= 48; sc++) skuActSum += (parseFloat(row[sc + offset]) || 0);
-
-                  SALES_TARGETS[norm] = {
-                    cpd_tar: parseFloat(row[7 + offset]) || 0,
-                    cpd_act: parseFloat(row[8 + offset]) || 0,
-                    cpd_ach: parseFloat(row[9 + offset]) || 0,
-
-                    vor_tar: parseFloat(row[10 + offset]) || 0,
-                    vor_act: parseFloat(row[11 + offset]) || 0,
-                    vor_ach: parseFloat(row[12 + offset]) || 0,
-
-                    volume_target: parseFloat(row[13 + offset]) || 0,
-                    volume_actual: parseFloat(row[14 + offset]) || 0,
-                    vol_ach: parseFloat(row[15 + offset]) || 0,
-                    vol_inc: parseFloat(row[16 + offset]) || 0,
-
-                    premium_target: parseFloat(row[18 + offset]) || 0,
-                    premium_actual: parseFloat(row[19 + offset]) || 0,
-                    sku_ach: parseFloat(row[20 + offset]) || 0,
-                    sku_inc: parseFloat(row[21 + offset]) || 0,
-
-                    mep_tar: parseFloat(row[23 + offset]) || 0,
-                    cov_tar: parseFloat(row[24 + offset]) || 0,
-                    sku_pri_tar: skuTarSum,
-
-                    mep_act: parseFloat(row[36 + offset]) || 0,
-                    cov_act: parseFloat(row[37 + offset]) || 0,
-                    sku_pri_act: skuActSum,
-
-                    mep_ach: parseFloat(row[49 + offset]) || 0,
-                    mep_inc: parseFloat(row[50 + offset]) || 0,
-
-                    fit_tar: parseFloat(row[61 + offset]) || 0,
-                    fit_act: parseFloat(row[62 + offset]) || 0,
-                    fit_ach: parseFloat(row[63 + offset]) || 0,
-                    fit_inc: parseFloat(row[64 + offset]) || 0,
-
-                    total_inc: parseFloat(row[67 + offset]) || 0
-                  };
-                  break;
-                }
-              }
-            });
-          }
-        }
-
-        const nowStr = new Date().toLocaleString('vi-VN');
-        btnSave.textContent = "Đang gửi lên Cloud...";
-
-        const payload = {
-          id: 'CURRENT_DATA',
-          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS },
-          sec: SEC_ORDERS,
-          promo: PROMOTIONS,
-          updated_at: nowStr
-        };
-
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates,return=minimal'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) throw new Error("Lỗi lưu Cloud: " + (await res.text()));
-
-        try {
-          localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER));
-          localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
-          localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS));
-          localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
-          localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA));
-          localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('UPDATE_TIME', nowStr);
-        } catch (storageErr) {}
-
-        document.getElementById('lblLastUpdate').textContent = `Cập nhật: ${nowStr}`;
-        toggleAdminModal();
-        btnSave.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
-        updateLatestOrderDateBanner();
-        populateDateFilter();
-        renderAll();
-        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} dòng đơn SEC-06 và ${Object.keys(SALES_TARGETS).length} SR Target & Total KPI.`);
-      } catch (err) {
-        console.error("Lỗi cập nhật:", err);
-        alert("Lỗi khi xử lý file: " + (err.message || err));
-        btnSave.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
-      }
-    }
-
-    function switchTab(tab) {
-      document.getElementById('tab1Content').classList.add('hidden');
-      document.getElementById('tab2Content').classList.add('hidden');
-      document.getElementById('tab3Content').classList.add('hidden');
-      document.getElementById('tab4Content').classList.add('hidden');
-
-      const inactiveClass = "py-2.5 rounded-xl text-gray-600 transition-all text-center";
-      const activeClass = "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center";
-
-      document.getElementById('tabBtn1').className = inactiveClass;
-      document.getElementById('tabBtn2').className = inactiveClass;
-      document.getElementById('tabBtn3').className = inactiveClass;
-      document.getElementById('tabBtn4').className = inactiveClass;
-
-      if (tab === 1) { document.getElementById('tab1Content').classList.remove('hidden'); document.getElementById('tabBtn1').className = activeClass; }
-      else if (tab === 2) { document.getElementById('tab2Content').classList.remove('hidden'); document.getElementById('tabBtn2').className = activeClass; }
-      else if (tab === 3) { document.getElementById('tab3Content').classList.remove('hidden'); document.getElementById('tabBtn3').className = activeClass; }
-      else if (tab === 4) { document.getElementById('tab4Content').classList.remove('hidden'); document.getElementById('tabBtn4').className = activeClass; }
-    }
-
-    function setTBStatusFilter(status) {
-      currentTBStatus = status;
-      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
-      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
-      document.getElementById('btnFilterTBAll').className = (status === 'ALL') ? act : inact;
-      document.getElementById('btnFilterTBFail').className = (status === 'FAIL') ? (act + " text-rose-600 font-bold") : inact;
-      document.getElementById('btnFilterTBPass').className = (status === 'PASS') ? (act + " text-emerald-600 font-bold") : inact;
-      renderAll();
-    }
-
-    function setLFStatusFilter(status) {
-      currentLFStatus = status;
-      const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center";
-      const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center";
-      document.getElementById('btnFilterLFAll').className = (status === 'ALL') ? act : inact;
-      document.getElementById('btnFilterLFFail').className = (status === 'FAIL') ? (act + " text-rose-600 font-bold") : inact;
-      document.getElementById('btnFilterLFPass').className = (status === 'PASS') ? (act + " text-emerald-600 font-bold") : inact;
-      renderAll();
-    }
-
-    function copyZaloReport() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
-        if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; }
-        else return;
-      }
-      document.getElementById('reportHubModal').classList.remove('hidden');
-    }
-
-    function closeReportHubModal() {
-      document.getElementById('reportHubModal').classList.add('hidden');
-    }
-
-    function triggerCopyReport(type) {
-      closeReportHubModal();
-      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
-      else if (type === 'INDIVIDUAL_SR') {
-        const curSR = document.getElementById('srFilter').value;
-        if (curSR === 'ALL') {
-          alert("Bạn đang chọn '-- Toàn bộ Team --'.\nVui lòng chọn tên 1 bạn SR cụ thể ở ô chọn trên đầu trang trước khi lấy báo cáo riêng nhé!");
-          return;
-        }
-        executeCopyIndividualReport();
-      }
-      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
-      else if (type === 'AUDIT_TB') executeCopyAuditReport();
-      else if (type === 'NO_ORDER_REMIND') {
-        openDailyOrdersModal();
-        setModalFilter('NO_ORDER');
-        copyManagerReminderReport();
-      }
-    }
-
-    function executeCopyTeamReport() {
-      const latestDate = updateLatestOrderDateBanner() || "Gần nhất";
-      const updateTime = localStorage.getItem('UPDATE_TIME') || "";
-      const srSelectEl = document.getElementById('srFilter');
-
-      let totalMonthHL = 0, totalDayHL = 0;
-      const srDayMap = {};
-
-      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
-        totalMonthHL += o.vol;
-        if (o.date === latestDate) {
-          totalDayHL += o.vol;
-          srDayMap[o.sr] = (srDayMap[o.sr] || 0) + o.vol;
-        }
-      });
-
-      const totalMonthCases = Math.round(totalMonthHL / CASE_VOLUME);
-      const totalDayCases = Math.round(totalDayHL / CASE_VOLUME);
-
-      const salesByOutlet = {};
-      SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
-        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
-        salesByOutlet[o.code].total += o.vol;
-      });
-
-      let tbPass = 0;
-      MASTER.filter(m => TEAM_SRS.includes(m.sr)).forEach(m => {
-        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-        const actTot = actH + actP;
-
-        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
-        const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
-        const effectiveTarTot = m.tarHuda + effectiveTarPre;
-
-        const condStandard = (actH >= (m.tarHuda - 0.005)) && (actP >= (effectiveTarPre - 0.005));
-        const condPreDominant = (actTot >= (effectiveTarTot - 0.005)) && (effectiveTarTot > 0) && ((actP / actTot) >= 0.5);
-        if (condStandard || condPreDominant) tbPass++;
-      });
-
-      let lfPass = 0;
-      LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).forEach(l => {
-        if (l.channelType === "TONT") {
-          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          if (preHL >= (l.tarHL - 0.001)) lfPass++;
-        } else {
-          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
-        }
-      });
-
-      const tbTotal = MASTER.filter(m => TEAM_SRS.includes(m.sr)).length;
-      const lfTotal = LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)).length;
-
-      const topSRs = Object.entries(srDayMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
-      let topText = "";
-      topSRs.forEach(([srKey, vol], i) => {
-        const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
-        const name = opt ? opt.text : srKey;
-        topText += `\n  ${i + 1}. ${name}: ${vol.toFixed(2)} HL (${Math.round(vol / CASE_VOLUME)} th)`;
-      });
-
-      const reportText = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${latestDate}):\n• Sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} thùng)\n${topText ? '• Top bán trong ngày:' + topText : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${totalMonthHL.toFixed(2)} HL (${totalMonthCases} thùng)\n• OLS Trưng bày: ${tbPass}/${tbTotal} điểm đạt (${tbTotal ? Math.round(tbPass / tbTotal * 100) : 0}%)\n• Listing Fee: ${lfPass}/${lfTotal} điểm đạt (${lfTotal ? Math.round(lfPass / lfTotal * 100) : 0}%)\n\n👉 Anh em bám sát các điểm chưa đạt trên web để chốt đơn kịp tiến độ!`;
-
-      navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã sao chép Báo cáo Tổng tiến độ Team vào bộ nhớ tạm!\nBạn chỉ cần mở nhóm Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
-    function executeCopyIndividualReport() {
-      const selectedSR = document.getElementById('srFilter').value;
-      const srSelectEl = document.getElementById('srFilter');
-      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
-      const latestDate = updateLatestOrderDateBanner() || "Gần nhất";
-      const updateTime = localStorage.getItem('UPDATE_TIME') || "";
-
-      let dayHL = 0, monthHL = 0, monthPreHL = 0, monthHudaHL = 0;
-      const listSRSec = SEC_ORDERS.filter(o => o.sr === selectedSR);
-
-      listSRSec.forEach(o => {
-        monthHL += o.vol;
-        if (o.category === "Premium") monthPreHL += o.vol;
-        if (o.category === "Mainstream") monthHudaHL += o.vol;
-        if (o.date === latestDate) dayHL += o.vol;
-      });
-
-      const dayCases = Math.round(dayHL / CASE_VOLUME);
-
-      let tarVol = 0, tarPre = 0, totalInc = 0;
-      if (SALES_TARGETS && SALES_TARGETS[selectedSR]) {
-        tarVol = SALES_TARGETS[selectedSR].volume_target || 0;
-        tarPre = SALES_TARGETS[selectedSR].premium_target || 0;
-        totalInc = SALES_TARGETS[selectedSR].total_inc || 0;
-      }
-      const tarMain = Math.max(0, tarVol - tarPre);
-      const pctVol = tarVol > 0 ? Math.round((monthHL / tarVol) * 100) : 0;
-      const pctPre = tarPre > 0 ? Math.round((monthPreHL / tarPre) * 100) : 0;
-      const pctMain = tarMain > 0 ? Math.round((monthHudaHL / tarMain) * 100) : 0;
-
-      const salesByOutlet = {};
-      listSRSec.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") salesByOutlet[o.code].huda += o.vol;
-        if (o.category === "Premium") salesByOutlet[o.code].pre += o.vol;
-        salesByOutlet[o.code].total += o.vol;
-      });
-
-      const listSRMaster = MASTER.filter(m => m.sr === selectedSR);
-      let tbPass = 0;
-      listSRMaster.forEach(m => {
-        const actH = salesByOutlet[m.code] ? salesByOutlet[m.code].huda : 0;
-        const actP = salesByOutlet[m.code] ? salesByOutlet[m.code].pre : 0;
-        const actTot = actH + actP;
-
-        let minPreCases = (m.level === "LV1") ? 5 : (m.level === "LV2" ? 3 : 2);
-        const effectiveTarPre = Number((minPreCases * CASE_VOLUME).toFixed(4));
-        const effectiveTarTot = m.tarHuda + effectiveTarPre;
-
-        const condStandard = (actH >= (m.tarHuda - 0.005)) && (actP >= (effectiveTarPre - 0.005));
-        const condPreDominant = (actTot >= (effectiveTarTot - 0.005)) && (effectiveTarTot > 0) && ((actP / actTot) >= 0.5);
-        if (condStandard || condPreDominant) tbPass++;
-      });
-
-      const listSRLF = LISTING_FEE.filter(l => l.sr === selectedSR);
-      let lfPass = 0;
-      listSRLF.forEach(l => {
-        if (l.channelType === "TONT") {
-          const preHL = salesByOutlet[l.code] ? salesByOutlet[l.code].pre : 0;
-          if (preHL >= (l.tarHL - 0.001)) lfPass++;
-        } else {
-          const hudaHL = salesByOutlet[l.code] ? salesByOutlet[l.code].huda : 0;
-          if (hudaHL >= (l.tarHL - 0.001)) lfPass++;
-        }
-      });
-
-      const tbMiss = listSRMaster.length - tbPass;
-      const lfMiss = listSRLF.length - lfPass;
-
-      const reportText = `🎯 BÁO CÁO TIẾN ĐỘ - ${srNameText.toUpperCase()}\n📅 Đơn duyệt ngày: ${latestDate} (${updateTime ? 'Cập nhật ' + updateTime : ''})\n\n1️⃣ SẢN LƯỢNG NGÀY (${latestDate}):\n• Đạt: ${dayHL.toFixed(2)} HL (${dayCases} thùng)\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng sản lượng: ${monthHL.toFixed(2)} / ${tarVol.toFixed(2)} HL (${pctVol}%)\n  - Mainstream: ${monthHudaHL.toFixed(2)} / ${tarMain.toFixed(2)} HL (${pctMain}%)\n  - Premium: ${monthPreHL.toFixed(2)} / ${tarPre.toFixed(2)} HL (${pctPre}%)\n\n3️⃣ CHƯƠNG TRÌNH ĐIỂM BÁN:\n• OLS Trưng bày: ${tbPass}/${listSRMaster.length} điểm đạt (${listSRMaster.length ? Math.round(tbPass / listSRMaster.length * 100) : 0}%)\n  ${tbMiss > 0 ? '⚠️ Còn thiếu ' + tbMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n• Listing Fee: ${lfPass}/${listSRLF.length} điểm đạt (${listSRLF.length ? Math.round(lfPass / listSRLF.length * 100) : 0}%)\n  ${lfMiss > 0 ? '⚠️ Còn thiếu ' + lfMiss + ' điểm cần bù đơn' : '✓ Hoàn thành 100%'}\n\n💵 TẠM TÍNH THƯỞNG INCENTIVE: ${totalInc.toLocaleString('vi-VN')} đ\n\n👉 Nhắc nhở: Tập trung chào hàng bổ sung các điểm còn thiếu nhé!`;
-
-      navigator.clipboard.writeText(reportText).then(() => {
-        alert(`Đã sao chép Báo cáo riêng của ${srNameText} vào bộ nhớ tạm!\nBạn chỉ cần mở tin nhắn Zalo riêng của bạn đó và Dán (Paste).`);
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
-    function executeCopyIncentiveTeamReport() {
-      const nowStr = new Date().toLocaleDateString('vi-VN');
-      const srSelectEl = document.getElementById('srFilter');
-
-      const incList = [];
-      let totalTeamInc = 0;
-
-      TEAM_SRS.forEach(k => {
-        const opt = Array.from(srSelectEl.options).find(o => o.value === k);
-        const name = opt ? opt.text : k;
-        const incData = SALES_TARGETS[k] || {};
-        const total = incData.total_inc || 0;
-        totalTeamInc += total;
-        incList.push({ name, total, data: incData });
-      });
-
-      incList.sort((a, b) => b.total - a.total);
-
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE TOÀN ĐỘI (FIT-10)\n📅 Ngày cập nhật: ${nowStr}\n💰 Tổng quỹ thưởng tạm tính: ${totalTeamInc.toLocaleString('vi-VN')} đ\n\n`;
-
-      incList.forEach((item, i) => {
-        const d = item.data;
-        msg += `${i + 1}. ${item.name}: ${item.total.toLocaleString('vi-VN')} đ\n`;
-        if (item.total > 0) {
-          const parts = [];
-          if (d.mep_inc > 0) parts.push(`MP: ${(d.mep_inc/1000).toFixed(0)}k`);
-          if (d.fit_inc > 0) parts.push(`FIT: ${(d.fit_inc/1000).toFixed(0)}k`);
-          if (d.vol_inc > 0) parts.push(`Vol: ${(d.vol_inc/1000).toFixed(0)}k`);
-          if (d.sku_inc > 0) parts.push(`Pre: ${(d.sku_inc/1000).toFixed(0)}k`);
-          if (parts.length > 0) msg += `   └ (${parts.join(', ')})\n`;
-        } else {
-          msg += `   └ (Chưa đạt mốc thưởng chặn)\n`;
-        }
-      });
-
-      msg += `\n👉 Lưu ý: Tiền thưởng tạm tính dựa trên tiến độ file FIT-10. Anh em bám sát điều kiện Volume & Tiêu chuẩn để nhận trọn thưởng tháng!`;
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép Bảng thưởng Incentive toàn đội vào bộ nhớ tạm!\nBạn có thể mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
-    function executeCopyAuditReport() {
-      const selectedSR = document.getElementById('srFilter').value;
-      const srSelectEl = document.getElementById('srFilter');
-      const srNameText = srSelectEl.options[srSelectEl.selectedIndex].text;
-      const nowStr = new Date().toLocaleDateString('vi-VN');
-
-      let list = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
-
-      const need2List = list.filter(a => a.count === 1);
-      const noneList = list.filter(a => a.count === 0);
-      const doneList = list.filter(a => a.count >= 2);
-
-      let msg = "";
-      if (selectedSR === "ALL") {
-        msg = `📸 BÁO CÁO TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n📅 Tính đến ngày: ${nowStr}\n• Tổng điểm trưng bày: ${list.length} điểm\n• Đã hoàn thành (2/2 lần): ${doneList.length}/${list.length} (${list.length ? Math.round(doneList.length/list.length*100) : 0}%)\n• Cần chụp Lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp lần nào (0/2 lần): ${noneList.length} điểm\n`;
-
-        if (noneList.length > 0) {
-          const srNoneMap = {};
-          noneList.forEach(a => { srNoneMap[a.sr] = (srNoneMap[a.sr] || 0) + 1; });
-          msg += `\n⚠️ CÁC BẠN CÒN ĐIỂM CHƯA CHỤP LẦN NÀO:\n`;
-          Object.entries(srNoneMap).sort((a,b) => b[1] - a[1]).forEach(([srKey, cnt], i) => {
-            const opt = Array.from(srSelectEl.options).find(o => o.value === srKey);
-            const name = opt ? opt.text : srKey;
-            msg += `  ${i + 1}. ${name}: Còn ${cnt} điểm\n`;
-          });
-        }
-
-        if (need2List.length > 0) {
-          msg += `\n💡 LƯU Ý: Còn ${need2List.length} điểm đã chấm lần 1, anh em nhớ sắp xếp lịch đi chụp bổ sung lần 2 đúng tiến độ nhé!`;
-        }
-      } else {
-        msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY - ${srNameText.toUpperCase()}\n📅 Tính đến ngày: ${nowStr}\n\n• Đã xong (2/2 lần): ${doneList.length}/${list.length} điểm\n• Thiếu lần 2 (1/2 lần): ${need2List.length} điểm\n• Chưa chụp (0/2 lần): ${noneList.length} điểm\n`;
-
-        if (noneList.length > 0) {
-          msg += `\n❌ DANH SÁCH CHƯA CHỤP LẦN NÀO:\n`;
-          noneList.slice(0, 10).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
-          if (noneList.length > 10) msg += `  ... và ${noneList.length - 10} điểm khác\n`;
-        }
-
-        if (need2List.length > 0) {
-          msg += `\n⚠️ DANH SÁCH CẦN CHỤP LẦN 2:\n`;
-          need2List.slice(0, 5).forEach((a, i) => { msg += `  ${i + 1}. ${a.name} (${a.code})\n`; });
-          if (need2List.length > 5) msg += `  ... và ${need2List.length - 5} điểm khác\n`;
-        }
-
-        msg += `\n👉 Nhớ mở app DMS chụp hình đầy đủ trước hạn để đảm bảo tiền thưởng cho quán nhé!`;
-      }
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép tin nhắn nhắc nhở chụp TB vào bộ nhớ tạm!\nBạn chỉ cần mở Zalo và Dán (Paste) để gửi.");
-      }).catch(err => alert("Lỗi sao chép: " + err));
-    }
-
     function renderAll() {
       const selectedSR = document.getElementById('srFilter').value;
       const selectedDate = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'ALL';
@@ -2414,6 +1748,23 @@
         else document.getElementById('btnClearSearch').classList.add('hidden');
       }
 
+      // 1. TÍNH TOÁN BỘ DỮ LIỆU BÁN HÀNG THEO ĐIỂM BÁN (TOÀN CỤC)
+      const salesByOutlet = {};
+      const salesHudaCan20ByOutlet = {};
+
+      SEC_ORDERS.forEach(o => {
+        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
+        if (o.category === "Mainstream") {
+          salesByOutlet[o.code].huda += o.vol;
+          salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
+        }
+        if (o.category === "Premium") {
+          salesByOutlet[o.code].pre += o.vol;
+        }
+        salesByOutlet[o.code].total += o.vol;
+      });
+
+      // 2. SẢN LƯỢNG THÁNG CỦA SR / TEAM
       let listMonth = (selectedSR === "ALL") ? SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)) : SEC_ORDERS.filter(o => o.sr === selectedSR);
       let monthHudaHL = 0, monthPreHL = 0;
       const preBrandMap = {};
@@ -2463,7 +1814,7 @@
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT INCENTIVE & TOTAL KPI
+      // 3. CẬP NHẬT INCENTIVE & TOTAL KPI
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
@@ -2529,7 +1880,7 @@
         document.getElementById('kpiMpPct').textContent = `${pctAllMep}%`;
         document.getElementById('kpiCovRatio').textContent = `${sumCovAct.toLocaleString('vi-VN')} / ${sumCovTar.toLocaleString('vi-VN')} điểm`;
         document.getElementById('kpiCovPct').textContent = `${pctAllCov}%`;
-        document.getElementById('kpiSkuPriRatio').textContent = `${sumSkuPriAct.toLocaleString('vi-VN')} / ${sumSkuPriTar.toLocaleString('vi-VN')} điểm`;
+        document.getElementById('kpiSkuPriRatio').textContent = `${sumSkuPriAct.toFixed(1)} / ${sumSkuPriTar.toFixed(1)} điểm`;
         document.getElementById('kpiSkuPriPct').textContent = `${pctAllSkuPri}%`;
         document.getElementById('kpiFitRatio').textContent = `${avgFitActPct}% / ${avgFitTarPct}%`;
         document.getElementById('kpiFitPct').textContent = `${pctAllFit}%`;
@@ -2706,9 +2057,7 @@
         });
       }
 
-      // ==========================================
-      // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA (CHUẨN HÓA LEVEL: LV1: 5 th, LV2: 3 th, LV3: 2 th)
-      // ==========================================
+      // 4. RENDER TAB 2: OLS TRƯNG BÀY BIA (DÙNG salesByOutlet ĐÃ KHAI BÁO TOÀN CỤC)
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
@@ -2867,9 +2216,7 @@
       document.getElementById('barPre').style.width = `${totTarP ? Math.min(100, Math.round((totActP / totTarP) * 100)) : 0}%`;
       document.getElementById('txtListCount').textContent = `${preparedList.length} điểm bán`;
 
-      // ==========================================
-      // 3. RENDER TAB 3: OLS LISTING FEE
-      // ==========================================
+      // 5. RENDER TAB 3: OLS LISTING FEE
       const baseListLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       
       let cTONT = 0, pTONT = 0;
@@ -3023,9 +2370,7 @@
       document.getElementById('barLF').style.width = `${Math.min(100, pctLFPass)}%`;
       document.getElementById('txtLFListCount').textContent = `${preparedLFList.length} điểm bán`;
 
-      // ==========================================
-      // 4. RENDER TAB 4: CHỤP TB
-      // ==========================================
+      // 6. RENDER TAB 4: CHỤP TB
       const baseAuditList = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
 
       let cntAuditDone = 0, cntAuditNeed2 = 0, cntAuditNone = 0;
