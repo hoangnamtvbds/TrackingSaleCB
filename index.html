@@ -270,7 +270,7 @@
             <div class="text-base font-black text-amber-950" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
             <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
               <span>Target:</span>
-              <b class="text-gray-700" id="valPreTar">0.00 HL</b>
+              <b class="text-gray-700" id="valMainTar">0.00 HL</b>
             </div>
             <div class="w-full bg-amber-100 h-1.5 rounded-full overflow-hidden mt-1">
               <div id="barPreMini" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
@@ -287,7 +287,7 @@
         </details>
       </div>
 
-      <!-- Khối Thưởng Incentive -->
+      <!-- Khối Thưởng Incentive (4 Trụ Cột Doanh Thu) -->
       <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
         <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
           <div class="flex items-center gap-2">
@@ -598,7 +598,7 @@
           <div class="p-2 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
             <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐANG PHỦ</span>
             <span id="covCoveredCount" class="text-sm font-black text-emerald-950 mt-0.5 block">0</span>
-            <span id="covCoveredBreakdown" class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
+            <span class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
           </div>
           <div class="p-2 rounded-2xl bg-rose-50/70 border border-rose-200/80">
             <span class="text-[9px] font-bold text-rose-700 block uppercase">BỊ LAPSED</span>
@@ -629,291 +629,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU ================= -->
-  <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
-          <div>
-            <h3 class="text-sm font-black text-[#1F4E79] tracking-tight">TIẾN ĐỘ TOTAL KPI (FIT-10)</h3>
-            <p class="text-[10px] text-gray-400 font-semibold" id="lblKpiModalSubtitle">Chi tiết chất lượng thực địa & đi tuyến</p>
-          </div>
-        </div>
-        <button onclick="closeTotalKpiModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        <!-- Khối 1: IR / SAT -->
-        <div class="space-y-1.5">
-          <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
-          
-          <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-purple-950 text-[11px] block">1. IR Product (Nhận diện sản phẩm)</span>
-              <span id="kpiIrProdRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 lượt đạt</span>
-            </div>
-            <span id="kpiIrProdPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện trưng bày)</span>
-              <span id="kpiIrVisRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 điểm đạt</span>
-            </div>
-            <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Kiểm toán tủ lạnh)</span>
-              <span id="kpiSatRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0 / 0 tủ quét</span>
-            </div>
-            <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score tổng hợp</span>
-              <span id="kpiFitRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0% / 0%</span>
-            </div>
-            <span id="kpiFitPct" class="px-2 py-0.5 bg-indigo-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-        </div>
-
-        <!-- Khối 2: MEP -->
-        <div class="space-y-1.5 pt-1 border-t border-gray-100">
-          <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
-          
-          <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-teal-950 text-[11px] block">5. Độ Phủ (Coverage điểm bán)</span>
-              <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-            </div>
-            <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-emerald-950 text-[11px] block">6. Chỉ Tiêu SKU Ưu Tiên</span>
-              <span id="kpiSkuPriRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-            </div>
-            <span id="kpiSkuPriPct" class="px-2 py-0.5 bg-emerald-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-emerald-950 text-[11px] block">7. Chỉ Tiêu MP (Tổng thực thi)</span>
-              <span id="kpiMpRatio" class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
-            </div>
-            <span id="kpiMpPct" class="px-2 py-0.5 bg-emerald-700 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-        </div>
-
-        <!-- Khối 3: Route -->
-        <div class="space-y-1.5 pt-1 border-t border-gray-100">
-          <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
-          
-          <div class="p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-amber-950 text-[11px] block">8. Call Per Day (Ghé thăm/ngày)</span>
-              <span id="kpiCpdRatio" class="text-[10px] text-amber-700 font-semibold mt-0.5 block">0.0 / 0.0 cuộc</span>
-            </div>
-            <span id="kpiCpdPct" class="px-2 py-0.5 bg-amber-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-
-          <div class="p-2.5 rounded-2xl bg-rose-50/70 border border-rose-200/70 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-rose-950 text-[11px] block">9. Visit On Route (Đúng tuyến MCP)</span>
-              <span id="kpiVorRatio" class="text-[10px] text-rose-700 font-semibold mt-0.5 block">0 / 0 lượt</span>
-            </div>
-            <span id="kpiVorPct" class="px-2 py-0.5 bg-rose-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="pt-2 border-t border-gray-100">
-        <button onclick="closeTotalKpiModal()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 font-extrabold rounded-xl text-xs transition-all">
-          Đóng cửa sổ
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL TRUNG TÂM BÁO CÁO SS ================= -->
-  <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📋 TRUNG TÂM BÁO CÁO (SS)
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảo mật quản lý • Chọn loại báo cáo cần gửi Zalo</p>
-        </div>
-        <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
-            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
-        </button>
-
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
-        </button>
-
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL SOI ĐƠN HÀNG NGÀY ================= -->
-  <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📦 ĐƠN DUYỆT THEO NGÀY
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
-        </div>
-        <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all">✕</button>
-      </div>
-
-      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
-        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
-        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
-        </select>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2 text-center select-none">
-        <div id="cardFilterAll" onclick="setModalFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50 border-blue-200 ring-2 ring-blue-500 shadow-sm">
-          <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG SẢN LƯỢNG</span>
-          <span id="modalSummaryTotalHL" class="text-xs font-black text-blue-950 mt-0.5 block">0.00 HL</span>
-          <span id="modalSummaryTotalCases" class="text-[9px] text-blue-700 font-semibold block">0 th</span>
-        </div>
-        <div id="cardFilterHasOrder" onclick="setModalFilter('HAS_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/70">
-          <span class="text-[9px] font-bold text-emerald-700 block uppercase">CÓ ĐƠN</span>
-          <span id="modalSummaryHasOrder" class="text-xs font-black text-emerald-950 mt-0.5 block">0 SR</span>
-          <span class="text-[9px] text-emerald-700 font-semibold block">Chạm để lọc</span>
-        </div>
-        <div id="cardFilterNoOrder" onclick="setModalFilter('NO_ORDER')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200 hover:bg-rose-100/70">
-          <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CÓ ĐƠN</span>
-          <span id="modalSummaryNoOrder" class="text-xs font-black text-rose-950 mt-0.5 block">0 SR</span>
-          <span class="text-[9px] text-rose-700 font-semibold block">Chạm để lọc</span>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center px-1 pt-0.5">
-        <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
-        <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
-      </div>
-
-      <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
-        📢 Sao chép nhắc nhở các bạn chưa có đơn
-      </button>
-
-      <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL ADMIN CẬP NHẬT -->
-  <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-sm font-extrabold text-gray-900">🔒 CẬP NHẬT DỮ LIỆU</h3>
-        <button onclick="toggleAdminModal()" class="text-gray-400 font-bold text-lg">✕</button>
-      </div>
-
-      <div id="pinBox">
-        <label class="text-xs font-bold text-gray-600 block mb-1.5">Nhập mã PIN xác thực:</label>
-        <div class="flex gap-2">
-          <input type="password" id="inputPin" placeholder="••••" class="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-center text-base tracking-widest font-bold outline-none focus:border-amber-500">
-          <button onclick="verifyPin()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Xác nhận</button>
-        </div>
-      </div>
-
-      <div id="uploadBox" class="hidden space-y-3">
-        <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master, Target và Coverage chỉ cần nạp định kỳ. Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong!
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
-          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">2. FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
-          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">3. FILE CHỤP TB DIP-01 (.xlsx) <span id="auditStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileAudit" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">5. FILE COVERAGE L28D SEC-19 (.xlsx) <span id="covStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileCov" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
-        </div>
-        <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
-          ⚡ XÁC NHẬN CẬP NHẬT
-        </button>
-
-        <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span class="text-[11px] text-gray-400 font-medium">Bảo mật hệ thống</span>
-          <button onclick="promptExportFiles()" class="text-base p-1.5 rounded-full hover:bg-amber-100 active:scale-90 transition-all select-none" title="Mở khóa tải file">
-            🍺
-          </button>
-        </div>
-
-        <div id="exportActionBox" class="hidden space-y-2 pt-2 bg-amber-50/60 p-3 rounded-2xl border border-amber-200/70">
-          <p class="text-[11px] font-bold text-amber-900 text-center">🔓 ĐÃ MỞ KHÓA TẢI FILE CLOUD</p>
-          <div class="grid grid-cols-3 gap-1.5 pt-1">
-            <button onclick="downloadCloudFile('TRACKING')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">📥 Trưng bày</button>
-            <button onclick="downloadCloudFile('LF')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">📥 Listing Fee</button>
-            <button onclick="downloadCloudFile('SEC')" class="py-2 px-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 font-bold rounded-xl text-[10px] shadow-sm flex items-center justify-center active:scale-95 transition-all">📥 SEC-06</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= LOGIC JAVASCRIPT ================= -->
+  <!-- ================= LOGIC JAVASCRIPT TINH GỌN (CHỐNG NULL & ĐẦY ĐỦ TÍNH NĂNG) ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -938,6 +654,7 @@
     let supabaseClient = null;
     try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
 
+    // HELPER GÁN GIAO DIỆN AN TOÀN TUYỆT ĐỐI (KHÔNG BAO GIỜ BỊ LỖI NULL)
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
@@ -976,6 +693,7 @@
       return 'Premium Khác';
     }
 
+    // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
       [1, 2, 3, 4, 5].forEach(i => {
         const c = document.getElementById(`tab1Content`.replace('1', i));
@@ -1030,6 +748,7 @@
       renderAll();
     }
 
+    // ================= XỬ LÝ AUTH & USER =================
     async function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('loginUsername').value.trim().toLowerCase();
@@ -1597,7 +1316,8 @@
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
+        alert(`Đồng bộ thành công!
+Đã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
