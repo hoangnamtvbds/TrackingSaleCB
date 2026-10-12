@@ -217,7 +217,7 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 5 TAB (TỐI ƯU CÂN ĐỐI 5 CỘT) -->
+    <!-- THANH CHUYỂN 5 TAB -->
     <div class="grid grid-cols-5 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[10px] sm:text-[11px] font-extrabold gap-1 shadow-sm">
       <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">📊 SỐ BÁN</button>
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">🎯 DISPLAY</button>
@@ -287,7 +287,7 @@
         </details>
       </div>
 
-      <!-- Khối Thưởng Incentive (4 Trụ Cột Doanh Thu) -->
+      <!-- Khối Thưởng Incentive (4 Trụ cột thu nhập chuẩn xác) -->
       <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
         <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
           <div class="flex items-center gap-2">
@@ -369,7 +369,7 @@
           <div class="bg-blue-50/80 rounded-xl p-2.5 border border-blue-200/60 text-xs flex justify-between items-center">
             <div>
               <div class="text-[10px] font-bold text-blue-600 uppercase" id="lblSpecificDateTitle">Đơn trong ngày:</div>
-              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700" id="lblSpecificDateCases">(0 th)</span></div>
+              <div class="text-base font-black text-[#1F4E79]" id="lblSpecificDateVol">0.00 HL <span class="text-xs font-bold text-amber-700">(0 th)</span></div>
             </div>
             <div class="text-right text-[11px] space-y-0.5">
               <div class="text-emerald-700 font-bold">Main: <span id="lblSpecificDateMain">0.00 HL</span></div>
@@ -576,7 +576,6 @@
 
     <!-- ================= TAB 5: ĐỘ PHỦ COVERAGE L28D (MỚI) ================= -->
     <div id="tab5Content" class="hidden space-y-3">
-      <!-- Khối thống kê tổng quan độ phủ -->
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
           <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📍 TỶ LỆ GIỮ ĐỘ PHỦ (L28D)</span>
@@ -590,7 +589,6 @@
           <div id="barCoverage" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- 3 Thẻ thống kê chi tiết kênh & Trạng thái -->
         <div class="grid grid-cols-3 gap-2 pt-1 text-center select-none">
           <div class="p-2 rounded-2xl bg-blue-50/70 border border-blue-200/80">
             <span class="text-[9px] font-bold text-blue-700 block uppercase">TỔNG ACTIVE</span>
@@ -600,16 +598,15 @@
           <div class="p-2 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
             <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐANG PHỦ</span>
             <span id="covCoveredCount" class="text-sm font-black text-emerald-950 mt-0.5 block">0</span>
-            <span class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
+            <span id="covCoveredBreakdown" class="text-[9px] text-emerald-700 font-semibold block">Existed + New</span>
           </div>
           <div class="p-2 rounded-2xl bg-rose-50/70 border border-rose-200/80">
             <span class="text-[9px] font-bold text-rose-700 block uppercase">BỊ LAPSED</span>
             <span id="covLapsedCount" class="text-sm font-black text-rose-950 mt-0.5 block">0</span>
-            <span class="text-[9px] text-rose-700 font-semibold block">>28 ngày chưa đi</span>
+            <span id="covLapsedBreakdown" class="text-[9px] text-rose-700 font-semibold block">>28 ngày chưa đi</span>
           </div>
         </div>
 
-        <!-- Bộ lọc trạng thái Coverage -->
         <div class="pt-2 border-t border-gray-100 space-y-1.5">
           <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
             <button id="btnCovStatusAll" onclick="setCovStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
@@ -632,11 +629,10 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU (IR, SAT, MEP & ROUTE) ================= -->
+  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       
-      <!-- Header -->
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
@@ -649,8 +645,7 @@
       </div>
 
       <div class="space-y-3 max-h-[66vh] overflow-y-auto pr-0.5 text-xs">
-        
-        <!-- KHỐI 1: CHẤT LƯỢNG HÌNH ẢNH IR & TỦ LẠNH SAT -->
+        <!-- Khối 1: IR / SAT -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
           
@@ -687,7 +682,7 @@
           </div>
         </div>
 
-        <!-- KHỐI 2: ĐỘ PHỦ & THỰC THI THÁNG (MEP) -->
+        <!-- Khối 2: MEP -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
           
@@ -716,7 +711,7 @@
           </div>
         </div>
 
-        <!-- KHỐI 3: KỶ LUẬT ĐI TUYẾN MCP -->
+        <!-- Khối 3: Route -->
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
           
@@ -918,7 +913,7 @@
     </div>
   </div>
 
-  <!-- ================= LOGIC JAVASCRIPT TINH GỌN (CHỐNG NULL & ĐẦY ĐỦ TÍNH NĂNG) ================= -->
+  <!-- ================= LOGIC JAVASCRIPT ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -938,12 +933,11 @@
     let currentCovStatus = "ALL", currentCovChannel = "ALL";
     let isManagerVerified = false, currentUser = null;
 
-    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = [], COVERAGE_DATA = [];
+    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
 
     let supabaseClient = null;
     try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
 
-    // HELPER GÁN GIAO DIỆN AN TOÀN TUYỆT ĐỐI (KHÔNG BAO GIỜ BỊ LỖI NULL)
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
@@ -982,7 +976,6 @@
       return 'Premium Khác';
     }
 
-    // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
       [1, 2, 3, 4, 5].forEach(i => {
         const c = document.getElementById(`tab1Content`.replace('1', i));
@@ -1517,7 +1510,7 @@
           }
         }
 
-                // 5. ĐỌC FILE MỚI: COVERAGE OUTLETS BY SR L28D (SEC-19) - ĐÃ FIX CHUẨN CỘT
+        // 5. ĐỌC FILE MỚI: COVERAGE OUTLETS BY SR L28D (SEC-19) - ĐÃ FIX CHUẨN CỘT
         if (fCov) {
           const wb = XLSX.read(await fCov.arrayBuffer(), { dense: false });
           const sCovName = wb.SheetNames.find(s => s.toLowerCase().includes('coverage')) || wb.SheetNames[0];
@@ -1592,7 +1585,7 @@
         });
         if (!res.ok) throw new Error(await res.text());
 
-          try {
+        try {
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
@@ -1605,8 +1598,7 @@
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!
-Đã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
+        alert(`Đồng bộ thành công!\nĐã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
@@ -1706,6 +1698,7 @@
         const pIrVis = sumTotVisib > 0 ? Math.round((sumIrVisib / sumTotVisib) * 100) : 0;
         const pSat = sumTotSat > 0 ? Math.round((sumSatScan / sumTotSat) * 100) : 0;
 
+        // Card Incentive ngoài màn hình (Ví tiền SR)
         setText('txtTotalIncentiveDisplay', `${sumTotInc.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`); setText('incVolAch', `${pV}%`); setText('incVolVal', `${sumVolInc.toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`); setText('incSkuAch', `${pP}%`); setText('incSkuVal', `${sumSkuInc.toLocaleString('vi-VN')} đ`);
@@ -1713,6 +1706,7 @@
         setText('incFitRatio', `${avgFA}% / ${avgFT}%`); setText('incFitAch', `${pF}%`); setText('incFitVal', `${sumFitInc.toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`);
 
+        // Popup Total KPI Modal: 3 Khối chuyên sâu (Không trùng sản lượng)
         setText('kpiIrProdRatio', `${Math.round(sumIrProd)} / ${Math.round(sumTotVisit)} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${Math.round(sumIrVisib)} / ${Math.round(sumTotVisib)} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${Math.round(sumSatScan)} / ${Math.round(sumTotSat)} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1720,7 +1714,7 @@
 
         setText('kpiCovRatio', `${sumCovAct.toFixed(1)} / ${sumCovTar.toFixed(1)} điểm`); setText('kpiCovPct', `${pC}%`);
         setText('kpiSkuPriRatio', `${sumSkuPriAct.toFixed(1)} / ${sumSkuPriTar.toFixed(1)} điểm`); setText('kpiSkuPriPct', `${pS}%`);
-        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${pM}%`);
+        setText('kpiMpRatio', `${sumMepAct.toFixed(1)} / ${sumMepTar.toFixed(1)} điểm`); setText('kpiMpPct', `${mAch}%`);
 
         setText('kpiCpdRatio', `${(sumCpdAct/cnt).toFixed(1)} / ${(sumCpdTar/cnt).toFixed(1)} cuộc`); setText('kpiCpdPct', `${pCPD}%`);
         setText('kpiVorRatio', `${Math.round(sumVorAct)} / ${Math.round(sumVorTar)} lượt`); setText('kpiVorPct', `${pVOR}%`);
@@ -1746,6 +1740,7 @@
 
         const tot = d.total_inc || 0;
 
+        // Card Incentive ngoài màn hình
         setText('txtTotalIncentiveDisplay', `${tot.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${vA.toFixed(2)} / ${vT.toFixed(2)} HL`); setText('incVolAch', `${vAch}%`); setText('incVolVal', `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${pA.toFixed(2)} / ${pT.toFixed(2)} HL`); setText('incSkuAch', `${pAch}%`); setText('incSkuVal', `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`);
@@ -1753,6 +1748,7 @@
         setText('incFitRatio', `${fAP}% / ${fTP}%`); setText('incFitAch', `${fAch}%`); setText('incFitVal', `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${tot.toLocaleString('vi-VN')} đ`);
 
+        // Popup Total KPI Modal: 3 Khối chuyên sâu
         setText('kpiIrProdRatio', `${irProd} / ${totVis} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${irVisib} / ${totVisib} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${satScan} / ${totSat} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1765,6 +1761,63 @@
         setText('kpiCpdRatio', `${cpdA} / ${cpdT} cuộc`); setText('kpiCpdPct', `${cpdAch}%`);
         setText('kpiVorRatio', `${vorA} / ${vorT} lượt`); setText('kpiVorPct', `${vorAch}%`);
       }
+
+      // Brand Premium
+      const preBox = document.getElementById('preBrandBreakdown');
+      preBox.innerHTML = '';
+      if (Object.keys(preBrandMap).length === 0) preBox.innerHTML = '<span class="text-gray-400">Chưa có sản lượng Premium</span>';
+      else Object.entries(preBrandMap).sort((a,b) => b[1] - a[1]).forEach(([br, vol]) => {
+        preBox.innerHTML += `<div class="flex justify-between items-center text-gray-700 font-semibold"><span>● ${br}</span> <span class="font-black text-amber-700">${vol.toFixed(2)} HL</span></div>`;
+      });
+
+      // Lọc ngày lẻ
+      const boxDate = document.getElementById('boxSpecificDateSales');
+      let listFiltered = listMonth;
+      if (selectedDate !== "ALL") {
+        listFiltered = listMonth.filter(o => o.date === selectedDate);
+        let dH = 0, dP = 0; listFiltered.forEach(o => { if (o.category === "Mainstream") dH += o.vol; if (o.category === "Premium") dP += o.vol; });
+        boxDate.classList.remove('hidden');
+        setText('lblSpecificDateTitle', `Đơn ngày ${selectedDate}:`);
+        setHTML('lblSpecificDateVol', `${(dH + dP).toFixed(2)} HL <span class="text-xs font-bold text-amber-700">(${Math.round((dH + dP) / CASE_VOLUME)} th)</span>`);
+        setText('lblSpecificDateMain', `${dH.toFixed(2)} HL`); setText('lblSpecificDatePre', `${dP.toFixed(2)} HL`);
+      } else boxDate.classList.add('hidden');
+
+      // Điểm bán Tab 1
+      const otMap = {};
+      listFiltered.forEach(o => {
+        if (!otMap[o.code]) otMap[o.code] = { code: o.code, name: o.name, totalVol: 0, products: {} };
+        otMap[o.code].totalVol += o.vol;
+        if (!otMap[o.code].products[o.product]) otMap[o.code].products[o.product] = { vol: 0, qty: 0 };
+        otMap[o.code].products[o.product].vol += o.vol; otMap[o.code].products[o.product].qty += o.qty;
+      });
+      let sortedOt = Object.values(otMap).sort((a,b) => b.totalVol - a.totalVol);
+      if (searchKeyword) sortedOt = sortedOt.filter(ot => ot.name.toLowerCase().includes(searchKeyword) || ot.code.toLowerCase().includes(searchKeyword));
+
+      const aggBox = document.getElementById('aggregatedOutletList');
+      aggBox.innerHTML = '';
+      setText('txtAggCount', `${sortedOt.length} điểm bán`);
+      sortedOt.forEach(ot => {
+        let pHTML = '';
+        Object.entries(ot.products).forEach(([pName, pData]) => {
+          pHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium">${pName}</span><span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
+        });
+        aggBox.innerHTML += `<details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden"><summary class="p-3.5 flex justify-between items-center cursor-pointer select-none"><div class="pr-2"><div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div><div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div></div><div class="text-right"><div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div><div class="text-[10px] font-bold text-amber-700">${(ot.totalVol / CASE_VOLUME).toFixed(1)} thùng ▼</div></div></summary><div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">${pHTML}</div></details>`;
+      });
+
+      // Khuyến mãi
+      let promoList = (selectedSR === "ALL") ? PROMOTIONS.filter(p => TEAM_SRS.includes(p.sr)) : PROMOTIONS.filter(p => p.sr === selectedSR);
+      if (selectedDate !== "ALL") promoList = promoList.filter(p => p.date === selectedDate);
+      const prMap = {};
+      promoList.forEach(p => {
+        if (!prMap[p.promoName]) prMap[p.promoName] = { count: 0, reward: p.rewardItem, outlets: new Set() };
+        prMap[p.promoName].count += p.qty; prMap[p.promoName].outlets.add(p.outletName);
+      });
+      setText('badgePromoCount', Object.keys(prMap).length);
+      const prBox = document.getElementById('promoListContent'); prBox.innerHTML = '';
+      if (Object.keys(prMap).length === 0) prBox.innerHTML = `<p class="text-gray-400 text-center py-2">Không có khuyến mãi nào trong đợt này.</p>`;
+      else Object.entries(prMap).forEach(([k, item]) => {
+        prBox.innerHTML += `<div class="p-2.5 bg-white rounded-xl border border-gray-100 flex justify-between items-center"><div class="pr-2"><div class="font-bold text-gray-800 text-[11px]">${k}</div><div class="text-[10px] text-gray-400 mt-0.5">${item.reward} • Áp dụng ${item.outlets.size} điểm</div></div><span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span></div>`;
+      });
 
       // 4. TAB 2: DISPLAY (CHUẨN 5/3/2 THÙNG)
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
@@ -1923,7 +1976,6 @@
 
       if (searchKeyword) fCovList = fCovList.filter(c => c.name.toLowerCase().includes(searchKeyword) || c.code.toLowerCase().includes(searchKeyword));
 
-      // Sắp xếp ưu tiên các điểm BỊ LAPSED lên đầu để SR thấy ngay
       fCovList.sort((a,b) => {
         if (a.covNote === 'Lapsed' && b.covNote !== 'Lapsed') return -1;
         if (a.covNote !== 'Lapsed' && b.covNote === 'Lapsed') return 1;
@@ -1977,7 +2029,7 @@
                 <span class="${isLapsed ? 'text-rose-600 font-bold' : 'text-emerald-600 font-medium'}">${isLapsed ? 'Cần ghé ngay' : 'Đang duy trì'}</span>
               </div>
 
-              <div class="pt-1 border-t border-gray-50 flex flex-wrap gap-1">
+              <div class="pt-1 border-t border-gray-100 flex flex-wrap gap-1">
                 ${brandPills}
               </div>
             </div>`;
@@ -2015,19 +2067,8 @@
       SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
         tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
       });
-      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `
-  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
-      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM
-📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})
-
-1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):
-• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)
-${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}
-
-2️⃣ LŨY KẾ THÁNG (MTD):
-• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)
-
-👉 Anh em bám sát web để về số đúng tiến độ!`;
+      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
+      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Báo cáo Team!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -2035,20 +2076,13 @@ ${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát si
       const sr = document.getElementById('srFilter').value, name = document.getElementById('srFilter').options[document.getElementById('srFilter').selectedIndex].text;
       const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
       let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
-      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}
-📅 Đơn duyệt: ${dt}
-• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)
-• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)
-💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
+      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
       navigator.clipboard.writeText(msg).then(() => alert(`Đã sao chép báo cáo ${name}!`)).catch(e => alert("Lỗi: " + e));
     }
 
     function executeCopyIncentiveTeamReport() {
       const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)
-
-` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('
-');
+      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Bảng thưởng Team!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -2056,10 +2090,7 @@ ${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát si
       const sr = document.getElementById('srFilter').value;
       const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
       const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
-      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)
-• Hoàn thành (2/2 lần): ${done}/${list.length}
-• Thiếu lần 2: ${n2} điểm
-• Chưa chụp: ${none} điểm`;
+      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép báo cáo Chụp TB!")).catch(e => alert("Lỗi: " + e));
     }
 
@@ -2124,10 +2155,7 @@ ${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát si
       const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
       SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
       const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
-      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}
-⚠️ Các bạn chưa có đơn duyệt:
-` + noList.join('
-');
+      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
       navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép nhắc nhở!")).catch(e => alert("Lỗi: " + e));
     }
 
