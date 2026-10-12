@@ -316,7 +316,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-amber-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">👑 2. Thưởng Dòng Bia Premium</span>
+              <span class="text-gray-800 font-bold block">👑 2. Thưởng Premium</span>
               <span id="incSkuRatio" class="text-[10px] text-gray-400 font-medium">0.00 / 0.00 HL</span>
             </div>
             <div class="text-right">
@@ -327,7 +327,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">🎯 3. Thưởng Chỉ Tiêu MEP</span>
+              <span class="text-gray-800 font-bold block">🎯 3. Thưởng Chỉ Tiêu MP</span>
               <span id="incMepRatio" class="text-[10px] text-gray-500 font-medium">0 / 0 điểm</span>
             </div>
             <div class="text-right">
@@ -338,7 +338,7 @@
 
           <div class="bg-white/80 p-2.5 rounded-xl border border-purple-100 flex justify-between items-center text-[11px]">
             <div>
-              <span class="text-gray-800 font-bold block">📸 4. Thưởng Điểm FIT Score</span>
+              <span class="text-gray-800 font-bold block">📸 4. Thưởng FIT Score</span>
               <span id="incFitRatio" class="text-[10px] text-gray-400 font-medium">0% / 0%</span>
             </div>
             <div class="text-right">
@@ -429,17 +429,17 @@
           </div>
           <div class="grid grid-cols-3 gap-2 text-center select-none">
             <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
-              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1 (≥5 th Pre)</span>
+              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
               <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
               <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2 (≥3 th Pre)</span>
+              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
               <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
               <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
-              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3 (≥2 th Pre)</span>
+              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
               <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
               <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
@@ -608,7 +608,7 @@
           <!-- 2. IR Visibility -->
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện trưng bày)</span>
+              <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện biển hiệu)</span>
               <span id="kpiIrVisRatio" class="text-[10px] text-purple-700 font-semibold mt-0.5 block">0 / 0 điểm đạt</span>
             </div>
             <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -617,7 +617,7 @@
           <!-- 3. SAT Scanned (Tủ lạnh) -->
           <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Kiểm toán tủ lạnh)</span>
+              <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Quét tủ lạnh)</span>
               <span id="kpiSatRatio" class="text-[10px] text-sky-700 font-semibold mt-0.5 block">0 / 0 tủ quét</span>
             </div>
             <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -626,7 +626,7 @@
           <!-- 4. Điểm FIT Score tổng hợp -->
           <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score tổng hợp</span>
+              <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score</span>
               <span id="kpiFitRatio" class="text-[10px] text-indigo-700 font-semibold mt-0.5 block">0% / 0%</span>
             </div>
             <span id="kpiFitPct" class="px-2 py-0.5 bg-indigo-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
@@ -640,7 +640,7 @@
           <!-- 5. Độ phủ Coverage -->
           <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
             <div>
-              <span class="font-bold text-teal-950 text-[11px] block">5. Độ Phủ (Coverage điểm bán)</span>
+              <span class="font-bold text-teal-950 text-[11px] block">5. Tổng Coverage </span>
               <span id="kpiCovRatio" class="text-[10px] text-teal-700 font-semibold mt-0.5 block">0 / 0 điểm</span>
             </div>
             <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
