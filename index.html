@@ -683,33 +683,50 @@
     // ==========================================
     // LOGIC ĐĂNG NHẬP, PHÂN QUYỀN & QUẢN LÝ USER
     // ==========================================
-    async function handleLogin(e) {
+        async function handleLogin(e) {
       e.preventDefault();
-      const u = document.getElementById('loginUsername').value.trim();
+      // Loại bỏ hoàn toàn khoảng trắng vô tình bị bàn phím thêm vào
+      const u = document.getElementById('loginUsername').value.trim().toLowerCase();
       const p = document.getElementById('loginPassword').value.trim();
       const btn = document.getElementById('btnLoginSubmit');
       btn.textContent = "Đang kiểm tra...";
 
       try {
-        if (!supabaseClient) throw new Error("Chưa kết nối Supabase");
-        const { data, error } = await supabaseClient
-          .from('app_users')
-          .select('*')
-          .eq('username', u)
-          .eq('password', p)
-          .maybeSingle();
+        // Gọi trực tiếp REST API Supabase (bỏ qua client SDK để tránh lỗi cache)
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users?username=eq.${encodeURIComponent(u)}&select=*`, {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-        if (error) throw error;
-        if (!data) {
-          alert("Sai tên đăng nhập hoặc mật khẩu!");
+        if (!res.ok) {
+          throw new Error("Lỗi kết nối cơ sở dữ liệu: " + res.statusText);
+        }
+
+        const users = await res.json();
+        
+        if (!users || users.length === 0) {
+          alert("Không tìm thấy tên đăng nhập: " + u);
           btn.textContent = "Đăng Nhập";
           return;
         }
 
-        currentUser = data;
-        localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(data));
+        const user = users[0];
 
-        if (data.is_first_login || data.password === '123456') {
+        // So khớp mật khẩu chính xác
+        if (String(user.password).trim() !== p) {
+          alert("Mật khẩu không chính xác!");
+          btn.textContent = "Đăng Nhập";
+          return;
+        }
+
+        currentUser = user;
+        localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(user));
+
+        if (user.is_first_login || p === '123456') {
           document.getElementById('changePasswordModal').classList.remove('hidden');
         } else {
           applyUserPermissions();
