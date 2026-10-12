@@ -154,12 +154,16 @@
             <span class="font-bold text-gray-500 italic">by LHN</span>
           </div>
         </div>
+        <!-- Khu vực hiển thị Tên User & Thao tác quản trị -->
         <div class="flex items-center gap-1.5">
+          <span id="lblUserBadge" class="text-[10px] font-bold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-xl truncate max-w-[140px]" title="Tài khoản hiện tại">
+            👤 Đang tải...
+          </span>
           <button id="btnAdminUserManage" onclick="openAdminUserModal()" class="hidden text-[10px] font-extrabold bg-purple-100 text-purple-800 px-2 py-1 rounded-xl shadow-xs">
             👥 QL User
           </button>
           <button onclick="handleLogout()" class="text-[10px] font-extrabold bg-gray-100 hover:bg-rose-50 text-gray-600 hover:text-rose-600 px-2 py-1 rounded-xl transition-all" title="Đăng xuất">
-            Đăng xuất ⎋
+            ⎋
           </button>
         </div>
       </div>
@@ -237,7 +241,7 @@
       <!-- 1. KHỐI TIẾN ĐỘ THÁNG & TARGET -->
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG</span>
+          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
           <div class="flex items-center gap-1.5">
             <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-xs active:scale-95 transition-all flex items-center gap-1">
               <span>🎯</span> TOTAL KPI
@@ -438,17 +442,17 @@
           </div>
           <div class="grid grid-cols-3 gap-2 text-center select-none">
             <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
-              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
+              <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1 (≥5 th Pre)</span>
               <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
               <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
+              <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2 (≥3 th Pre)</span>
               <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
               <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
-              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
+              <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3 (≥2 th Pre)</span>
               <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
               <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
@@ -1038,8 +1042,14 @@
     function applyUserPermissions() {
       document.getElementById('loginScreen').classList.add('hidden');
       if (!currentUser) return;
-      const role = currentUser.role;
 
+      // HIỂN THỊ TÊN VÀ VAI TRÒ CỦA USER
+      const userBadge = document.getElementById('lblUserBadge');
+      if (userBadge) {
+        userBadge.textContent = `👤 ${currentUser.fullname} (${currentUser.role})`;
+      }
+
+      const role = currentUser.role;
       const srSelectEl = document.getElementById('srFilter');
       const srContainer = document.getElementById('srFilterContainer');
       const btnAdminUser = document.getElementById('btnAdminUserManage');
@@ -1133,7 +1143,10 @@
               <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
               <div class="text-[10px] text-gray-400 mt-0.5">ID: <b>${u.username}</b> • Pass: <span class="font-mono">${u.password}</span></div>
             </div>
-            <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px]">Reset</button>
+            <div class="flex items-center gap-1">
+              <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px]">Reset</button>
+              ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}', '${u.fullname || u.username}')" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg text-[10px]">Xóa 🗑️</button>` : ''}
+            </div>
           `;
           container.appendChild(div);
         });
@@ -1159,6 +1172,26 @@
         loadAdminUserList();
       } catch (err) {
         alert("Lỗi: " + err.message);
+      }
+    }
+
+    async function deleteUser(id, name) {
+      if (!confirm(`Bạn có chắc chắn muốn XÓA tài khoản của [${name}] không?\nHành động này không thể hoàn tác!`)) return;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/app_users?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+        alert(`Đã xóa tài khoản [${name}] thành công!`);
+        loadAdminUserList();
+      } catch (err) {
+        alert("Lỗi khi xóa tài khoản: " + err.message);
       }
     }
 
@@ -1471,7 +1504,7 @@
           card.innerHTML = `
             <div class="flex justify-between items-center">
               <span class="font-bold text-[13px] ${hasOrder ? 'text-gray-900' : 'text-gray-500'}">${name}</span>
-              <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide ${hasOrder ? 'bg-emerald-500 text-white shadow-xs' : 'bg-rose-100 text-rose-700'}">
+              <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide ${hasOrder ? 'bg-emerald-50 text-white shadow-xs' : 'bg-rose-100 text-rose-700'}">
                 ${hasOrder ? 'CÓ ĐƠN' : 'CHƯA CÓ ĐƠN'}
               </span>
             </div>
@@ -1554,7 +1587,7 @@
         msg = `👏 BIỂU DƯƠNG DOANH SỐ TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n🎉 Chúc mừng ${hasList.length} bạn đã nổ đơn:\n`;
         hasList.forEach((item, i) => { msg += `${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`; });
       } else {
-        msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
+        msg = `📊 BÁO CÁO TỔNG HỢP ĐƠN DUYỆT TRONG NGÀY\n📅 Ngày duyệt: ${selectedDate}\n📦 Tổng sản lượng ngày: ${totalDayHL.toFixed(2)} HL (${totalDayCases} th)\n\n👏 SR CÓ ĐƠN (${hasList.length}/9 bạn):\n`;
         hasList.forEach((item, i) => { msg += `  ${i + 1}. ${item.name}: ${item.vol.toFixed(2)} HL (${item.cases} th)\n`; });
         if (noList.length > 0) {
           msg += `\n⚠️ SR CHƯA CÓ ĐƠN (${noList.length}/9 bạn):\n`;
@@ -2430,7 +2463,7 @@
       document.getElementById('valPreTar').textContent = `${targetPrem.toFixed(2)} HL`;
       document.getElementById('barPreMini').style.width = `${Math.min(100, pctTargetPrem)}%`;
 
-      // CẬP NHẬT INCENTIVE & TOTAL KPI (SỬA LỖI CPD, VOR & LÀM TRÒN GỌN GÀNG)
+      // CẬP NHẬT INCENTIVE & TOTAL KPI
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0;
@@ -2676,21 +2709,6 @@
       // ==========================================
       // 2. RENDER TAB 2: OLS TRƯNG BÀY BIA (CHUẨN HÓA LEVEL: LV1: 5 th, LV2: 3 th, LV3: 2 th)
       // ==========================================
-      const salesByOutlet = {};
-      const salesHudaCan20ByOutlet = {};
-
-      SEC_ORDERS.forEach(o => {
-        if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
-        if (o.category === "Mainstream") {
-          salesByOutlet[o.code].huda += o.vol;
-          salesHudaCan20ByOutlet[o.code] = (salesHudaCan20ByOutlet[o.code] || 0) + o.qty;
-        }
-        if (o.category === "Premium") {
-          salesByOutlet[o.code].pre += o.vol;
-        }
-        salesByOutlet[o.code].total += o.vol;
-      });
-
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passCount = 0, totTarH = 0, totActH = 0, totTarP = 0, totActP = 0;
       let cLV1 = 0, cLV2 = 0, cLV3 = 0;
