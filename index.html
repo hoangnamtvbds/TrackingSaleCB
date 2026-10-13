@@ -573,7 +573,8 @@
       </div>
       <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
-    <!-- ================= TAB 5: COVERAGE L28D (CHẠM LỌC TRỰC QUAN) ================= -->
+
+    <!-- ================= TAB 5: COVERAGE L28D (TỐI ƯU CHẠM LỌC) ================= -->
     <div id="tab5Content" class="hidden space-y-3">
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
@@ -588,7 +589,7 @@
           <div id="barCoverage" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- 3 THẺ CHẠM ĐỂ LỌC TRỰC TIẾP -->
+        <!-- 3 THẺ CHẠM ĐỂ LỌC TRỰC TIẾP (PHẢN HỒI RÕ RÀNG) -->
         <div class="pt-2 border-t border-gray-100">
           <div class="flex justify-between items-center mb-1.5">
             <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Chạm thẻ để lọc trạng thái:</span>
@@ -607,12 +608,12 @@
             <div id="cardCovLapsed" onclick="setCovStatusFilter('LAPSED')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/50 border-rose-100 opacity-60">
               <span class="text-[10px] font-bold text-rose-600 block">BỊ LAPSED</span>
               <span id="covLapsedCount" class="text-sm font-black text-rose-900 block mt-0.5">0</span>
-              <span class="text-[9px] text-rose-600 font-bold block mt-0.5">>28 ngày chưa đi</span>
+              <span id="covLapsedRateCard" class="text-[9px] text-rose-600 font-bold block mt-0.5">>28 ngày chưa đi</span>
             </div>
           </div>
         </div>
 
-        <!-- LỌC KÊNH TONT / TOFT -->
+        <!-- LỌC THEO KÊNH GỌN GÀNG -->
         <div class="pt-2 border-t border-gray-100">
           <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
             <button id="btnCovChannelAll" onclick="setCovChannelFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold">Tất cả kênh</button>
@@ -1230,8 +1231,7 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA));
-          localStorage.setItem('UPDATE_TIME', data.updated_at);
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('UPDATE_TIME', data.updated_at);
         } catch(e) {}
 
         setText('lblLastUpdate', `Cập nhật: ${data.updated_at}`);
@@ -1516,7 +1516,7 @@
           }
         }
 
-        // 5. NẠP FILE COVERAGE L28D (SEC-19)
+        // 5. NẠP FILE MỚI: COVERAGE OUTLETS BY SR L28D (SEC-19)
         if (fCov) {
           const wb = XLSX.read(await fCov.arrayBuffer(), { dense: false });
           const sCovName = wb.SheetNames.find(s => s.toLowerCase().includes('coverage')) || wb.SheetNames[0];
@@ -1530,7 +1530,7 @@
 
             const h = (raw[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
             let colCode = 5, colName = 6, colStatus = 7, colLastVisit = 8, colChannel = 9, colType = 10, colSr = 11, colCovNote = 14;
-
+            
             h.forEach((v, idx) => {
               if (v === 'code' || v === 'mã điểm bán') colCode = idx;
               if (v === 'name' || v === 'tên điểm bán') colName = idx;
@@ -1593,7 +1593,7 @@
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã cập nhật dữ liệu và các chỉ tiêu hệ thống.`);
+        alert(`Đồng bộ thành công!\nĐã cập nhật ${COVERAGE_DATA.length} điểm Coverage L28D và toàn bộ chỉ tiêu hệ thống.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
@@ -1856,14 +1856,15 @@
       setText('countLV1', c1); setText('passLV1', `Đạt ${p1}/${c1} điểm`);
       setText('countLV2', c2); setText('passLV2', `Đạt ${p2}/${c2} điểm`);
       setText('countLV3', c3); setText('passLV3', `Đạt ${p3}/${c3} điểm`);
-      const cLV1 = document.getElementById('cardLV1'), cLV2 = document.getElementById('cardLV2'), cLV3 = document.getElementById('cardLV3');
+
+      const cLV1 = document.getElementById('cardLV1');
+      const cLV2 = document.getElementById('cardLV2');
+      const cLV3 = document.getElementById('cardLV3');
       if (cLV1 && cLV2 && cLV3) {
-        cLV1.className = (currentTBLevel === 'LV1') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-100 border-blue-500 ring-2 ring-blue-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
-        cLV2.className = (currentTBLevel === 'LV2') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
-        cLV3.className = (currentTBLevel === 'LV3') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-100 border-purple-500 ring-2 ring-purple-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
+        cLV1.className = (currentTBLevel === 'LV1') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-100 border-blue-500 ring-2 ring-blue-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200" + (currentTBLevel !== 'ALL' ? " opacity-60" : "");
+        cLV2.className = (currentTBLevel === 'LV2') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentTBLevel !== 'ALL' ? " opacity-60" : "");
+        cLV3.className = (currentTBLevel === 'LV3') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-100 border-purple-500 ring-2 ring-purple-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200" + (currentTBLevel !== 'ALL' ? " opacity-60" : "");
       }
-      const btnResetTB = document.getElementById('btnResetTBLevel');
-      if (btnResetTB) btnResetTB.classList.toggle('hidden', currentTBLevel === 'ALL');
       const pctPass = listMaster.length ? Math.round((passC / listMaster.length) * 100) : 0;
       setText('txtOutletPercent', `${pctPass}%`); setText('txtOutletAchieved', `${passC} / ${listMaster.length}`);
       setStyleWidth('barOutlet', `${Math.min(100, pctPass)}%`);
@@ -1881,7 +1882,10 @@
         else { cTOFT++; if (aHL >= (l.tarHL - 0.001)) pTOFT++; }
       });
       setText('passLFTont', `Đạt ${pTONT}/${cTONT} điểm`); setText('passLFToft', `Đạt ${pTOFT}/${cTOFT} điểm`);
-      const bLFAll = document.getElementById('btnLFChannelAll'), bLFTont = document.getElementById('btnLFTont'), bLFToft = document.getElementById('btnLFToft');
+
+      const bLFAll = document.getElementById('btnLFChannelAll');
+      const bLFTont = document.getElementById('btnLFTont');
+      const bLFToft = document.getElementById('btnLFToft');
       if (bLFAll && bLFTont && bLFToft) {
         const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
         const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
@@ -1889,10 +1893,12 @@
         bLFTont.className = (currentLFChannel === 'TONT') ? (act + " text-amber-700") : inact;
         bLFToft.className = (currentLFChannel === 'TOFT') ? (act + " text-emerald-700") : inact;
       }
-      const cLFTont = document.getElementById('cardLFTont'), cLFToft = document.getElementById('cardLFToft');
+
+      const cLFTont = document.getElementById('cardLFTont');
+      const cLFToft = document.getElementById('cardLFToft');
       if (cLFTont && cLFToft) {
-        cLFTont.className = (currentLFChannel === 'TONT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentLFChannel !== 'ALL' ? " opacity-50" : "");
-        cLFToft.className = (currentLFChannel === 'TOFT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentLFChannel !== 'ALL' ? " opacity-50" : "");
+        cLFTont.className = (currentLFChannel === 'TONT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentLFChannel !== 'ALL' ? " opacity-60" : "");
+        cLFToft.className = (currentLFChannel === 'TOFT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentLFChannel !== 'ALL' ? " opacity-60" : "");
       }
 
       let listLF = (currentLFChannel !== "ALL") ? baseLF.filter(l => l.channelType === currentLFChannel) : baseLF;
@@ -1933,14 +1939,6 @@
       let cDone = 0, cNeed = 0, cNone = 0;
       baseAudit.forEach(a => { if (a.count >= 2) cDone++; else if (a.count === 1) cNeed++; else cNone++; });
       setText('countAuditDone', cDone); setText('countAuditNeed2', cNeed); setText('countAuditNone', cNone);
-      const cADone = document.getElementById('cardAuditDone'), cANeed2 = document.getElementById('cardAuditNeed2'), cANone = document.getElementById('cardAuditNone');
-      if (cADone && cANeed2 && cANone) {
-        cADone.className = (currentAuditStatus === 'DONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
-        cANeed2.className = (currentAuditStatus === 'NEED_SECOND') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
-        cANone.className = (currentAuditStatus === 'NONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-100 border-rose-500 ring-2 ring-rose-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
-      }
-      const btnResetAudit = document.getElementById('btnResetAuditStatus');
-      if (btnResetAudit) btnResetAudit.classList.toggle('hidden', currentAuditStatus === 'ALL');
       const pctAu = baseAudit.length ? Math.round((cDone / baseAudit.length) * 100) : 0;
       setText('txtAuditPercent', `${pctAu}%`); setText('txtAuditAchieved', `${cDone} / ${baseAudit.length}`);
       setStyleWidth('barAudit', `${Math.min(100, pctAu)}%`);
@@ -1965,7 +1963,7 @@
       });
       setText('txtAuditListCount', `${fAudit.length} điểm bán`);
 
-      // TAB 5: COVERAGE L28D
+      // TAB 5: COVERAGE L28D (CHẠM LỌC CHUẨN XÁC VÀ CẬP NHẬT GIAO DIỆN)
       const baseCov = (selectedSR === "ALL") ? COVERAGE_DATA.filter(c => TEAM_SRS.includes(c.sr)) : COVERAGE_DATA.filter(c => c.sr === selectedSR);
       let covActive = baseCov.length;
       let covTont = 0, covToft = 0, covExisted = 0, covNew = 0, covLapsed = 0;
@@ -1991,7 +1989,7 @@
       setText('covCoveredCount', covCovered);
       setText('covLapsedCount', covLapsed);
 
-      // Cập nhật phản hồi chạm trực quan cho 3 thẻ card của Coverage
+      // CẬP NHẬT HIỆU ỨNG CHỌN (TOUCH FEEDBACK) CHO 3 THẺ TRẠNG THÁI
       const cCovAll = document.getElementById('cardCovAll');
       const cCovCovered = document.getElementById('cardCovCovered');
       const cCovLapsed = document.getElementById('cardCovLapsed');
@@ -2001,7 +1999,7 @@
         cCovLapsed.className = (currentCovStatus === 'LAPSED') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50 border-rose-500 ring-2 ring-rose-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/50 border-rose-100 opacity-60";
       }
 
-      // Cập nhật phản hồi chạm cho nút Kênh TONT / TOFT của Coverage
+      // CẬP NHẬT HIỆU ỨNG CHỌN CHO NÚT KÊNH
       const bCovChanAll = document.getElementById('btnCovChannelAll');
       const bCovChanTont = document.getElementById('btnCovChannelTont');
       const bCovChanToft = document.getElementById('btnCovChannelToft');
