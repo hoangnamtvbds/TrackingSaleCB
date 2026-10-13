@@ -217,12 +217,13 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 4 TAB -->
-    <div class="grid grid-cols-4 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-sm">
+    <!-- THANH CHUYỂN 5 TAB -->
+    <div class="grid grid-cols-5 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[10px] sm:text-[11px] font-extrabold gap-1 shadow-sm">
       <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center">📊 SỐ BÁN</button>
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">🎯 DISPLAY</button>
       <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">💰 LF</button>
       <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📸 CHỤP TB</button>
+      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center">📍 COVERAGE</button>
     </div>
 
     <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
@@ -286,7 +287,7 @@
         </details>
       </div>
 
-      <!-- Khối Thưởng Incentive -->
+      <!-- Khối Thưởng Incentive (4 Trụ cột thu nhập chuẩn xác) -->
       <div class="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 rounded-2xl p-3 border border-amber-200/80 card-shadow space-y-2">
         <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleIncentiveDetail()">
           <div class="flex items-center gap-2">
@@ -424,27 +425,24 @@
 
         <div class="pt-2 border-t border-gray-100">
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ (Chạm để lọc):</span>
-            <button id="btnResetTBLevel" onclick="toggleTBLevel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Xem tất cả</button>
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phân bổ cấp độ:</span>
+            <button id="btnResetTBLevel" onclick="toggleTBLevel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Tất cả cấp độ</button>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center select-none">
             <div id="cardLV1" onclick="toggleTBLevel('LV1')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200">
               <span class="text-[10px] font-bold text-blue-600 block">LEVEL 1</span>
               <span id="countLV1" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
-              <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0</span>
-              <span id="badgeActiveLV1" class="hidden text-[9px] font-black text-white bg-blue-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
+              <span id="passLV1" class="text-[10px] text-blue-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV2" onclick="toggleTBLevel('LV2')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
               <span class="text-[10px] font-bold text-emerald-600 block">LEVEL 2</span>
               <span id="countLV2" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
-              <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0</span>
-              <span id="badgeActiveLV2" class="hidden text-[9px] font-black text-white bg-emerald-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
+              <span id="passLV2" class="text-[10px] text-emerald-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
             <div id="cardLV3" onclick="toggleTBLevel('LV3')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200">
               <span class="text-[10px] font-bold text-purple-600 block">LEVEL 3</span>
               <span id="countLV3" class="text-sm font-black text-purple-900 block mt-0.5">0</span>
-              <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0</span>
-              <span id="badgeActiveLV3" class="hidden text-[9px] font-black text-white bg-purple-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
+              <span id="passLV3" class="text-[10px] text-purple-600 font-bold block mt-0.5">Đạt 0/0 điểm</span>
             </div>
           </div>
         </div>
@@ -479,7 +477,7 @@
       <div id="outletList" class="space-y-2.5"></div>
     </div>
 
-    <!-- ================= TAB 3: OLS LISTING FEE (GOM GỌN, LỌC BẰNG CARD) ================= -->
+    <!-- ================= TAB 3: OLS LISTING FEE ================= -->
     <div id="tab3Content" class="hidden space-y-3">
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
@@ -494,34 +492,30 @@
           <div id="barLF" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- Thanh lọc Đạt / Chưa đạt -->
         <div class="pt-2 border-t border-gray-100">
           <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1 mb-2">
             <button id="btnFilterLFAll" onclick="setLFStatusFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả</button>
             <button id="btnFilterLFFail" onclick="setLFStatusFilter('FAIL')" class="flex-1 py-1.5 rounded-lg text-rose-600 text-center">Chưa đạt</button>
             <button id="btnFilterLFPass" onclick="setLFStatusFilter('PASS')" class="flex-1 py-1.5 rounded-lg text-emerald-600 text-center">Đã đạt</button>
           </div>
+
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+            <button id="btnLFChannelAll" onclick="filterLFChannel('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center">Tất cả kênh</button>
+            <button id="btnLFTont" onclick="filterLFChannel('TONT')" class="flex-1 py-1.5 rounded-lg text-amber-700 text-center">TONT (Quán nhậu)</button>
+            <button id="btnLFToft" onclick="filterLFChannel('TOFT')" class="flex-1 py-1.5 rounded-lg text-emerald-700 text-center">TOFT (Tạp hóa)</button>
+          </div>
         </div>
 
-        <!-- 2 Khối Card TONT / TOFT làm nút lọc chính (Gom gọn - loại bỏ thanh lặp) -->
-        <div class="pt-1">
-          <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kênh điểm bán (Chạm để lọc):</span>
-            <button id="btnResetLFChannel" onclick="toggleLFChannel('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Xem tất cả</button>
+        <div class="pt-1 grid grid-cols-2 gap-2 text-center text-xs select-none">
+          <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
+            <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
+            <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
+            <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-center text-xs select-none">
-            <div id="cardLFTont" onclick="toggleLFChannel('TONT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
-              <span class="text-[10px] font-bold text-amber-800 block">TONT (Quán nhậu)</span>
-              <span class="text-[11px] font-black text-amber-900 block mt-0.5">≥ 15 th Pre tiêu chuẩn</span>
-              <span id="passLFTont" class="text-[10px] text-amber-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-              <span id="badgeActiveTONT" class="hidden text-[9px] font-black text-white bg-amber-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
-            </div>
-            <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
-              <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
-              <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
-              <span id="passLFToft" class="text-[10px] text-emerald-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
-              <span id="badgeActiveTOFT" class="hidden text-[9px] font-black text-white bg-emerald-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
-            </div>
+          <div id="cardLFToft" onclick="toggleLFChannel('TOFT')" class="p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+            <span class="text-[10px] font-bold text-emerald-800 block">TOFT (Tạp hóa)</span>
+            <span class="text-[11px] font-black text-emerald-900 block mt-0.5">≥ 30 th Huda</span>
+            <span id="passLFToft" class="text-[10px] text-emerald-700 font-bold block mt-0.5">Đạt 0/0 điểm</span>
           </div>
         </div>
       </div>
@@ -550,7 +544,7 @@
 
         <div class="pt-2 border-t border-gray-100">
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm (Chạm để lọc):</span>
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Trạng thái chấm:</span>
             <button id="btnResetAuditStatus" onclick="setAuditStatusFilter('ALL')" class="hidden text-[10px] font-bold text-blue-600 hover:underline">Xem tất cả</button>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center select-none">
@@ -558,19 +552,16 @@
               <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐỦ 2 LẦN</span>
               <span id="countAuditDone" class="text-sm font-black text-emerald-950 block mt-0.5">0</span>
               <span class="text-[9px] text-emerald-600 font-semibold block mt-0.5">Hoàn thành</span>
-              <span id="badgeActiveAuditDone" class="hidden text-[9px] font-black text-white bg-emerald-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
             </div>
             <div id="cardAuditNeed2" onclick="setAuditStatusFilter('NEED_SECOND')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
               <span class="text-[9px] font-bold text-amber-800 block uppercase">THIẾU LẦN 2</span>
               <span id="countAuditNeed2" class="text-sm font-black text-amber-950 block mt-0.5">0</span>
               <span class="text-[9px] text-amber-700 font-semibold block mt-0.5">Mới chấm 1 lần</span>
-              <span id="badgeActiveAuditNeed2" class="hidden text-[9px] font-black text-white bg-amber-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
             </div>
             <div id="cardAuditNone" onclick="setAuditStatusFilter('NONE')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200">
               <span class="text-[9px] font-bold text-rose-700 block uppercase">CHƯA CHẤM</span>
               <span id="countAuditNone" class="text-sm font-black text-rose-950 block mt-0.5">0</span>
               <span class="text-[9px] text-rose-600 font-semibold block mt-0.5">Cần đi gấp</span>
-              <span id="badgeActiveAuditNone" class="hidden text-[9px] font-black text-white bg-rose-600 px-1.5 py-0.2 rounded-md mt-1 inline-block">● Đang lọc</span>
             </div>
           </div>
         </div>
@@ -582,12 +573,68 @@
       </div>
       <div id="auditOutletList" class="space-y-2.5"></div>
     </div>
+    <!-- ================= TAB 5: COVERAGE L28D (CHẠM LỌC TRỰC QUAN) ================= -->
+    <div id="tab5Content" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">📍 TỶ LỆ GIỮ ĐỘ PHỦ (L28D)</span>
+          <span id="txtCovPercent" class="text-xs font-extrabold text-emerald-600">0%</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span id="txtCovAchieved" class="text-2xl font-extrabold text-gray-900">0 / 0</span>
+          <span id="txtCovLapsedRate" class="text-xs font-bold text-rose-600">Rớt: 0%</span>
+        </div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div id="barCoverage" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <!-- 3 THẺ CHẠM ĐỂ LỌC TRỰC TIẾP -->
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Chạm thẻ để lọc trạng thái:</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center select-none">
+            <div id="cardCovAll" onclick="setCovStatusFilter('ALL')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-white border-blue-500 ring-2 ring-blue-300 shadow-sm">
+              <span class="text-[10px] font-bold text-blue-600 block">TỔNG ACTIVE</span>
+              <span id="covActiveCount" class="text-sm font-black text-blue-900 block mt-0.5">0</span>
+              <span id="covChannelBreakdown" class="text-[9px] text-gray-500 font-semibold block mt-0.5">0 TONT • 0 TOFT</span>
+            </div>
+            <div id="cardCovCovered" onclick="setCovStatusFilter('COVERED')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/50 border-emerald-100 opacity-60">
+              <span class="text-[10px] font-bold text-emerald-600 block">ĐANG PHỦ</span>
+              <span id="covCoveredCount" class="text-sm font-black text-emerald-900 block mt-0.5">0</span>
+              <span class="text-[9px] text-emerald-600 font-bold block mt-0.5">Existed + New</span>
+            </div>
+            <div id="cardCovLapsed" onclick="setCovStatusFilter('LAPSED')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/50 border-rose-100 opacity-60">
+              <span class="text-[10px] font-bold text-rose-600 block">BỊ LAPSED</span>
+              <span id="covLapsedCount" class="text-sm font-black text-rose-900 block mt-0.5">0</span>
+              <span class="text-[9px] text-rose-600 font-bold block mt-0.5">>28 ngày chưa đi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LỌC KÊNH TONT / TOFT -->
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex p-1 bg-gray-100 rounded-xl text-[11px] font-bold gap-1">
+            <button id="btnCovChannelAll" onclick="setCovChannelFilter('ALL')" class="flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold">Tất cả kênh</button>
+            <button id="btnCovChannelTont" onclick="setCovChannelFilter('TONT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold">TONT (Quán)</button>
+            <button id="btnCovChannelToft" onclick="setCovChannelFilter('TOFT')" class="flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold">TOFT (Tạp hóa)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Danh sách Coverage L28D</span>
+        <span id="txtCovListCount" class="text-[11px] font-semibold text-gray-400">0 điểm</span>
+      </div>
+      <div id="covOutletList" class="space-y-2.5"></div>
+    </div>
   </div>
 
-  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU ================= -->
+  <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU (IR, SAT, MEP & ROUTE) ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" style="padding-top: env(safe-area-inset-top, 24px); padding-bottom: env(safe-area-inset-bottom, 24px);">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       
+      <!-- Header -->
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-sm">🎯</div>
@@ -605,6 +652,7 @@
         <div class="space-y-1.5">
           <span class="text-[10px] font-black text-purple-900 uppercase tracking-wider block px-1">📸 I. CHẤT LƯỢNG HÌNH ẢNH & TỦ LẠNH (IR / SAT)</span>
           
+          <!-- 1. IR Product -->
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-purple-950 text-[11px] block">1. IR Product (Nhận diện sản phẩm)</span>
@@ -613,6 +661,7 @@
             <span id="kpiIrProdPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 2. IR Visibility -->
           <div class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-purple-950 text-[11px] block">2. IR Visibility (Nhận diện biển hiệu)</span>
@@ -621,6 +670,7 @@
             <span id="kpiIrVisPct" class="px-2 py-0.5 bg-purple-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 3. SAT Scanned (Tủ lạnh) -->
           <div class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-sky-950 text-[11px] block">3. SAT Scanned (Quét tủ lạnh)</span>
@@ -629,6 +679,7 @@
             <span id="kpiSatPct" class="px-2 py-0.5 bg-sky-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 4. Điểm FIT Score tổng hợp -->
           <div class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-indigo-950 text-[11px] block">4. Điểm FIT Score</span>
@@ -642,6 +693,7 @@
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-emerald-900 uppercase tracking-wider block px-1">🎯 II. ĐỘ PHỦ & THỰC THI THÁNG (MEP)</span>
           
+          <!-- 5. Độ phủ Coverage -->
           <div class="p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-teal-950 text-[11px] block">5. Tổng Coverage </span>
@@ -650,6 +702,7 @@
             <span id="kpiCovPct" class="px-2 py-0.5 bg-teal-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 6. SKU Ưu tiên -->
           <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-emerald-950 text-[11px] block">6. Chỉ Tiêu SKU Ưu Tiên</span>
@@ -658,6 +711,7 @@
             <span id="kpiSkuPriPct" class="px-2 py-0.5 bg-emerald-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 7. Tổng MP -->
           <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-emerald-950 text-[11px] block">7. Chỉ Tiêu MP (Tổng thực thi)</span>
@@ -671,6 +725,7 @@
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <span class="text-[10px] font-black text-rose-900 uppercase tracking-wider block px-1">🚶‍♂️ III. KỶ LUẬT ĐI TUYẾN MCP</span>
           
+          <!-- 8. Call Per Day -->
           <div class="p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-amber-950 text-[11px] block">8. Call Per Day (Ghé thăm/ngày)</span>
@@ -679,6 +734,7 @@
             <span id="kpiCpdPct" class="px-2 py-0.5 bg-amber-600 text-white font-black rounded-lg text-[10px] shadow-xs">0%</span>
           </div>
 
+          <!-- 9. Visit On Route -->
           <div class="p-2.5 rounded-2xl bg-rose-50/70 border border-rose-200/70 flex justify-between items-center">
             <div>
               <span class="font-bold text-rose-950 text-[11px] block">9. Visit On Route (Đúng tuyến MCP)</span>
@@ -842,6 +898,10 @@
           <label class="text-[11px] font-bold text-gray-600 block mb-1">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
           <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
         </div>
+        <div>
+          <label class="text-[11px] font-bold text-gray-600 block mb-1">5. FILE COVERAGE L28D SEC-19 (.xlsx) <span id="covStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+          <input type="file" id="fileCov" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+        </div>
         <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all">
           ⚡ XÁC NHẬN CẬP NHẬT
         </button>
@@ -882,9 +942,10 @@
     const TEAM_SRS = Object.keys(TEAM_SR_MAP);
 
     let currentLFChannel = "ALL", currentTBStatus = "ALL", currentLFStatus = "ALL", currentTBLevel = "ALL", currentAuditStatus = "ALL";
+    let currentCovStatus = "ALL", currentCovChannel = "ALL";
     let isManagerVerified = false, currentUser = null;
 
-    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {};
+    let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
 
     let supabaseClient = null;
     try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
@@ -930,7 +991,7 @@
 
     // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
-      [1, 2, 3, 4].forEach(i => {
+      [1, 2, 3, 4, 5].forEach(i => {
         const c = document.getElementById(`tab1Content`.replace('1', i));
         const b = document.getElementById(`tabBtn1`.replace('1', i));
         if (c) c.classList.toggle('hidden', i !== tab);
@@ -938,20 +999,20 @@
       });
     }
 
-    function toggleTBLevel(lvl) { 
-      currentTBLevel = (currentTBLevel === lvl && lvl !== 'ALL') ? 'ALL' : lvl; 
-      renderAll(); 
+    function setCovStatusFilter(status) {
+      currentCovStatus = (currentCovStatus === status && status !== 'ALL') ? 'ALL' : status;
+      renderAll();
     }
 
-    function toggleLFChannel(chan) { 
-      currentLFChannel = (currentLFChannel === chan && chan !== 'ALL') ? 'ALL' : chan; 
-      renderAll(); 
+    function setCovChannelFilter(chan) {
+      currentCovChannel = chan;
+      renderAll();
     }
 
-    function setAuditStatusFilter(st) { 
-      currentAuditStatus = (currentAuditStatus === st && st !== 'ALL') ? 'ALL' : st; 
-      renderAll(); 
-    }
+    function toggleTBLevel(lvl) { currentTBLevel = (currentTBLevel === lvl && lvl !== 'ALL') ? 'ALL' : lvl; renderAll(); }
+    function toggleLFChannel(chan) { currentLFChannel = (currentLFChannel === chan && chan !== 'ALL') ? 'ALL' : chan; renderAll(); }
+    function filterLFChannel(chan) { currentLFChannel = chan; renderAll(); }
+    function setAuditStatusFilter(st) { currentAuditStatus = (currentAuditStatus === st && st !== 'ALL') ? 'ALL' : st; renderAll(); }
 
     function setTBStatusFilter(status) {
       currentTBStatus = status;
@@ -1158,9 +1219,10 @@
         if (error || !data || !data.updated_at) { setText('lblLastUpdate', "Chưa có dữ liệu Cloud"); return; }
 
         if (Array.isArray(data.master)) {
-          MASTER = data.master; LISTING_FEE = data.listing || []; AUDIT_DATA = data.audit || []; SALES_TARGETS = data.targets || {};
+          MASTER = data.master; LISTING_FEE = data.listing || []; AUDIT_DATA = data.audit || []; SALES_TARGETS = data.targets || {}; COVERAGE_DATA = data.coverage || [];
         } else if (data.master && typeof data.master === 'object') {
           MASTER = data.master.toft || []; LISTING_FEE = data.master.listing || []; AUDIT_DATA = data.master.audit || data.audit || []; SALES_TARGETS = data.master.targets || data.targets || {};
+          COVERAGE_DATA = data.master.coverage || data.coverage || [];
         }
         SEC_ORDERS = data.sec || []; PROMOTIONS = data.promo || [];
 
@@ -1168,6 +1230,7 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA));
           localStorage.setItem('UPDATE_TIME', data.updated_at);
         } catch(e) {}
 
@@ -1176,6 +1239,7 @@
         document.getElementById('trackStatusText').className = "text-emerald-600 font-bold";
         if (AUDIT_DATA.length > 0) setText('auditStatusText', `(Đã có ${AUDIT_DATA.length} điểm)`);
         if (Object.keys(SALES_TARGETS).length > 0) setText('targetStatusText', `(Đã có ${Object.keys(SALES_TARGETS).length} SR)`);
+        if (COVERAGE_DATA.length > 0) setText('covStatusText', `(Đã có ${COVERAGE_DATA.length} điểm)`);
 
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
       } catch (err) {}
@@ -1195,8 +1259,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       try {
-        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lu = localStorage.getItem('UPDATE_TIME');
-        if (lm) MASTER = JSON.parse(lm); if (ll) LISTING_FEE = JSON.parse(ll); if (ls) SEC_ORDERS = JSON.parse(ls); if (lp) PROMOTIONS = JSON.parse(lp); if (la) AUDIT_DATA = JSON.parse(la); if (lt) SALES_TARGETS = JSON.parse(lt); if (lu) setText('lblLastUpdate', `Cập nhật: ${lu}`);
+        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lc = localStorage.getItem('COVERAGE_DATA'), lu = localStorage.getItem('UPDATE_TIME');
+        if (lm) MASTER = JSON.parse(lm); if (ll) LISTING_FEE = JSON.parse(ll); if (ls) SEC_ORDERS = JSON.parse(ls); if (lp) PROMOTIONS = JSON.parse(lp); if (la) AUDIT_DATA = JSON.parse(la); if (lt) SALES_TARGETS = JSON.parse(lt); if (lc) COVERAGE_DATA = JSON.parse(lc); if (lu) setText('lblLastUpdate', `Cập nhật: ${lu}`);
 
         const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
         if (savedUserStr) { currentUser = JSON.parse(savedUserStr); applyUserPermissions(); }
@@ -1265,13 +1329,14 @@
       setText('iconIncentiveToggle', isH ? '▼' : '▲'); setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-    // ================= XỬ LÝ NẠP FILE =================
+    // ================= XỬ LÝ NẠP FILE (DÒ HEADER & TÍNH TOÁN CHUẨN) =================
     async function processAndSave() {
       const fTrack = document.getElementById('fileTrack').files[0], fSec = document.getElementById('fileSec').files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0], fTarget = document.getElementById('fileTarget')?.files[0];
+      const fCov = document.getElementById('fileCov')?.files[0];
 
       if (!fTrack && MASTER.length === 0) { alert("Chưa có file Tracking Master!"); return; }
-      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
+      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget && !fCov) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
 
       const btn = document.getElementById('btnSaveData');
       btn.textContent = "Đang xử lý dữ liệu...";
@@ -1400,6 +1465,7 @@
           AUDIT_DATA = Object.values(aMap);
         }
 
+        // 4. ĐỌC SHEET FIT-10 (CHỤP ĐỦ IR PRODUCT, IR VISIBILITY, SAT SCANNED VÀ CÁC CHỈ TIÊU)
         if (fTarget) {
           const wb = XLSX.read(await fTarget.arrayBuffer(), { dense: false });
           const sTar = wb.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wb.SheetNames[0];
@@ -1427,6 +1493,7 @@
                     mep_act: parseFloat(row[36 + offset]) || 0, cov_act: parseFloat(row[37 + offset]) || 0, sku_pri_act: skuActSum,
                     mep_ach: parseFloat(row[49 + offset]) || 0, mep_inc: parseFloat(row[50 + offset]) || 0,
 
+                    // Bổ sung IR Visit & SAT Scanned chính xác theo index
                     ir_visit_tar: parseFloat(row[51 + offset]) || 0,
                     total_visit: parseFloat(row[52 + offset]) || 0,
                     ir_product: parseFloat(row[53 + offset]) || 0,
@@ -1449,13 +1516,67 @@
           }
         }
 
+        // 5. NẠP FILE COVERAGE L28D (SEC-19)
+        if (fCov) {
+          const wb = XLSX.read(await fCov.arrayBuffer(), { dense: false });
+          const sCovName = wb.SheetNames.find(s => s.toLowerCase().includes('coverage')) || wb.SheetNames[0];
+          if (wb.Sheets[sCovName]) {
+            const raw = XLSX.utils.sheet_to_json(wb.Sheets[sCovName], { header: 1 });
+            let hIdx = 1;
+            for (let i = 0; i < Math.min(6, raw.length); i++) {
+              const rowStr = (raw[i] || []).join(' ').toLowerCase();
+              if (rowStr.includes('srname') || rowStr.includes('last visit')) { hIdx = i; break; }
+            }
+
+            const h = (raw[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
+            let colCode = 5, colName = 6, colStatus = 7, colLastVisit = 8, colChannel = 9, colType = 10, colSr = 11, colCovNote = 14;
+
+            h.forEach((v, idx) => {
+              if (v === 'code' || v === 'mã điểm bán') colCode = idx;
+              if (v === 'name' || v === 'tên điểm bán') colName = idx;
+              if (v === 'status' || v.includes('trạng thái')) colStatus = idx;
+              if (v.includes('last visit') || v.includes('viếng thăm')) colLastVisit = idx;
+              if (v === 'channel' || v.includes('kênh')) colChannel = idx;
+              if (v.includes('outlet type') || v.includes('loại hình')) colType = idx;
+              if (v === 'srname' || v === 'sr' || v.includes('tên sr')) colSr = idx;
+            });
+
+            COVERAGE_DATA = [];
+            for (let r = hIdx + 1; r < raw.length; r++) {
+              const row = raw[r]; if (!row || !row[colCode]) continue;
+              const status = String(row[colStatus] || '').trim();
+              if (status.toLowerCase() !== 'approved') continue;
+
+              const srNorm = normalizeSR(row[colSr]);
+              if (!TEAM_SRS.includes(srNorm)) continue;
+
+              const code = String(row[colCode]).trim();
+              const name = String(row[colName] || '').trim();
+              const channel = String(row[colChannel] || '').trim().toUpperCase();
+              const covNote = String(row[colCovNote] || 'Lapsed').trim();
+              const lastVisit = formatAuditDate(row[colLastVisit]);
+
+              COVERAGE_DATA.push({
+                code, name, sr: srNorm, channel: (channel === 'TONT' ? 'TONT' : 'TOFT'),
+                lastVisit, status: 'Approved', covNote
+              });
+            }
+          }
+        }
+
         const nowStr = new Date().toLocaleString('vi-VN');
         btn.textContent = "Đang gửi lên Cloud...";
+
+        const payload = {
+          id: 'CURRENT_DATA',
+          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
+          sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
+        };
 
         const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-          body: JSON.stringify({ id: 'CURRENT_DATA', master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS }, sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr })
+          body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error(await res.text());
 
@@ -1463,14 +1584,16 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('UPDATE_TIME', nowStr);
-        } catch (e) {}
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('UPDATE_TIME', nowStr);
+        } catch (storageErr) {
+          console.warn("Bộ nhớ máy đầy, dữ liệu ưu tiên lưu an toàn trên Cloud.");
+        }
 
         setText('lblLastUpdate', `Cập nhật: ${nowStr}`);
         toggleAdminModal();
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã nạp ${SEC_ORDERS.length} đơn và ${Object.keys(SALES_TARGETS).length} SR Target.`);
+        alert(`Đồng bộ thành công!\nĐã cập nhật dữ liệu và các chỉ tiêu hệ thống.`);
       } catch (err) {
         alert("Lỗi khi xử lý file: " + (err.message || err));
         btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
@@ -1529,7 +1652,7 @@
       setText('valPreTar', `${targetPrem.toFixed(2)} HL`);
       setStyleWidth('barPreMini', `${Math.min(100, pctTargetPrem)}%`);
 
-      // 3. INCENTIVE & TOTAL KPI MODAL
+      // 3. INCENTIVE (TIỀN THƯỞNG) & MODAL TOTAL KPI (CHUYÊN SÂU CHẤT LƯỢNG THỰC ĐỊA & KỶ LUẬT)
       if (selectedSR === "ALL") {
         let sumVolInc = 0, sumSkuInc = 0, sumMepInc = 0, sumFitInc = 0, sumTotInc = 0;
         let sumVolTar = 0, sumVolAct = 0, sumPreTar = 0, sumPreAct = 0, sumMepTar = 0, sumMepAct = 0;
@@ -1570,6 +1693,7 @@
         const pIrVis = sumTotVisib > 0 ? Math.round((sumIrVisib / sumTotVisib) * 100) : 0;
         const pSat = sumTotSat > 0 ? Math.round((sumSatScan / sumTotSat) * 100) : 0;
 
+        // Card Incentive ngoài màn hình (Ví tiền SR)
         setText('txtTotalIncentiveDisplay', `${sumTotInc.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${sumVolAct.toFixed(1)} / ${sumVolTar.toFixed(1)} HL`); setText('incVolAch', `${pV}%`); setText('incVolVal', `${sumVolInc.toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${sumPreAct.toFixed(1)} / ${sumPreTar.toFixed(1)} HL`); setText('incSkuAch', `${pP}%`); setText('incSkuVal', `${sumSkuInc.toLocaleString('vi-VN')} đ`);
@@ -1577,6 +1701,7 @@
         setText('incFitRatio', `${avgFA}% / ${avgFT}%`); setText('incFitAch', `${pF}%`); setText('incFitVal', `${sumFitInc.toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${sumTotInc.toLocaleString('vi-VN')} đ (Toàn team)`);
 
+        // Popup Total KPI Modal: 3 Khối chuyên sâu (Không trùng sản lượng)
         setText('kpiIrProdRatio', `${Math.round(sumIrProd)} / ${Math.round(sumTotVisit)} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${Math.round(sumIrVisib)} / ${Math.round(sumTotVisib)} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${Math.round(sumSatScan)} / ${Math.round(sumTotSat)} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1610,6 +1735,7 @@
 
         const tot = d.total_inc || 0;
 
+        // Card Incentive ngoài màn hình
         setText('txtTotalIncentiveDisplay', `${tot.toLocaleString('vi-VN')} đ`);
         setText('incVolRatio', `${vA.toFixed(2)} / ${vT.toFixed(2)} HL`); setText('incVolAch', `${vAch}%`); setText('incVolVal', `${(d.vol_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incSkuRatio', `${pA.toFixed(2)} / ${pT.toFixed(2)} HL`); setText('incSkuAch', `${pAch}%`); setText('incSkuVal', `${(d.sku_inc || 0).toLocaleString('vi-VN')} đ`);
@@ -1617,6 +1743,7 @@
         setText('incFitRatio', `${fAP}% / ${fTP}%`); setText('incFitAch', `${fAch}%`); setText('incFitVal', `${(d.fit_inc || 0).toLocaleString('vi-VN')} đ`);
         setText('incTotalVal', `${tot.toLocaleString('vi-VN')} đ`);
 
+        // Popup Total KPI Modal: 3 Khối chuyên sâu
         setText('kpiIrProdRatio', `${irProd} / ${totVis} lượt đạt`); setText('kpiIrProdPct', `${pIrProd}%`);
         setText('kpiIrVisRatio', `${irVisib} / ${totVisib} điểm đạt`); setText('kpiIrVisPct', `${pIrVis}%`);
         setText('kpiSatRatio', `${satScan} / ${totSat} tủ quét`); setText('kpiSatPct', `${pSat}%`);
@@ -1687,7 +1814,7 @@
         prBox.innerHTML += `<div class="p-2.5 bg-white rounded-xl border border-gray-100 flex justify-between items-center"><div class="pr-2"><div class="font-bold text-gray-800 text-[11px]">${k}</div><div class="text-[10px] text-gray-400 mt-0.5">${item.reward} • Áp dụng ${item.outlets.size} điểm</div></div><span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-lg text-xs whitespace-nowrap">${item.count} suất</span></div>`;
       });
 
-      // ================= 4. TAB 2: DISPLAY (ACTIVE STATE TRỰC QUAN) =================
+      // 4. TAB 2: DISPLAY (CHUẨN 5/3/2 THÙNG)
       const listMaster = (selectedSR === "ALL") ? MASTER.filter(m => TEAM_SRS.includes(m.sr)) : MASTER.filter(m => m.sr === selectedSR);
       let passC = 0, totTH = 0, totAH = 0, totTP = 0, totAP = 0;
       let c1 = 0, c2 = 0, c3 = 0, p1 = 0, p2 = 0, p3 = 0;
@@ -1715,19 +1842,6 @@
         listTB.push({ item: m, aH, aP, effPre, effHuda: m.tarHuda, isPass, pct, miss });
       });
 
-      // Cập nhật giao diện Active cho Thẻ Level (Card LV1, LV2, LV3)
-      const isL1 = (currentTBLevel === 'LV1'), isL2 = (currentTBLevel === 'LV2'), isL3 = (currentTBLevel === 'LV3');
-      const isFilteringLevel = (currentTBLevel !== 'ALL');
-      document.getElementById('btnResetTBLevel').classList.toggle('hidden', !isFilteringLevel);
-
-      document.getElementById('cardLV1').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isL1 ? 'bg-blue-100/90 border-blue-500 ring-2 ring-blue-500 shadow-md' : (isFilteringLevel ? 'bg-blue-50/40 border-blue-100 opacity-45' : 'bg-blue-50/70 border-blue-200')}`;
-      document.getElementById('cardLV2').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isL2 ? 'bg-emerald-100/90 border-emerald-500 ring-2 ring-emerald-500 shadow-md' : (isFilteringLevel ? 'bg-emerald-50/40 border-emerald-100 opacity-45' : 'bg-emerald-50/70 border-emerald-200')}`;
-      document.getElementById('cardLV3').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isL3 ? 'bg-purple-100/90 border-purple-500 ring-2 ring-purple-500 shadow-md' : (isFilteringLevel ? 'bg-purple-50/40 border-purple-100 opacity-45' : 'bg-purple-50/70 border-purple-200')}`;
-
-      document.getElementById('badgeActiveLV1').classList.toggle('hidden', !isL1);
-      document.getElementById('badgeActiveLV2').classList.toggle('hidden', !isL2);
-      document.getElementById('badgeActiveLV3').classList.toggle('hidden', !isL3);
-
       if (currentTBLevel !== 'ALL') listTB = listTB.filter(p => p.item.level === currentTBLevel);
       if (searchKeyword) listTB = listTB.filter(p => p.item.name.toLowerCase().includes(searchKeyword) || p.item.code.toLowerCase().includes(searchKeyword));
       if (currentTBStatus === "FAIL") listTB = listTB.filter(p => !p.isPass);
@@ -1739,9 +1853,17 @@
         outBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${o.item.code} • ${o.item.sr} • <span class="text-blue-600 font-extrabold">${o.item.level}</span></div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${o.item.name}</div></div><div class="flex items-center gap-1.5"><span class="text-[11px] font-extrabold ${o.isPass ? 'text-emerald-600' : 'text-gray-400'}">${o.pct}%</span><span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${o.isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">${o.isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span></div></div><div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${o.isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, o.pct)}%"></div></div><div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs"><div class="text-[11px] text-gray-500 space-x-2"><span>Huda: <b>${o.aH.toFixed(2)}</b>/${o.effHuda.toFixed(2)}</span><span>Pre: <b>${o.aP.toFixed(2)}</b>/${o.effPre.toFixed(2)}</span></div><div>${o.miss}</div></div></div>`;
       });
 
-      setText('countLV1', c1); setText('passLV1', `Đạt ${p1}/${c1}`);
-      setText('countLV2', c2); setText('passLV2', `Đạt ${p2}/${c2}`);
-      setText('countLV3', c3); setText('passLV3', `Đạt ${p3}/${c3}`);
+      setText('countLV1', c1); setText('passLV1', `Đạt ${p1}/${c1} điểm`);
+      setText('countLV2', c2); setText('passLV2', `Đạt ${p2}/${c2} điểm`);
+      setText('countLV3', c3); setText('passLV3', `Đạt ${p3}/${c3} điểm`);
+      const cLV1 = document.getElementById('cardLV1'), cLV2 = document.getElementById('cardLV2'), cLV3 = document.getElementById('cardLV3');
+      if (cLV1 && cLV2 && cLV3) {
+        cLV1.className = (currentTBLevel === 'LV1') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-100 border-blue-500 ring-2 ring-blue-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-blue-50/70 border-blue-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
+        cLV2.className = (currentTBLevel === 'LV2') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
+        cLV3.className = (currentTBLevel === 'LV3') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-100 border-purple-500 ring-2 ring-purple-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-purple-50/70 border-purple-200" + (currentTBLevel !== 'ALL' ? " opacity-50" : "");
+      }
+      const btnResetTB = document.getElementById('btnResetTBLevel');
+      if (btnResetTB) btnResetTB.classList.toggle('hidden', currentTBLevel === 'ALL');
       const pctPass = listMaster.length ? Math.round((passC / listMaster.length) * 100) : 0;
       setText('txtOutletPercent', `${pctPass}%`); setText('txtOutletAchieved', `${passC} / ${listMaster.length}`);
       setStyleWidth('barOutlet', `${Math.min(100, pctPass)}%`);
@@ -1749,7 +1871,7 @@
       setText('txtVolPre', `${totAP.toFixed(2)} / ${totTP.toFixed(2)} HL`); setStyleWidth('barPre', `${totTP ? Math.min(100, Math.round((totAP / totTP) * 100)) : 0}%`);
       setText('txtListCount', `${listTB.length} điểm bán`);
 
-      // ================= 5. TAB 3: LISTING FEE (GOM GỌN & ACTIVE STATE) =================
+      // 5. TAB 3: LISTING FEE
       const baseLF = (selectedSR === "ALL") ? LISTING_FEE.filter(l => TEAM_SRS.includes(l.sr)) : LISTING_FEE.filter(l => l.sr === selectedSR);
       let cTONT = 0, pTONT = 0, cTOFT = 0, pTOFT = 0;
       baseLF.forEach(l => {
@@ -1759,23 +1881,25 @@
         else { cTOFT++; if (aHL >= (l.tarHL - 0.001)) pTOFT++; }
       });
       setText('passLFTont', `Đạt ${pTONT}/${cTONT} điểm`); setText('passLFToft', `Đạt ${pTOFT}/${cTOFT} điểm`);
-
-      // Cập nhật giao diện Active cho Thẻ Kênh LF (card TONT / TOFT)
-      const isTONT = (currentLFChannel === 'TONT'), isTOFT = (currentLFChannel === 'TOFT');
-      const isFilteringChannel = (currentLFChannel !== 'ALL');
-      document.getElementById('btnResetLFChannel').classList.toggle('hidden', !isFilteringChannel);
-
-      document.getElementById('cardLFTont').className = `p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isTONT ? 'bg-amber-100/90 border-amber-500 ring-2 ring-amber-500 shadow-md' : (isFilteringChannel ? 'bg-amber-50/40 border-amber-100 opacity-45' : 'bg-amber-50/70 border-amber-200')}`;
-      document.getElementById('cardLFToft').className = `p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isTOFT ? 'bg-emerald-100/90 border-emerald-500 ring-2 ring-emerald-500 shadow-md' : (isFilteringChannel ? 'bg-emerald-50/40 border-emerald-100 opacity-45' : 'bg-emerald-50/70 border-emerald-200')}`;
-
-      document.getElementById('badgeActiveTONT').classList.toggle('hidden', !isTONT);
-      document.getElementById('badgeActiveTOFT').classList.toggle('hidden', !isTOFT);
+      const bLFAll = document.getElementById('btnLFChannelAll'), bLFTont = document.getElementById('btnLFTont'), bLFToft = document.getElementById('btnLFToft');
+      if (bLFAll && bLFTont && bLFToft) {
+        const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
+        const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
+        bLFAll.className = (currentLFChannel === 'ALL') ? act : inact;
+        bLFTont.className = (currentLFChannel === 'TONT') ? (act + " text-amber-700") : inact;
+        bLFToft.className = (currentLFChannel === 'TOFT') ? (act + " text-emerald-700") : inact;
+      }
+      const cLFTont = document.getElementById('cardLFTont'), cLFToft = document.getElementById('cardLFToft');
+      if (cLFTont && cLFToft) {
+        cLFTont.className = (currentLFChannel === 'TONT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentLFChannel !== 'ALL' ? " opacity-50" : "");
+        cLFToft.className = (currentLFChannel === 'TOFT') ? "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2.5 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentLFChannel !== 'ALL' ? " opacity-50" : "");
+      }
 
       let listLF = (currentLFChannel !== "ALL") ? baseLF.filter(l => l.channelType === currentLFChannel) : baseLF;
       let passLF = 0, prepLF = [];
       listLF.forEach(l => {
-        const isChTONT = (l.channelType === "TONT");
-        const aHL = isChTONT ? (salesByOutlet[l.code]?.pre || 0) : (salesByOutlet[l.code]?.huda || 0);
+        const isTONT = (l.channelType === "TONT");
+        const aHL = isTONT ? (salesByOutlet[l.code]?.pre || 0) : (salesByOutlet[l.code]?.huda || 0);
         const aTC = Math.round((aHL / CASE_VOLUME) * 10) / 10;
         const isPass = aHL >= (l.tarHL - 0.001);
         const pct = l.tarHL > 0 ? Math.round((aHL / l.tarHL) * 100) : 0;
@@ -1784,9 +1908,9 @@
         let miss = isPass ? `<span class="text-[11px] font-bold text-emerald-600">✓ ĐÃ ĐẠT (${pct}%)</span>` : '';
         if (!isPass) {
           const gap = Math.max(0, l.tarHL - aHL);
-          miss = isChTONT ? `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${Math.ceil(gap / CASE_VOLUME)}</b> th Pre tiêu chuẩn (${pct}%)</span>` : `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${Math.ceil(gap / HUDA_CAN20_VOL)}</b> th lon 20 (${pct}%)</span>`;
+          miss = isTONT ? `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${Math.ceil(gap / CASE_VOLUME)}</b> th Pre tiêu chuẩn (${pct}%)</span>` : `<span class="text-[11px] font-semibold text-rose-500">Thiếu <b>${Math.ceil(gap / HUDA_CAN20_VOL)}</b> th lon 20 (${pct}%)</span>`;
         }
-        const disp = isChTONT ? `Thực bán: <b class="text-gray-900">${aTC}</b>/${l.tarCases} th Pre <span class="text-gray-400">(${aHL.toFixed(2)} HL)</span>` : `Thực bán: <b class="text-gray-900">${aTC}</b>/${l.tarCases} th Huda <span class="text-gray-400">(${aHL.toFixed(2)} HL)</span>`;
+        const disp = isTONT ? `Thực bán: <b class="text-gray-900">${aTC}</b>/${l.tarCases} th Pre <span class="text-gray-400">(${aHL.toFixed(2)} HL)</span>` : `Thực bán: <b class="text-gray-900">${aTC}</b>/${l.tarCases} th Huda <span class="text-gray-400">(${aHL.toFixed(2)} HL)</span>`;
         prepLF.push({ item: l, isPass, pct, disp, miss });
       });
 
@@ -1804,27 +1928,22 @@
       setText('txtLFPercent', `${pctLF}%`); setText('txtLFAchieved', `${passLF} / ${listLF.length}`);
       setStyleWidth('barLF', `${Math.min(100, pctLF)}%`); setText('txtLFListCount', `${prepLF.length} điểm bán`);
 
-      // ================= 6. TAB 4: CHỤP TB (ACTIVE STATE TRỰC QUAN) =================
+      // 6. TAB 4: CHỤP TB
       const baseAudit = (selectedSR === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === selectedSR);
       let cDone = 0, cNeed = 0, cNone = 0;
       baseAudit.forEach(a => { if (a.count >= 2) cDone++; else if (a.count === 1) cNeed++; else cNone++; });
       setText('countAuditDone', cDone); setText('countAuditNeed2', cNeed); setText('countAuditNone', cNone);
+      const cADone = document.getElementById('cardAuditDone'), cANeed2 = document.getElementById('cardAuditNeed2'), cANone = document.getElementById('cardAuditNone');
+      if (cADone && cANeed2 && cANone) {
+        cADone.className = (currentAuditStatus === 'DONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
+        cANeed2.className = (currentAuditStatus === 'NEED_SECOND') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
+        cANone.className = (currentAuditStatus === 'NONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-100 border-rose-500 ring-2 ring-rose-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
+      }
+      const btnResetAudit = document.getElementById('btnResetAuditStatus');
+      if (btnResetAudit) btnResetAudit.classList.toggle('hidden', currentAuditStatus === 'ALL');
       const pctAu = baseAudit.length ? Math.round((cDone / baseAudit.length) * 100) : 0;
       setText('txtAuditPercent', `${pctAu}%`); setText('txtAuditAchieved', `${cDone} / ${baseAudit.length}`);
       setStyleWidth('barAudit', `${Math.min(100, pctAu)}%`);
-
-      // Cập nhật giao diện Active cho Thẻ Chụp TB
-      const isADone = (currentAuditStatus === 'DONE'), isANeed = (currentAuditStatus === 'NEED_SECOND'), isANone = (currentAuditStatus === 'NONE');
-      const isFilteringAudit = (currentAuditStatus !== 'ALL');
-      document.getElementById('btnResetAuditStatus').classList.toggle('hidden', !isFilteringAudit);
-
-      document.getElementById('cardAuditDone').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isADone ? 'bg-emerald-100/90 border-emerald-500 ring-2 ring-emerald-500 shadow-md' : (isFilteringAudit ? 'bg-emerald-50/40 border-emerald-100 opacity-45' : 'bg-emerald-50/70 border-emerald-200')}`;
-      document.getElementById('cardAuditNeed2').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isANeed ? 'bg-amber-100/90 border-amber-500 ring-2 ring-amber-500 shadow-md' : (isFilteringAudit ? 'bg-amber-50/40 border-amber-100 opacity-45' : 'bg-amber-50/70 border-amber-200')}`;
-      document.getElementById('cardAuditNone').className = `p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all ${isANone ? 'bg-rose-100/90 border-rose-500 ring-2 ring-rose-500 shadow-md' : (isFilteringAudit ? 'bg-rose-50/40 border-rose-100 opacity-45' : 'bg-rose-50/70 border-rose-200')}`;
-
-      document.getElementById('badgeActiveAuditDone').classList.toggle('hidden', !isADone);
-      document.getElementById('badgeActiveAuditNeed2').classList.toggle('hidden', !isANeed);
-      document.getElementById('badgeActiveAuditNone').classList.toggle('hidden', !isANone);
 
       let fAudit = baseAudit;
       if (currentAuditStatus === 'DONE') fAudit = fAudit.filter(a => a.count >= 2);
@@ -1845,6 +1964,103 @@
         aBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${a.name}</div></div><div><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${a.count >= 2 ? 'bg-emerald-100 text-emerald-800' : (a.count === 1 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700')}">${a.count >= 2 ? 'ĐỦ 2 LẦN' : (a.count === 1 ? 'THIẾU LẦN 2' : 'CHƯA CHẤM')}</span></div></div><div class="pt-1.5 border-t border-gray-100">${detHTML}</div></div>`;
       });
       setText('txtAuditListCount', `${fAudit.length} điểm bán`);
+
+      // TAB 5: COVERAGE L28D
+      const baseCov = (selectedSR === "ALL") ? COVERAGE_DATA.filter(c => TEAM_SRS.includes(c.sr)) : COVERAGE_DATA.filter(c => c.sr === selectedSR);
+      let covActive = baseCov.length;
+      let covTont = 0, covToft = 0, covExisted = 0, covNew = 0, covLapsed = 0;
+
+      baseCov.forEach(c => {
+        if (c.channel === 'TONT') covTont++; else covToft++;
+        if (c.covNote === 'Lapsed') covLapsed++;
+        else if (c.covNote === 'New') covNew++;
+        else covExisted++;
+      });
+
+      const covCovered = covExisted + covNew;
+      const pctCov = covActive > 0 ? Math.round((covCovered / covActive) * 100) : 0;
+      const pctLapsed = covActive > 0 ? (covLapsed / covActive * 100).toFixed(1) : '0.0';
+
+      setText('txtCovPercent', `${pctCov}%`);
+      setText('txtCovAchieved', `${covCovered} / ${covActive}`);
+      setText('txtCovLapsedRate', `Rớt: ${pctLapsed}%`);
+      setStyleWidth('barCoverage', `${Math.min(100, pctCov)}%`);
+
+      setText('covActiveCount', covActive);
+      setText('covChannelBreakdown', `${covTont} TONT • ${covToft} TOFT`);
+      setText('covCoveredCount', covCovered);
+      setText('covLapsedCount', covLapsed);
+
+      // Cập nhật phản hồi chạm trực quan cho 3 thẻ card của Coverage
+      const cCovAll = document.getElementById('cardCovAll');
+      const cCovCovered = document.getElementById('cardCovCovered');
+      const cCovLapsed = document.getElementById('cardCovLapsed');
+      if (cCovAll && cCovCovered && cCovLapsed) {
+        cCovAll.className = (currentCovStatus === 'ALL') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-white border-blue-500 ring-2 ring-blue-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-gray-50 border-gray-200 opacity-60";
+        cCovCovered.className = (currentCovStatus === 'COVERED') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/50 border-emerald-100 opacity-60";
+        cCovLapsed.className = (currentCovStatus === 'LAPSED') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50 border-rose-500 ring-2 ring-rose-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/50 border-rose-100 opacity-60";
+      }
+
+      // Cập nhật phản hồi chạm cho nút Kênh TONT / TOFT của Coverage
+      const bCovChanAll = document.getElementById('btnCovChannelAll');
+      const bCovChanTont = document.getElementById('btnCovChannelTont');
+      const bCovChanToft = document.getElementById('btnCovChannelToft');
+      if (bCovChanAll && bCovChanTont && bCovChanToft) {
+        const act = "flex-1 py-1.5 rounded-lg bg-white text-gray-800 shadow-sm text-center font-bold";
+        const inact = "flex-1 py-1.5 rounded-lg text-gray-500 text-center font-bold";
+        bCovChanAll.className = (currentCovChannel === 'ALL') ? act : inact;
+        bCovChanTont.className = (currentCovChannel === 'TONT') ? (act + " text-amber-700") : inact;
+        bCovChanToft.className = (currentCovChannel === 'TOFT') ? (act + " text-emerald-700") : inact;
+      }
+
+      let fCovList = baseCov;
+      if (currentCovStatus === 'LAPSED') fCovList = fCovList.filter(c => c.covNote === 'Lapsed');
+      else if (currentCovStatus === 'COVERED') fCovList = fCovList.filter(c => c.covNote !== 'Lapsed');
+
+      if (currentCovChannel === 'TONT') fCovList = fCovList.filter(c => c.channel === 'TONT');
+      else if (currentCovChannel === 'TOFT') fCovList = fCovList.filter(c => c.channel === 'TOFT');
+
+      if (searchKeyword) fCovList = fCovList.filter(c => c.name.toLowerCase().includes(searchKeyword) || c.code.toLowerCase().includes(searchKeyword));
+
+      fCovList.sort((a,b) => {
+        if (a.covNote === 'Lapsed' && b.covNote !== 'Lapsed') return -1;
+        if (a.covNote !== 'Lapsed' && b.covNote === 'Lapsed') return 1;
+        return 0;
+      });
+
+      const covBox = document.getElementById('covOutletList');
+      if (covBox) {
+        covBox.innerHTML = '';
+        if (fCovList.length === 0) {
+          covBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Chưa có dữ liệu Coverage. Hãy nạp file SEC-19.</div>`;
+        } else {
+          fCovList.forEach(c => {
+            const isLapsed = (c.covNote === 'Lapsed');
+            const noteBadge = isLapsed 
+              ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-rose-100 text-rose-700 shadow-xs">⚠️ LAPSED (>28D)</span>`
+              : (c.covNote === 'New' ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-blue-100 text-blue-700 shadow-xs">✨ NEW</span>` 
+                                     : `<span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-700 shadow-xs">✓ EXISTED</span>`);
+
+            covBox.innerHTML += `
+              <div class="bg-white rounded-2xl p-3.5 card-shadow border ${isLapsed ? 'border-rose-200/80 bg-rose-50/20' : 'border-gray-100'} space-y-2">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-[10px] font-bold text-gray-400 tracking-wide">
+                      ${c.code} • ${TEAM_SR_MAP[c.sr] || c.sr} • <span class="${c.channel === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${c.channel}</span>
+                    </div>
+                    <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${c.name}</div>
+                  </div>
+                  <div>${noteBadge}</div>
+                </div>
+                <div class="pt-1.5 border-t border-gray-100 flex justify-between items-center text-[10px]">
+                  <span class="text-gray-500">Ghé cuối: <b class="${isLapsed ? 'text-rose-600' : 'text-gray-700'}">${c.lastVisit || 'Chưa rõ'}</b></span>
+                  <span class="${isLapsed ? 'text-rose-600 font-bold' : 'text-emerald-600 font-medium'}">${isLapsed ? 'Cần ghé ngay' : 'Đang duy trì'}</span>
+                </div>
+              </div>`;
+          });
+        }
+        setText('txtCovListCount', `${fCovList.length} điểm bán`);
+      }
     }
 
     // ================= BÁO CÁO ZALO & SOI ĐƠN =================
