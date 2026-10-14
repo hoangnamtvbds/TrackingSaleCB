@@ -14,13 +14,15 @@
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     input, button, select { touch-action: manipulation; }
-    /* Bảng ma trận FIT-10 cuộn tự do không khóa */
     .table-fit-matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 680px; font-size: 11px; }
     .table-fit-matrix th, .table-fit-matrix td { border: 1px solid #d1d5db; padding: 5px 8px; text-align: center; white-space: nowrap; }
     .table-fit-matrix th { font-weight: 800; }
   </style>
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-none flex flex-col items-center gap-2 w-full max-w-xs px-3"></div>
 
   <!-- ================= MÀN HÌNH ĐĂNG NHẬP ================= -->
   <div id="loginScreen" class="fixed inset-0 bg-[#F8F9FA] z-[999] flex items-center justify-center p-4">
@@ -143,6 +145,31 @@
     </div>
   </div>
 
+  <!-- ================= MODAL HỒ SƠ 360° ĐIỂM BÁN ================= -->
+  <div id="outlet360Modal" class="fixed inset-0 bg-black/75 z-[150] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" onclick="if(event.target===this) closeOutlet360()">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[88vh] flex flex-col">
+      <div class="flex justify-between items-start border-b border-gray-100 pb-2.5">
+        <div class="pr-2">
+          <div class="flex items-center gap-1.5">
+            <span id="o360Code" class="text-[10px] font-black px-2 py-0.5 rounded-md bg-blue-100 text-[#1F4E79]">CD000000</span>
+            <span id="o360Sr" class="text-[10px] font-bold text-gray-500">• SR</span>
+          </div>
+          <h3 id="o360Name" class="text-sm font-black text-gray-900 mt-1 leading-snug">Tên Điểm Bán</h3>
+        </div>
+        <button onclick="closeOutlet360()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center shrink-0 cursor-pointer">✕</button>
+      </div>
+      <div id="o360Body" class="overflow-y-auto flex-1 space-y-2.5 pr-0.5 text-xs"></div>
+      <div class="pt-2 border-t border-gray-100 flex gap-2">
+        <button onclick="copyOutlet360Zalo()" class="flex-1 py-2.5 bg-[#1F4E79] hover:bg-blue-900 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+          📋 Copy nhắc việc điểm này
+        </button>
+        <button onclick="closeOutlet360()" class="px-4 py-2.5 bg-gray-100 text-gray-600 font-bold rounded-xl text-xs cursor-pointer">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= GIAO DIỆN CHÍNH DASHBOARD ================= -->
   <div id="mainDashboard">
     <!-- Header -->
@@ -152,8 +179,9 @@
           <h1 class="text-[17px] font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
             🍺 Carlsberg Sale Tracking
           </h1>
-          <div class="flex items-center gap-1 mt-0.5 text-[10px] text-gray-400">
+          <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-400">
             <span id="lblLastUpdate" class="font-medium">Chưa nạp dữ liệu</span>
+            <button onclick="manualSyncCloud()" id="btnQuickSync" class="text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-1.5 py-0.5 rounded-md active:scale-90 transition-all cursor-pointer" title="Làm mới dữ liệu">🔄 Sync</button>
             <span class="text-gray-300">•</span>
             <span class="font-bold text-gray-500 italic">by LHN</span>
           </div>
@@ -172,7 +200,7 @@
       </div>
 
       <!-- 4 Nút chức năng phía trên -->
-      <div class="grid grid-cols-4 gap-1.5">
+      <div id="topActionGrid" class="grid grid-cols-4 gap-1.5">
         <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           📦 Đơn ngày
         </button>
@@ -182,7 +210,7 @@
         <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           📋 Báo cáo
         </button>
-        <button onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
+        <button id="btnTopUpload" onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           ⚙️ Nạp file
         </button>
       </div>
@@ -219,7 +247,7 @@
     <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
     <div class="mb-3">
       <div class="relative">
-        <input type="text" id="searchInput" oninput="resetLimitsAndRender()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
+        <input type="text" id="searchInput" oninput="onSearchInputDebounced()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
           class="w-full p-2.5 pl-9 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-800 placeholder-gray-400 card-shadow outline-none focus:border-blue-500">
         <span class="absolute left-3 top-2.5 text-gray-400 text-xs">🔍</span>
         <button onclick="clearSearch()" id="btnClearSearch" class="hidden absolute right-3 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer">✕</button>
@@ -253,6 +281,12 @@
         </div>
         <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
           <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <!-- Thanh Run-rate Tốc độ về số -->
+        <div id="boxRunRate" class="bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 flex justify-between items-center text-[11px]">
+          <span class="text-blue-900 font-semibold" id="lblRunRateDays">⏳ Còn -- ngày</span>
+          <span class="text-[#1F4E79] font-extrabold" id="lblRunRateNeed">Cần bán: -- th/ngày</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
@@ -663,10 +697,9 @@
     </div>
   </div>
 
-  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CUỘN TỰ DO & CHIA SẺ ZALO/ALBUM) ================= -->
+  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 ================= -->
   <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-4xl rounded-3xl p-4 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[92vh] flex flex-col">
-      <!-- Header Modal -->
       <div class="flex justify-between items-center border-b border-gray-100 pb-2">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-sm">🏆</div>
@@ -678,7 +711,6 @@
         <button onclick="closeFit10Modal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
       </div>
 
-      <!-- Thanh chọn 5 bảng FIT-10 -->
       <div class="grid grid-cols-5 p-1 bg-gray-100 rounded-xl gap-1 text-[10px] font-bold text-center">
         <button id="fitTabBtn1" onclick="switchFit10SubTab(1)" class="py-1.5 rounded-lg bg-white text-indigo-900 shadow-sm cursor-pointer">1. MCP Đi Tuyến</button>
         <button id="fitTabBtn2" onclick="switchFit10SubTab(2)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">2. Sản Lượng</button>
@@ -687,7 +719,6 @@
         <button id="fitTabBtn5" onclick="switchFit10SubTab(5)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">5. FIT Score</button>
       </div>
 
-      <!-- Nút chức năng: Chia sẻ Zalo/Lưu ảnh & Tải PNG -->
       <div class="flex justify-between items-center gap-2">
         <span class="text-[11px] text-gray-600 font-bold" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
         <div class="flex items-center gap-1.5">
@@ -700,12 +731,10 @@
         </div>
       </div>
 
-      <!-- Container chứa bảng cuộn ngang tự do -->
       <div class="flex-1 overflow-x-auto overflow-y-auto rounded-xl border border-gray-200 bg-white" id="fit10CaptureContainer">
         <div id="fit10TableWrap" class="p-2 min-w-full inline-block bg-white"></div>
       </div>
 
-      <!-- Footer Modal -->
       <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
         <span>* Bảng ma trận cuộn ngang tự do thoải mái trên màn hình điện thoại.</span>
         <button onclick="closeFit10Modal()" class="px-4 py-1.5 bg-gray-100 text-gray-600 font-bold rounded-lg cursor-pointer">Đóng</button>
@@ -890,8 +919,7 @@
 
       <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
         <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
-        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm">
-        </select>
+        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm"></select>
       </div>
 
       <div class="grid grid-cols-3 gap-2 text-center select-none">
@@ -921,8 +949,7 @@
         📢 Sao chép nhắc nhở các bạn chưa có đơn
       </button>
 
-      <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer">
-      </div>
+      <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer"></div>
     </div>
   </div>
 
@@ -1117,7 +1144,7 @@
       }
     }
 
-    // ================= XỬ LÝ ĐĂNG NHẬP NHANH =================
+    // ================= XỬ LÝ ĐĂNG NHẬP =================
     async function handleLogin(e) {
       e.preventDefault();
       const uEl = document.getElementById('loginUsername');
@@ -1200,7 +1227,7 @@
       }
     }
 
-    // ================= PHÂN QUYỀN VÀ MỞ GIAO DIỆN SIÊU TỐC =================
+    // ================= PHÂN QUYỀN & BẢO MẬT USER =================
     function applyUserPermissions() {
       const loginScr = document.getElementById('loginScreen');
       if (loginScr) loginScr.classList.add('hidden');
@@ -1225,6 +1252,21 @@
         }
       }
 
+      // Xóa password khỏi localStorage để bảo mật
+      if (currentUser && currentUser.password) {
+        delete currentUser.password;
+        localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
+      }
+      
+      // Ẩn nút Nạp file nếu là SR
+      const btnUpload = document.getElementById('btnTopUpload');
+      const topGrid = document.getElementById('topActionGrid');
+      if (btnUpload && topGrid) {
+        const isSR = (role === 'SR');
+        btnUpload.classList.toggle('hidden', isSR);
+        topGrid.className = isSR ? "grid grid-cols-3 gap-1.5" : "grid grid-cols-4 gap-1.5";
+      }
+
       loadLocalCacheFast();
       setTimeout(() => {
         loadDataFromCloud();
@@ -1235,8 +1277,8 @@
       e.preventDefault();
       const p1 = document.getElementById('newPassword').value.trim();
       const p2 = document.getElementById('confirmNewPassword').value.trim();
-      if (p1 !== p2) { alert("Mật khẩu xác nhận không khớp!"); return; }
-      if (p1 === '123456') { alert("Vui lòng đặt mật khẩu khác 123456!"); return; }
+      if (p1 !== p2) { showToast("Mật khẩu xác nhận không khớp!", "error"); return; }
+      if (p1 === '123456') { showToast("Vui lòng đặt mật khẩu khác 123456!", "error"); return; }
 
       try {
         if (currentUser && currentUser.username && currentUser.id !== 'admin-root') {
@@ -1248,11 +1290,10 @@
         }
       } catch (err) {}
 
-      currentUser.password = p1; 
       currentUser.is_first_login = false;
       localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
       document.getElementById('changePasswordModal')?.classList.add('hidden');
-      alert("Đổi mật khẩu thành công!");
+      showToast("Đổi mật khẩu thành công!", "success");
       applyUserPermissions();
     }
 
@@ -1267,7 +1308,7 @@
       }
     }
 
-    // ================= TẢI DỮ LIỆU TỪ SUPABASE =================
+    // ================= TẢI DỮ LIỆU TỪ SUPABASE & SYNC =================
     async function loadDataFromCloud() {
       setText('lblLastUpdate', "Đang kiểm tra dữ liệu mới...");
       try {
@@ -1325,6 +1366,193 @@
         console.warn("Không tải được data cloud:", err);
         setText('lblLastUpdate', "Dữ liệu ngoại tuyến");
       }
+    }
+
+    async function manualSyncCloud() {
+      const btn = document.getElementById('btnQuickSync');
+      if (btn) btn.innerHTML = '⏳...';
+      localStorage.removeItem('UPDATE_TIME');
+      await loadDataFromCloud();
+      if (btn) btn.innerHTML = '🔄 Sync';
+      showToast('Đã đồng bộ dữ liệu mới nhất!', 'info');
+    }
+
+    // ================= TOAST NOTIFICATION & DEBOUNCE =================
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const colors = {
+        success: 'bg-emerald-700 text-white border-emerald-500',
+        error: 'bg-rose-600 text-white border-rose-400',
+        info: 'bg-[#1F4E79] text-white border-blue-400'
+      };
+      const icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : 'ℹ️');
+      const el = document.createElement('div');
+      el.className = `px-3.5 py-2.5 rounded-2xl shadow-xl border text-xs font-bold flex items-center gap-2 transition-all duration-300 transform -translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+      el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      container.appendChild(el);
+
+      requestAnimationFrame(() => {
+        el.classList.remove('-translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        el.classList.add('-translate-y-2', 'opacity-0');
+        setTimeout(() => el.remove(), 300);
+      }, 2400);
+    }
+
+    let searchDebounceTimer = null;
+    function onSearchInputDebounced() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        resetLimitsAndRender();
+      }, 180);
+    }
+
+    // ================= TÍNH RUN-RATE (TỐC ĐỘ VỀ SỐ) =================
+    function updateRunRateUI(monthTotalHL, targetVol) {
+      const now = new Date();
+      const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const remainDays = Math.max(1, totalDaysInMonth - now.getDate());
+      const gapHL = Math.max(0, targetVol - monthTotalHL);
+
+      setText('lblRunRateDays', `⏳ Còn ${remainDays} ngày trong tháng`);
+      if (targetVol <= 0) {
+        setText('lblRunRateNeed', 'Chưa nạp Target');
+      } else if (gapHL <= 0.005) {
+        setHTML('lblRunRateNeed', '<span class="text-emerald-600 font-black">🎉 ĐÃ CÁN ĐÍCH 100%!</span>');
+      } else {
+        const hlPerDay = gapHL / remainDays;
+        const casesPerDay = Math.ceil(hlPerDay / CASE_VOLUME);
+        setHTML('lblRunRateNeed', `Cần: <b>${hlPerDay.toFixed(2)} HL</b> (~${casesPerDay} th)/ngày`);
+      }
+    }
+
+    // ================= HỒ SƠ 360° ĐIỂM BÁN (ALL-IN-ONE) =================
+    let current360ReportText = "";
+
+    function openOutlet360(code) {
+      if (!code) return;
+      const cleanCode = String(code).trim();
+
+      const tbItem = MASTER.find(m => m.code === cleanCode);
+      const lfItem = LISTING_FEE.find(l => l.code === cleanCode);
+      const auditItem = AUDIT_DATA.find(a => a.code === cleanCode);
+      const covItem = COVERAGE_DATA.find(c => c.code === cleanCode);
+      const orders = SEC_ORDERS.filter(o => o.code === cleanCode);
+
+      const outletName = tbItem?.name || lfItem?.name || covItem?.name || auditItem?.name || orders[0]?.name || cleanCode;
+      const srRaw = tbItem?.sr || lfItem?.sr || covItem?.sr || auditItem?.sr || orders[0]?.sr || "";
+      const srName = TEAM_SR_MAP[srRaw] || srRaw || "Chưa rõ SR";
+
+      setText('o360Code', cleanCode);
+      setText('o360Sr', `• ${srName}`);
+      setText('o360Name', outletName);
+
+      let hudaHL = 0, preHL = 0;
+      orders.forEach(o => {
+        if (o.category === "Mainstream") hudaHL += o.vol;
+        else preHL += o.vol;
+      });
+      const totalHL = hudaHL + preHL;
+
+      let html = '';
+      let zaloLines = [`🏪 ĐIỂM BÁN: ${outletName} (${cleanCode})`, `👤 Phụ trách: ${srName}`];
+
+      html += `
+        <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-[#1F4E79] text-[11px]">📊 1. DOANH SỐ LŨY KẾ THÁNG</span>
+            <span class="font-black text-blue-950 text-xs">${totalHL.toFixed(2)} HL (${Math.round(totalHL / CASE_VOLUME)} th)</span>
+          </div>
+          <div class="flex justify-between text-[11px] text-gray-600 pt-1 border-t border-blue-100">
+            <span>🍺 Main: <b class="text-emerald-700">${hudaHL.toFixed(2)} HL</b></span>
+            <span>👑 Pre: <b class="text-amber-700">${preHL.toFixed(2)} HL</b></span>
+          </div>
+        </div>`;
+      zaloLines.push(`📊 Doanh số MTD: ${totalHL.toFixed(2)} HL (Main: ${hudaHL.toFixed(2)} | Pre: ${preHL.toFixed(2)})`);
+
+      if (tbItem) {
+        const minPre = (tbItem.level === "LV1") ? 5 : (tbItem.level === "LV2" ? 3 : 2);
+        const effPre = Number((minPre * CASE_VOLUME).toFixed(4));
+        const effTot = tbItem.tarHuda + effPre;
+        const isPass = ((hudaHL >= (tbItem.tarHuda - 0.005)) && (preHL >= (effPre - 0.005))) || ((totalHL >= (effTot - 0.005)) && (effTot > 0) && ((preHL / totalHL) >= 0.5));
+        const gP = Math.max(0, effPre - preHL), gH = Math.max(0, tbItem.tarHuda - hudaHL);
+        const cPre = gP > 0.005 ? Math.min(minPre, Math.ceil((gP - 0.005) / CASE_VOLUME)) : 0;
+        const cHu = gH > 0.005 ? Math.ceil((gH + 0.001) / HUDA_CAN20_VOL) : 0;
+
+        let statusText = isPass ? '✓ ĐÃ ĐẠT DISPLAY' : `Thiếu: ${cHu > 0 ? cHu + ' th Huda lon 20 ' : ''}${cPre > 0 ? cPre + ' th Pre' : ''}`;
+        html += `
+          <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'} border space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-gray-800 text-[11px]">🎯 2. TRƯNG BÀY (${tbItem.level})</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
+            </div>
+            <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusText}</div>
+          </div>`;
+        zaloLines.push(`🎯 Display (${tbItem.level}): ${statusText}`);
+      }
+
+      if (lfItem) {
+        const isTONT = (lfItem.channelType === "TONT");
+        const aHL = isTONT ? preHL : hudaHL;
+        const isPass = aHL >= (lfItem.tarHL - 0.001);
+        const gap = Math.max(0, lfItem.tarHL - aHL);
+        const missCases = isTONT ? Math.ceil(gap / CASE_VOLUME) : Math.ceil(gap / HUDA_CAN20_VOL);
+        const statusLF = isPass ? '✓ ĐÃ ĐẠT LF' : `Thiếu ${missCases} thùng ${isTONT ? 'Pre tiêu chuẩn' : 'Huda lon 20'}`;
+
+        html += `
+          <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-amber-50/80 border-amber-200'} border space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-gray-800 text-[11px]">💰 3. LISTING FEE (${lfItem.channelType})</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
+            </div>
+            <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusLF}</div>
+          </div>`;
+        zaloLines.push(`💰 Listing Fee (${lfItem.channelType}): ${statusLF}`);
+      }
+
+      if (auditItem) {
+        const stAudit = auditItem.count >= 2 ? 'Đủ 2/2 lần' : (auditItem.count === 1 ? '⚠️ Mới chụp 1 lần (Thiếu lần 2)' : '❌ Chưa chụp lần nào');
+        html += `
+          <div class="p-3 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-purple-950 text-[11px]">📸 4. CHỤP TRƯNG BÀY (DIP-01)</span>
+              <span class="font-black text-[10px] text-purple-700">${auditItem.count}/2 lần</span>
+            </div>
+            <div class="text-[11px] font-bold ${auditItem.count >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${stAudit}</div>
+          </div>`;
+        zaloLines.push(`📸 Chụp TB: ${stAudit}`);
+      }
+
+      if (covItem) {
+        const isLapsed = covItem.covNote === 'Lapsed';
+        html += `
+          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 flex justify-between items-center">
+            <div>
+              <span class="font-extrabold text-gray-800 text-[11px] block">📍 5. COVERAGE L28D (${covItem.channel})</span>
+              <span class="text-[10px] text-gray-500">Ghé cuối: <b>${covItem.lastVisit || 'Chưa rõ'}</b></span>
+            </div>
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${isLapsed ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${covItem.covNote}</span>
+          </div>`;
+        zaloLines.push(`📍 Coverage: ${covItem.covNote} (Ghé cuối: ${covItem.lastVisit || 'Chưa rõ'})`);
+      }
+
+      current360ReportText = zaloLines.join('\n');
+      setHTML('o360Body', html);
+      document.getElementById('outlet360Modal')?.classList.remove('hidden');
+    }
+
+    function closeOutlet360() {
+      document.getElementById('outlet360Modal')?.classList.add('hidden');
+    }
+
+    function copyOutlet360Zalo() {
+      if (!current360ReportText) return;
+      navigator.clipboard.writeText(current360ReportText)
+        .then(() => showToast("Đã copy hồ sơ điểm bán!", "success"))
+        .catch(() => showToast("Lỗi sao chép!", "error"));
     }
 
     // ================= CHUYỂN TAB & BỘ LỌC =================
@@ -1398,7 +1626,7 @@
         document.getElementById('pinBox')?.classList.add('hidden'); 
         document.getElementById('uploadBox')?.classList.remove('hidden');
       } else { 
-        alert("Mã PIN không đúng!"); 
+        showToast("Mã PIN không đúng!", "error"); 
         if (pinEl) pinEl.value = ''; 
       }
     }
@@ -1443,23 +1671,17 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-    // ================= XỬ LÝ 5 BẢNG MA TRẬN FIT-10 (BỎ STICKY, CUỘN TỰ DO) =================
+    // ================= 5 BẢNG MA TRẬN FIT-10 =================
     function openFit10Modal() {
       document.getElementById('fit10Modal')?.classList.remove('hidden');
       switchFit10SubTab(currentFitSubTab || 1);
     }
-
-    function closeFit10Modal() {
-      document.getElementById('fit10Modal')?.classList.add('hidden');
-    }
-
+    function closeFit10Modal() { document.getElementById('fit10Modal')?.classList.add('hidden'); }
     function switchFit10SubTab(tab) {
       currentFitSubTab = tab;
       for (let i = 1; i <= 5; i++) {
         const b = document.getElementById(`fitTabBtn${i}`);
-        if (b) {
-          b.className = (i === tab) ? "py-1.5 rounded-lg bg-white text-indigo-900 shadow-sm font-black cursor-pointer" : "py-1.5 rounded-lg text-gray-600 font-bold cursor-pointer";
-        }
+        if (b) b.className = (i === tab) ? "py-1.5 rounded-lg bg-white text-indigo-900 shadow-sm font-black cursor-pointer" : "py-1.5 rounded-lg text-gray-600 font-bold cursor-pointer";
       }
       renderFit10Table(tab);
     }
@@ -1470,8 +1692,7 @@
       if (!container) return;
 
       const titles = [
-        "",
-        "Bảng 1: MCP Đi Tuyến (Call Per Day & Visit On Route)",
+        "", "Bảng 1: MCP Đi Tuyến (Call Per Day & Visit On Route)",
         "Bảng 2: Sản Lượng Toàn Đội & Focused SKUs (Premium)",
         "Bảng 3: Monthly Execution Priority (MEP 12 Cột Thực Thi)",
         "Bảng 4: Chất Lượng Chụp Ảnh & Tủ Lạnh (IR Visit & SAT Scanned)",
@@ -1480,306 +1701,92 @@
       if (titleEl) titleEl.textContent = titles[tab];
 
       let html = '';
-
-      // BẢNG 1: MCP Đi Tuyến
       if (tab === 1) {
-        html = `
-          <table class="table-fit-matrix" id="fitTableActive">
-            <thead>
-              <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
-                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
-                <th rowspan="2" class="text-gray-700">% Working</th>
-                <th colspan="3" class="bg-blue-100 text-blue-900">Call Per Day</th>
-                <th colspan="3" class="bg-indigo-100 text-indigo-900">Visit On Route</th>
-              </tr>
-              <tr class="bg-blue-50/70 text-gray-700">
-                <th>Target</th><th>Actual</th><th>Achieved</th>
-                <th>Target</th><th>Actual</th><th>Achieved</th>
-              </tr>
-            </thead>
-            <tbody>`;
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th rowspan="2" class="text-gray-700">% Working</th><th colspan="3" class="bg-blue-100 text-blue-900">Call Per Day</th><th colspan="3" class="bg-indigo-100 text-indigo-900">Visit On Route</th></tr><tr class="bg-blue-50/70 text-gray-700"><th>Target</th><th>Actual</th><th>Achieved</th><th>Target</th><th>Actual</th><th>Achieved</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
-          const cpdT = Math.round(d.cpd_tar || 16);
-          const cpdA = Math.round(d.cpd_act || 0);
-          const isCpdPass = (cpdA >= cpdT && cpdT > 0);
-          const vorT = Math.round(d.vor_tar || 0);
-          const vorA = Math.round(d.vor_act || 0);
-          const vorPct = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
-          const isVorLow = vorPct < 80;
-          const isRedSr = (!isCpdPass || isVorLow);
-
-          html += `
-            <tr class="hover:bg-blue-50/40">
-              <td class="font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.hrid}</td>
-              <td class="text-left font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.cvtcsr}</td>
-              <td class="font-medium text-gray-700">100 %</td>
-              <td class="font-semibold">${cpdT}</td>
-              <td class="font-bold ${!isCpdPass ? 'text-rose-600' : 'text-gray-900'}">${cpdA}</td>
-              <td class="font-black ${isCpdPass ? 'text-emerald-700' : 'text-rose-600'}">${isCpdPass ? 'TRUE' : 'FALSE'}</td>
-              <td class="font-semibold">${vorT}</td>
-              <td class="font-bold text-gray-900">${vorA}</td>
-              <td class="font-black ${vorPct >= 95 ? 'text-emerald-700' : (vorPct >= 80 ? 'text-gray-800' : 'text-rose-600')}">${vorPct}%</td>
-            </tr>`;
+          const cpdT = Math.round(d.cpd_tar || 16), cpdA = Math.round(d.cpd_act || 0), isCpdPass = (cpdA >= cpdT && cpdT > 0);
+          const vorT = Math.round(d.vor_tar || 0), vorA = Math.round(d.vor_act || 0), vorPct = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>100 %</td><td>${cpdT}</td><td>${cpdA}</td><td class="font-black ${isCpdPass ? 'text-emerald-700' : 'text-rose-600'}">${isCpdPass ? 'TRUE' : 'FALSE'}</td><td>${vorT}</td><td>${vorA}</td><td class="font-black">${vorPct}%</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tab === 2) {
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th colspan="3" class="bg-amber-100 text-amber-950">Sales Volume</th><th colspan="4" class="bg-emerald-100 text-emerald-950">Focused SKUs</th></tr><tr class="bg-gray-50 text-gray-700"><th>Target</th><th>Actual</th><th>Achieved</th><th>Type</th><th>Target</th><th>Actual</th><th>Achieved</th></tr></thead><tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const vT = Math.round(d.volume_target || 0), vA = Math.round(d.volume_actual || 0), vAch = Math.round((d.vol_ach || 0) * 100);
+          const pT = (d.premium_target || 0).toFixed(2), pA = (d.premium_actual || 0).toFixed(2), pAch = Math.round((d.sku_ach || 0) * 100);
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${vT}</td><td>${vA}</td><td class="font-black">${vAch}%</td><td>Premium</td><td>${pT}</td><td>${pA}</td><td class="font-black">${pAch}%</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tab === 3) {
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th rowspan="2" class="text-gray-700">Type</th><th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th><th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th><th rowspan="2" class="bg-cyan-100 text-blue-950 font-black">Achieved</th></tr><tr class="bg-gray-50 text-gray-700"><th class="bg-cyan-50">MPTar</th><th class="bg-cyan-50">CovTar</th><th class="bg-cyan-50">TBTar</th><th class="bg-cyan-50">HUDTar</th><th class="bg-amber-100">MPAct</th><th class="bg-amber-100">CovAct</th><th class="bg-amber-100">TBAct</th><th class="bg-amber-100">HUDAct</th></tr></thead><tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const mpT = Math.round(d.mep_tar || 0), covT = Math.round(d.cov_tar || 0), tbT = Math.round(d.sku_pri_tar || 0), hudT = Math.max(0, mpT - covT - tbT);
+          const mpA = Math.round(d.mep_act || 0), covA = Math.round(d.cov_act || 0), tbA = Math.round(d.sku_pri_act || 0), hudA = Math.max(0, mpA - covA - tbA);
+          const achPct = Math.round((d.mep_ach || 0) * 100);
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>NewCovDis</td><td>${mpT}</td><td>${covT}</td><td>${tbT}</td><td>${hudT}</td><td>${mpA}</td><td>${covA}</td><td>${tbA}</td><td>${hudA}</td><td class="font-black ${achPct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${achPct}%</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tab === 4) {
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th colspan="7" class="bg-indigo-100 text-indigo-950">IR Visit</th><th colspan="3" class="bg-sky-100 text-sky-950">SAT Scanned</th></tr><tr class="bg-gray-50 text-gray-700"><th>Target IR</th><th>Total Visit</th><th>IR Product</th><th>Total Visibility</th><th>IR Visibility</th><th>IR Actual</th><th>Achieved</th><th>Total SAT</th><th>SAT Scanned</th><th>SAT Actual</th></tr></thead><tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const totVis = Math.round(d.total_visit || 0), irProd = Math.round(d.ir_product || 0), totVisib = Math.round(d.total_visibility || 0), irVisib = Math.round(d.ir_visibility || 0);
+          const irAct = Math.round((d.ir_act || 0) * 100), irAch = Math.round((d.ir_ach || 0) * 100);
+          const totSat = Math.round(d.total_sat || 0), satScan = Math.round(d.sat_scanned || 0), satAct = Math.round((d.sat_act || 0) * 100);
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>90%</td><td>${totVis}</td><td>${irProd}</td><td>${totVisib}</td><td>${irVisib}</td><td>${irAct}%</td><td class="font-black ${irAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${irAch}%</td><td>${totSat}</td><td>${satScan}</td><td class="font-black">${satAct}%</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tab === 5) {
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th class="text-[#1F4E79]">HRID</th><th class="text-[#1F4E79] text-left">CVTCSR</th><th class="bg-cyan-100 text-cyan-950">Target</th><th class="bg-amber-100 text-amber-950">Actual</th><th class="bg-emerald-100 text-emerald-950">Achieved</th></tr></thead><tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const fT = ((d.fit_tar || 0) * 100).toFixed(2), fA = ((d.fit_act || 0) * 100).toFixed(2), fAch = Math.round((d.fit_ach || 0) * 100);
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${fT}%</td><td>${fA}%</td><td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}.00%</td></tr>`;
         });
         html += `</tbody></table>`;
       }
-
-      // BẢNG 2: Sản Lượng & Focused SKUs
-      else if (tab === 2) {
-        html = `
-          <table class="table-fit-matrix" id="fitTableActive">
-            <thead>
-              <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
-                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
-                <th colspan="3" class="bg-amber-100 text-amber-950">Sales Volume</th>
-                <th colspan="4" class="bg-emerald-100 text-emerald-950">Focused SKUs</th>
-              </tr>
-              <tr class="bg-gray-50 text-gray-700">
-                <th>Target</th><th>Actual</th><th>Achieved</th>
-                <th>Type</th><th>Target</th><th>Actual</th><th>Achieved</th>
-              </tr>
-            </thead>
-            <tbody>`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const vT = Math.round(d.volume_target || 0);
-          const vA = Math.round(d.volume_actual || 0);
-          const vAch = Math.round((d.vol_ach || (vT > 0 ? (vA / vT) : 0)) * 100);
-          const pT = (d.premium_target || 0).toFixed(2);
-          const pA = (d.premium_actual || 0).toFixed(2);
-          const pAch = Math.round((d.sku_ach || (parseFloat(pT) > 0 ? (parseFloat(pA) / parseFloat(pT)) : 0)) * 100);
-          const isVolLow = vAch < 30;
-          const isPreLow = pAch < 30;
-
-          html += `
-            <tr class="hover:bg-blue-50/40">
-              <td class="font-bold text-blue-950">${sr.hrid}</td>
-              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
-              <td class="font-semibold">${vT}</td>
-              <td class="font-bold ${isVolLow ? 'text-rose-600' : 'text-gray-900'}">${vA}</td>
-              <td class="font-black ${isVolLow ? 'text-rose-600' : 'text-gray-800'}">${vAch}%</td>
-              <td class="font-medium text-emerald-800">Premium</td>
-              <td class="font-semibold">${pT}</td>
-              <td class="font-bold ${isPreLow ? 'text-rose-600' : 'text-gray-900'}">${pA}</td>
-              <td class="font-black ${isPreLow ? 'text-rose-600' : 'text-gray-800'}">${pAch}%</td>
-            </tr>`;
-        });
-        html += `</tbody></table>`;
-      }
-
-      // BẢNG 3: Monthly Execution Priority (MEP 12 Cột)
-      else if (tab === 3) {
-        html = `
-          <table class="table-fit-matrix" id="fitTableActive">
-            <thead>
-              <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
-                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
-                <th rowspan="2" class="text-gray-700">Type</th>
-                <th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th>
-                <th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th>
-                <th rowspan="2" class="bg-cyan-100 text-blue-950 font-black">Achieved</th>
-              </tr>
-              <tr class="bg-gray-50 text-gray-700">
-                <th class="bg-cyan-50">MPTar</th><th class="bg-cyan-50">CovTar</th><th class="bg-cyan-50">TBTar</th><th class="bg-cyan-50">HUDTar</th>
-                <th class="bg-amber-100">MPAct</th><th class="bg-amber-100">CovAct</th><th class="bg-amber-100">TBAct</th><th class="bg-amber-100">HUDAct</th>
-              </tr>
-            </thead>
-            <tbody>`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const mpT = Math.round(d.mep_tar || 0);
-          const covT = Math.round(d.cov_tar || 0);
-          const tbT = Math.round(d.sku_pri_tar || 0);
-          const hudT = Math.max(0, mpT - covT - tbT);
-          const mpA = Math.round(d.mep_act || 0);
-          const covA = Math.round(d.cov_act || 0);
-          const tbA = Math.round(d.sku_pri_act || 0);
-          const hudA = Math.max(0, mpA - covA - tbA);
-          const achPct = Math.round((d.mep_ach || (mpT > 0 ? (mpA / mpT) : 0)) * 100);
-          const isHudLow = hudA < hudT;
-          const isTbLow = tbA < tbT;
-          const isCovLow = covA < covT;
-
-          html += `
-            <tr class="hover:bg-blue-50/40">
-              <td class="font-bold text-blue-950">${sr.hrid}</td>
-              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
-              <td class="text-[10px] text-gray-500 font-semibold">NewCovDis2024</td>
-              <td class="font-bold bg-cyan-50/50">${mpT}</td>
-              <td class="font-semibold bg-cyan-50/50 ${isCovLow ? 'text-rose-600 font-bold' : ''}">${covT}</td>
-              <td class="font-semibold bg-cyan-50/50 ${isTbLow ? 'text-rose-600 font-bold' : ''}">${tbT}</td>
-              <td class="font-semibold bg-cyan-50/50 ${isHudLow ? 'text-rose-600 font-bold' : ''}">${hudT}</td>
-              <td class="font-bold bg-amber-50">${mpA}</td>
-              <td class="font-semibold bg-amber-50 ${isCovLow ? 'text-rose-600 font-bold' : ''}">${covA}</td>
-              <td class="font-semibold bg-amber-50 ${isTbLow ? 'text-rose-600 font-bold' : ''}">${tbA}</td>
-              <td class="font-semibold bg-amber-50 ${isHudLow ? 'text-rose-600 font-bold' : ''}">${hudA}</td>
-              <td class="font-black ${achPct >= 100 ? 'text-emerald-700 bg-emerald-50/50' : (achPct >= 85 ? 'text-blue-900' : 'text-rose-600')}">${achPct}%</td>
-            </tr>`;
-        });
-        html += `</tbody></table>`;
-      }
-
-      // BẢNG 4: IR Visit & SAT Scanned
-      else if (tab === 4) {
-        html = `
-          <table class="table-fit-matrix" id="fitTableActive">
-            <thead>
-              <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
-                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
-                <th colspan="7" class="bg-indigo-100 text-indigo-950">IR Visit</th>
-                <th colspan="3" class="bg-sky-100 text-sky-950">SAT Scanned</th>
-              </tr>
-              <tr class="bg-gray-50 text-gray-700">
-                <th>Target IR</th><th>Total Visit</th><th>IR Product</th><th>Total Visibility</th><th>IR Visibility</th><th>IR Actual</th><th>Achieved</th>
-                <th>Total SAT</th><th>SAT Scanned</th><th>SAT Actual</th>
-              </tr>
-            </thead>
-            <tbody>`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const tarIr = (sr.hrid === 'SPS-010') ? '80%' : '90%';
-          const totVis = Math.round(d.total_visit || 0);
-          const irProd = Math.round(d.ir_product || 0);
-          const totVisib = Math.round(d.total_visibility || 0);
-          const irVisib = Math.round(d.ir_visibility || 0);
-          const irAct = Math.round((d.ir_act || (totVis > 0 ? (irProd / totVis) : 0)) * 100);
-          const irAch = Math.round((d.ir_ach || 0) * 100) || (irAct > 0 ? Math.round(irAct / 90 * 100) : 0);
-          const totSat = Math.round(d.total_sat || 0);
-          const satScan = Math.round(d.sat_scanned || 0);
-          const satAct = Math.round((d.sat_act || (totSat > 0 ? (satScan / totSat) : 0)) * 100);
-          const isSatLow = satScan < totSat;
-
-          html += `
-            <tr class="hover:bg-blue-50/40">
-              <td class="font-bold text-blue-950">${sr.hrid}</td>
-              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
-              <td class="font-semibold text-gray-700">${tarIr}</td>
-              <td class="font-medium">${totVis}</td>
-              <td class="font-medium">${irProd}</td>
-              <td class="font-medium">${totVisib}</td>
-              <td class="font-medium">${irVisib || '-'}</td>
-              <td class="font-bold text-gray-900">${irAct}%</td>
-              <td class="font-black ${irAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${irAch}%</td>
-              <td class="font-medium">${totSat}</td>
-              <td class="font-bold ${isSatLow ? 'text-rose-600' : 'text-gray-900'}">${satScan}</td>
-              <td class="font-black ${satAct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${satAct}%</td>
-            </tr>`;
-        });
-        html += `</tbody></table>`;
-      }
-
-      // BẢNG 5: FIT Score
-      else if (tab === 5) {
-        html = `
-          <table class="table-fit-matrix" id="fitTableActive">
-            <thead>
-              <tr class="bg-gray-100 text-gray-800">
-                <th class="text-[#1F4E79]">HRID</th>
-                <th class="text-[#1F4E79] text-left">CVTCSR</th>
-                <th class="bg-cyan-100 text-cyan-950">Target</th>
-                <th class="bg-amber-100 text-amber-950">Actual</th>
-                <th class="bg-emerald-100 text-emerald-950">Achieved</th>
-              </tr>
-            </thead>
-            <tbody>`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const fT = ((d.fit_tar || 0) * 100).toFixed(2);
-          const fA = ((d.fit_act || 0) * 100).toFixed(2);
-          const fAch = Math.round((d.fit_ach || (parseFloat(fT) > 0 ? (parseFloat(fA) / parseFloat(fT)) : 0)) * 100);
-
-          html += `
-            <tr class="hover:bg-blue-50/40">
-              <td class="font-bold text-blue-950">${sr.hrid}</td>
-              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
-              <td class="font-bold text-cyan-900">${fT}%</td>
-              <td class="font-bold text-amber-900">${fA}%</td>
-              <td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}.00%</td>
-            </tr>`;
-        });
-        html += `</tbody></table>`;
-      }
-
       container.innerHTML = html;
     }
 
-    // Chia sẻ thẳng sang Zalo hoặc lưu vào Album Ảnh bằng Web Share API
     async function shareFit10Image() {
-      const btn = document.getElementById('btnShareFit');
-      const tableWrap = document.getElementById('fit10TableWrap');
+      const btn = document.getElementById('btnShareFit'), tableWrap = document.getElementById('fit10TableWrap');
       if (!tableWrap) return;
-
-      const origText = btn.innerHTML;
-      btn.innerHTML = "⏳ Đang xử lý...";
-      btn.disabled = true;
-
+      btn.innerHTML = "⏳ Đang xử lý..."; btn.disabled = true;
       try {
-        const canvas = await html2canvas(tableWrap, {
-          backgroundColor: '#FFFFFF',
-          scale: 2,
-          useCORS: true,
-          width: tableWrap.scrollWidth,
-          windowWidth: tableWrap.scrollWidth
-        });
-
+        const canvas = await html2canvas(tableWrap, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, width: tableWrap.scrollWidth });
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const fileName = `Bang_FIT10_${new Date().toISOString().slice(0, 10)}.png`;
-        const file = new File([blob], fileName, { type: 'image/png' });
-
+        const file = new File([blob], `Bang_FIT10_${new Date().toISOString().slice(0, 10)}.png`, { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file]
-          });
+          await navigator.share({ files: [file] });
         } else {
           exportFit10PngImage();
         }
       } catch (err) {
-        if (err.name !== 'AbortError') {
-          alert("Lỗi khi chia sẻ: " + err.message);
-        }
+        if (err.name !== 'AbortError') showToast("Lỗi chia sẻ: " + err.message, "error");
       } finally {
-        btn.innerHTML = origText;
-        btn.disabled = false;
+        btn.innerHTML = "📤 Gửi Zalo / Lưu ảnh"; btn.disabled = false;
       }
     }
 
-    // Tải ảnh PNG thông thường
     async function exportFit10PngImage() {
-      const btn = document.getElementById('btnExportFitPng');
       const tableWrap = document.getElementById('fit10TableWrap');
       if (!tableWrap) return;
-
-      const origText = btn.innerHTML;
-      btn.innerHTML = "⏳ Đang tạo...";
-      btn.disabled = true;
-
       try {
-        const canvas = await html2canvas(tableWrap, {
-          backgroundColor: '#FFFFFF',
-          scale: 2,
-          useCORS: true,
-          width: tableWrap.scrollWidth,
-          windowWidth: tableWrap.scrollWidth
-        });
-
+        const canvas = await html2canvas(tableWrap, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, width: tableWrap.scrollWidth });
         const link = document.createElement('a');
-        link.download = `Bang_FIT10_Carlsberg_${new Date().toISOString().slice(0,10)}.png`;
+        link.download = `Bang_FIT10_${new Date().toISOString().slice(0,10)}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
+        showToast("Đã tải ảnh thành công!", "success");
       } catch (err) {
-        alert("Lỗi khi tạo ảnh: " + err.message);
-      } finally {
-        btn.innerHTML = origText;
-        btn.disabled = false;
+        showToast("Lỗi tạo ảnh: " + err.message, "error");
       }
     }
 
-    // ================= HÀM RENDER AN TOÀN VỚI LAZY TAB & PHÂN TRANG =================
+    // ================= RENDER TOÀN BỘ GIAO DIỆN =================
     function renderAll() {
       const srFilterEl = document.getElementById('srFilter');
       if (!srFilterEl) return;
@@ -1833,6 +1840,7 @@
         setText('txtTargetAchieved', `${monthTotalHL.toFixed(2)} / ${targetVol.toFixed(2)} HL`);
         setText('txtTargetCases', `${Math.round(monthTotalHL / CASE_VOLUME)} / ${Math.round(targetVol / CASE_VOLUME)} th`);
         setStyleWidth('barTargetVol', `${Math.min(100, pctTargetVol)}%`);
+        updateRunRateUI(monthTotalHL, targetVol);
 
         setText('badgeMainPct', `${pctTargetMain}%`);
         setHTML('valMainAct', `${monthHudaHL.toFixed(2)} <span class="text-[11px] font-normal text-gray-500">HL</span>`);
@@ -1981,7 +1989,7 @@
             Object.entries(ot.products).forEach(([pName, pData]) => {
               pHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium">${pName}</span><span class="font-bold text-gray-900">${pData.qty} thùng <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
             });
-            aggBox.innerHTML += `<details class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden"><summary class="p-3.5 flex justify-between items-center cursor-pointer select-none"><div class="pr-2"><div class="text-xs font-bold text-gray-800 line-clamp-1">${ot.name}</div><div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div></div><div class="text-right"><div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div><div class="text-[10px] font-bold text-amber-700">${(ot.totalVol / CASE_VOLUME).toFixed(1)} thùng ▼</div></div></summary><div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">${pHTML}</div></details>`;
+            aggBox.innerHTML += `<div class="bg-white rounded-2xl card-shadow border border-gray-100 overflow-hidden"><div onclick="openOutlet360('${ot.code}')" class="p-3.5 flex justify-between items-center cursor-pointer select-none bg-blue-50/20 hover:bg-blue-50/50 transition-all"><div class="pr-2"><div class="text-xs font-bold text-[#1F4E79] line-clamp-1">🔍 ${ot.name}</div><div class="text-[10px] text-gray-400 mt-0.5">${ot.code} • ${Object.keys(ot.products).length} mặt hàng</div></div><div class="text-right"><div class="text-xs font-extrabold text-[#1F4E79]">${ot.totalVol.toFixed(2)} HL</div><div class="text-[10px] font-bold text-amber-700">${(ot.totalVol / CASE_VOLUME).toFixed(1)} thùng</div></div></div><div class="px-3.5 pb-3 pt-1 bg-gray-50/50 border-t border-gray-100">${pHTML}</div></div>`;
           });
           if (loadMoreAggBtn) loadMoreAggBtn.classList.toggle('hidden', sortedOt.length <= limits.agg);
         }
@@ -2027,7 +2035,7 @@
           if (!isPass) {
             const gP = Math.max(0, effPre - aP), gH = Math.max(0, m.tarHuda - aH);
             const cPre = gP > 0.005 ? Math.min(minPre, Math.ceil((gP - 0.005) / CASE_VOLUME)) : 0;
-            const cHu = gH > 0.005 ? Math.ceil((gH - 0.005) / HUDA_CAN20_VOL) : 0;
+            const cHu = gH > 0.005 ? Math.ceil((gH + 0.001) / HUDA_CAN20_VOL) : 0;
             let mArr = []; 
             if (cHu > 0) mArr.push(`Thiếu <b>${cHu}</b> th Huda lon 20`); 
             if (cPre > 0) mArr.push(`Thiếu <b>${cPre}</b> th Pre tiêu chuẩn`);
@@ -2048,7 +2056,7 @@
           outBox.innerHTML = '';
           const visibleTB = listTB.slice(0, limits.tb);
           visibleTB.forEach(o => {
-            outBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${o.item.code} • ${o.item.sr} • <span class="text-blue-600 font-extrabold">${o.item.level}</span></div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${o.item.name}</div></div><div class="flex items-center gap-1.5"><span class="text-[11px] font-extrabold ${o.isPass ? 'text-emerald-600' : 'text-gray-400'}">${o.pct}%</span><span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${o.isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">${o.isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span></div></div><div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${o.isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, o.pct)}%"></div></div><div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs"><div class="text-[11px] text-gray-500 space-x-2"><span>Huda: <b>${o.aH.toFixed(2)}</b>/${o.effHuda.toFixed(2)}</span><span>Pre: <b>${o.aP.toFixed(2)}</b>/${o.effPre.toFixed(2)}</span></div><div>${o.miss}</div></div></div>`;
+            outBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${o.item.code} • ${o.item.sr} • <span class="text-blue-600 font-extrabold">${o.item.level}</span></div><div onclick="openOutlet360('${o.item.code}')" class="text-xs font-bold text-[#1F4E79] hover:underline mt-0.5 line-clamp-1 cursor-pointer">🔍 ${o.item.name}</div></div><div class="flex items-center gap-1.5"><span class="text-[11px] font-extrabold ${o.isPass ? 'text-emerald-600' : 'text-gray-400'}">${o.pct}%</span><span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${o.isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">${o.isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span></div></div><div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${o.isPass ? 'bg-emerald-500' : 'bg-rose-400'}" style="width: ${Math.min(100, o.pct)}%"></div></div><div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs"><div class="text-[11px] text-gray-500 space-x-2"><span>Huda: <b>${o.aH.toFixed(2)}</b>/${o.effHuda.toFixed(2)}</span><span>Pre: <b>${o.aP.toFixed(2)}</b>/${o.effPre.toFixed(2)}</span></div><div>${o.miss}</div></div></div>`;
           });
           if (loadMoreTbBtn) loadMoreTbBtn.classList.toggle('hidden', listTB.length <= limits.tb);
         }
@@ -2127,7 +2135,7 @@
           lfBox.innerHTML = '';
           const visibleLF = prepLF.slice(0, limits.lf);
           visibleLF.forEach(o => {
-            lfBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${o.item.code} • ${o.item.sr} • <span class="${o.item.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${o.item.channelType}</span> <span class="text-gray-400 font-normal">(${o.item.channelDesc})</span></div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${o.item.name}</div></div><div class="flex items-center gap-1.5"><span class="text-[11px] font-extrabold ${o.isPass ? 'text-emerald-600' : 'text-gray-400'}">${o.pct}%</span><span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${o.isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">${o.isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span></div></div><div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${o.isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, o.pct)}%"></div></div><div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs"><div class="text-[11px] text-gray-500">${o.disp}</div><div>${o.miss}</div></div></div>`;
+            lfBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${o.item.code} • ${o.item.sr} • <span class="${o.item.channelType === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${o.item.channelType}</span></div><div onclick="openOutlet360('${o.item.code}')" class="text-xs font-bold text-[#1F4E79] hover:underline mt-0.5 line-clamp-1 cursor-pointer">🔍 ${o.item.name}</div></div><div class="flex items-center gap-1.5"><span class="text-[11px] font-extrabold ${o.isPass ? 'text-emerald-600' : 'text-gray-400'}">${o.pct}%</span><span class="px-2.5 py-1 text-[10px] font-extrabold rounded-lg ${o.isPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}">${o.isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span></div></div><div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${o.isPass ? 'bg-emerald-500' : 'bg-amber-400'}" style="width: ${Math.min(100, o.pct)}%"></div></div><div class="pt-1 border-t border-gray-50 flex justify-between items-center text-xs"><div class="text-[11px] text-gray-500">${o.disp}</div><div>${o.miss}</div></div></div>`;
           });
           if (loadMoreLfBtn) loadMoreLfBtn.classList.toggle('hidden', prepLF.length <= limits.lf);
         }
@@ -2175,7 +2183,7 @@
               });
               if (a.count === 1) detHTML += `<div class="text-[10px] text-amber-700 font-semibold mt-0.5">⚠️ Cần chấm Lần 2 trước ngày 25</div>`;
             }
-            aBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div><div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${a.name}</div></div><div><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${a.count >= 2 ? 'bg-emerald-100 text-emerald-800' : (a.count === 1 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700')}">${a.count >= 2 ? 'ĐỦ 2 LẦN' : (a.count === 1 ? 'THIẾU LẦN 2' : 'CHƯA CHẤM')}</span></div></div><div class="pt-1.5 border-t border-gray-100">${detHTML}</div></div>`;
+            aBox.innerHTML += `<div class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2"><div class="flex justify-between items-start"><div><div class="text-[10px] font-bold text-gray-400 tracking-wide">${a.code} • ${TEAM_SR_MAP[a.sr] || a.sr}</div><div onclick="openOutlet360('${a.code}')" class="text-xs font-bold text-[#1F4E79] hover:underline mt-0.5 line-clamp-1 cursor-pointer">🔍 ${a.name}</div></div><div><span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${a.count >= 2 ? 'bg-emerald-100 text-emerald-800' : (a.count === 1 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700')}">${a.count >= 2 ? 'ĐỦ 2 LẦN' : (a.count === 1 ? 'THIẾU LẦN 2' : 'CHƯA CHẤM')}</span></div></div><div class="pt-1.5 border-t border-gray-100">${detHTML}</div></div>`;
           });
           if (loadMoreAuditBtn) loadMoreAuditBtn.classList.toggle('hidden', fAudit.length <= limits.audit);
         }
@@ -2266,7 +2274,7 @@
                       <div class="text-[10px] font-bold text-gray-400 tracking-wide">
                         ${c.code} • ${TEAM_SR_MAP[c.sr] || c.sr} • <span class="${c.channel === 'TONT' ? 'text-amber-600' : 'text-emerald-600'} font-black">${c.channel}</span>
                       </div>
-                      <div class="text-xs font-bold text-gray-800 mt-0.5 line-clamp-1">${c.name}</div>
+                      <div onclick="openOutlet360('${c.code}')" class="text-xs font-bold text-[#1F4E79] hover:underline mt-0.5 line-clamp-1 cursor-pointer">🔍 ${c.name}</div>
                     </div>
                     <div>${noteBadge}</div>
                   </div>
@@ -2283,7 +2291,7 @@
       }
     }
 
-    // ================= XỬ LÝ QUẢN TRỊ USER =================
+    // ================= QUẢN TRỊ USER & BÁO CÁO =================
     function openAdminUserModal() { 
       if (currentUser?.role === 'ADMIN') { 
         document.getElementById('adminUserModal')?.classList.remove('hidden'); 
@@ -2311,11 +2319,11 @@
           body: JSON.stringify({ username, fullname, role, sr_key, password: '123456', is_first_login: true })
         });
         if (!res.ok) throw new Error(await res.text());
-        alert("Tạo tài khoản thành công! Pass mặc định: 123456");
+        showToast("Tạo tài khoản thành công! Pass: 123456", "success");
         document.getElementById('newUsername').value = ''; 
         document.getElementById('newFullname').value = '';
         loadAdminUserList();
-      } catch (err) { alert("Lỗi: " + err.message); }
+      } catch (err) { showToast("Lỗi: " + err.message, "error"); }
     }
 
     async function loadAdminUserList() {
@@ -2331,15 +2339,7 @@
         data.forEach(u => {
           const div = document.createElement('div');
           div.className = "p-2.5 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs";
-          div.innerHTML = `
-            <div>
-              <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
-              <div class="text-[10px] text-gray-400 mt-0.5">ID: <b>${u.username}</b> • Pass: <span class="font-mono">${u.password}</span></div>
-            </div>
-            <div class="flex items-center gap-1">
-              <button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px] cursor-pointer">Reset</button>
-              ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}', '${u.fullname || u.username}')" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg text-[10px] cursor-pointer">Xóa 🗑️</button>` : ''}
-            </div>`;
+          div.innerHTML = `<div><div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div><div class="text-[10px] text-gray-400 mt-0.5">ID: <b>${u.username}</b></div></div><div class="flex items-center gap-1"><button onclick="resetUserPassword('${u.id}', '${u.username}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-[10px] cursor-pointer">Reset</button>${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}', '${u.fullname || u.username}')" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg text-[10px] cursor-pointer">Xóa 🗑️</button>` : ''}</div>`;
           container.appendChild(div);
         });
       } catch (err) { container.innerHTML = '<p class="text-xs text-rose-500 text-center">Lỗi: ' + err.message + '</p>'; }
@@ -2353,8 +2353,8 @@
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: '123456', is_first_login: true })
         });
-        alert("Đã reset về 123456!"); loadAdminUserList();
-      } catch (err) { alert("Lỗi: " + err.message); }
+        showToast("Đã reset về 123456!", "success"); loadAdminUserList();
+      } catch (err) { showToast("Lỗi: " + err.message, "error"); }
     }
 
     async function deleteUser(id, name) {
@@ -2364,8 +2364,8 @@
           method: 'DELETE',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
-        alert(`Đã xóa [${name}]!`); loadAdminUserList();
-      } catch (err) { alert("Lỗi: " + err.message); }
+        showToast(`Đã xóa [${name}]!`, "success"); loadAdminUserList();
+      } catch (err) { showToast("Lỗi: " + err.message, "error"); }
     }
 
     async function exportUsersToExcel() {
@@ -2374,20 +2374,19 @@
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         const data = await res.json();
-        const exportData = data.map(u => ({ "Tên Đăng Nhập": u.username, "Mật Khẩu": u.password, "Họ Và Tên": u.fullname, "Vai Trò": u.role, "Ánh Xạ SR": u.sr_key || "", "Lần Đầu": u.is_first_login ? "Có" : "Không", "Ngày Tạo": u.created_at }));
+        const exportData = data.map(u => ({ "Tên Đăng Nhập": u.username, "Họ Và Tên": u.fullname, "Vai Trò": u.role, "Ánh Xạ SR": u.sr_key || "", "Ngày Tạo": u.created_at }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Danh Sách User");
         XLSX.writeFile(wb, `Danh_Sach_User_${new Date().toISOString().slice(0,10)}.xlsx`);
-      } catch (err) { alert("Lỗi xuất file: " + err.message); }
+      } catch (err) { showToast("Lỗi xuất file: " + err.message, "error"); }
     }
 
-    // ================= XỬ LÝ BÁO CÁO ZALO & SOI ĐƠN =================
     function copyZaloReport() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
         if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
+        else if (pin !== null) { showToast("Mã PIN không chính xác!", "error"); return; } else return;
       }
       document.getElementById('reportHubModal')?.classList.remove('hidden');
     }
@@ -2398,7 +2397,7 @@
       if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
       else if (type === 'INDIVIDUAL_SR') {
         const sf = document.getElementById('srFilter');
-        if (!sf || sf.value === 'ALL') { alert("Vui lòng chọn 1 SR cụ thể!"); return; }
+        if (!sf || sf.value === 'ALL') { showToast("Vui lòng chọn 1 SR cụ thể!", "error"); return; }
         executeCopyIndividualReport();
       }
       else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
@@ -2414,7 +2413,7 @@
       });
       const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
       const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Báo cáo Team!")).catch(e => alert("Lỗi: " + e));
+      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Báo cáo Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
     }
 
     function executeCopyIndividualReport() {
@@ -2424,13 +2423,13 @@
       const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
       let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
       const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
-      navigator.clipboard.writeText(msg).then(() => alert(`Đã sao chép báo cáo ${name}!`)).catch(e => alert("Lỗi: " + e));
+      navigator.clipboard.writeText(msg).then(() => showToast(`Đã sao chép báo cáo ${name}!`, "success")).catch(e => showToast("Lỗi: " + e, "error"));
     }
 
     function executeCopyIncentiveTeamReport() {
       const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
       let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép Bảng thưởng Team!")).catch(e => alert("Lỗi: " + e));
+      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Bảng thưởng Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
     }
 
     function executeCopyAuditReport() {
@@ -2438,14 +2437,14 @@
       const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
       const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
       const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép báo cáo Chụp TB!")).catch(e => alert("Lỗi: " + e));
+      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép báo cáo Chụp TB!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
     }
 
     function promptDailyOrdersModal() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
         if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { alert("Mã PIN không chính xác!"); return; } else return;
+        else if (pin !== null) { showToast("Mã PIN không chính xác!", "error"); return; } else return;
       }
       openDailyOrdersModal();
     }
@@ -2507,16 +2506,16 @@
       SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
       const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
       const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
-      navigator.clipboard.writeText(msg).then(() => alert("Đã sao chép nhắc nhở!")).catch(e => alert("Lỗi: " + e));
+      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép nhắc nhở!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
     }
 
     function promptExportFiles() {
       if (prompt("Nhập mật khẩu mở khóa tải file:") === EXPORT_PIN) {
-        document.getElementById('exportActionBox')?.classList.remove('hidden'); alert("Mở khóa thành công!");
-      } else alert("Mật khẩu không chính xác!");
+        document.getElementById('exportActionBox')?.classList.remove('hidden'); showToast("Mở khóa thành công!", "success");
+      } else showToast("Mật khẩu không chính xác!", "error");
     }
 
-    // ================= XỬ LÝ NẠP FILE & DOWNLOAD =================
+    // ================= XỬ LÝ FILE & SUPABASE =================
     function parseExcelDate(val) {
       if (!val) return '';
       const s = String(val).trim();
@@ -2553,7 +2552,7 @@
       const fCov = document.getElementById('fileCov')?.files[0];
 
       if (!fTrack && !fSec && !fAudit && !fTarget && !fCov) {
-        alert("Vui lòng chọn ít nhất một file để nạp!");
+        showToast("Vui lòng chọn ít nhất một file để nạp!", "error");
         return;
       }
 
@@ -2710,16 +2709,11 @@
                     mep_tar: parseFloat(row[23 + offset]) || 0, cov_tar: parseFloat(row[24 + offset]) || 0, sku_pri_tar: skuTarSum,
                     mep_act: parseFloat(row[36 + offset]) || 0, cov_act: parseFloat(row[37 + offset]) || 0, sku_pri_act: skuActSum,
                     mep_ach: parseFloat(row[49 + offset]) || 0, mep_inc: parseFloat(row[50 + offset]) || 0,
-                    ir_visit_tar: parseFloat(row[51 + offset]) || 0,
-                    total_visit: parseFloat(row[52 + offset]) || 0,
-                    ir_product: parseFloat(row[53 + offset]) || 0,
-                    total_visibility: parseFloat(row[54 + offset]) || 0,
-                    ir_visibility: parseFloat(row[55 + offset]) || 0,
-                    ir_act: parseFloat(row[56 + offset]) || 0,
-                    ir_ach: parseFloat(row[57 + offset]) || 0,
-                    total_sat: parseFloat(row[58 + offset]) || 0,
-                    sat_scanned: parseFloat(row[59 + offset]) || 0,
-                    sat_act: parseFloat(row[60 + offset]) || 0,
+                    ir_visit_tar: parseFloat(row[51 + offset]) || 0, total_visit: parseFloat(row[52 + offset]) || 0,
+                    ir_product: parseFloat(row[53 + offset]) || 0, total_visibility: parseFloat(row[54 + offset]) || 0,
+                    ir_visibility: parseFloat(row[55 + offset]) || 0, ir_act: parseFloat(row[56 + offset]) || 0,
+                    ir_ach: parseFloat(row[57 + offset]) || 0, total_sat: parseFloat(row[58 + offset]) || 0,
+                    sat_scanned: parseFloat(row[59 + offset]) || 0, sat_act: parseFloat(row[60 + offset]) || 0,
                     fit_tar: parseFloat(row[61 + offset]) || 0, fit_act: parseFloat(row[62 + offset]) || 0, fit_ach: parseFloat(row[63 + offset]) || 0, fit_inc: parseFloat(row[64 + offset]) || 0,
                     total_inc: parseFloat(row[67 + offset]) || 0
                   };
@@ -2804,9 +2798,9 @@
         toggleAdminModal();
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        alert(`Đồng bộ thành công!\nĐã cập nhật dữ liệu và các chỉ tiêu hệ thống.`);
+        showToast("Đồng bộ dữ liệu thành công!", "success");
       } catch (err) {
-        alert("Lỗi khi xử lý file: " + (err.message || err));
+        showToast("Lỗi khi xử lý file: " + (err.message || err), "error");
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
       }
     }
@@ -2823,7 +2817,7 @@
         data = SEC_ORDERS.map(s => ({ "Ngày": s.date, "SR": s.sr, "Mã Điểm": s.code, "Tên Điểm": s.name, "Brand": s.brand, "Sản Phẩm": s.product, "Loại": s.category, "Sản Lượng (HL)": s.vol, "Thùng": s.qty }));
         fn = "SEC06_Daily";
       }
-      if (!data.length) { alert("Không có dữ liệu để tải!"); return; }
+      if (!data.length) { showToast("Không có dữ liệu để tải!", "error"); return; }
       const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Data");
       XLSX.writeFile(wb, `${fn}_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
