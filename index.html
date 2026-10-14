@@ -146,8 +146,8 @@
   </div>
 
   <!-- ================= MODAL HỒ SƠ 360° ĐIỂM BÁN ================= -->
-  <div id="outlet360Modal" class="fixed inset-0 bg-black/75 z-[150] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" onclick="if(event.target===this) closeOutlet360()">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[88vh] flex flex-col">
+  <div id="outlet360Modal" class="fixed inset-0 bg-black/75 z-[150] flex items-center justify-center p-4 hidden backdrop-blur-sm overflow-hidden" onclick="if(event.target===this) closeOutlet360()">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[88vh] flex flex-col">
       <div class="flex justify-between items-start border-b border-gray-100 pb-2.5">
         <div class="pr-2">
           <div class="flex items-center gap-1.5">
@@ -849,7 +849,7 @@
 
   <!-- ================= MODAL TRUNG TÂM BÁO CÁO SS ================= -->
   <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4.5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div>
           <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
@@ -1430,7 +1430,7 @@
     // ================= HỒ SƠ 360° ĐIỂM BÁN (CÓ HIỂN THỊ SẢN PHẨM BÊN TRONG) =================
     let current360ReportText = "";
 
-    function openOutlet360(code) {
+     function openOutlet360(code) {
       if (!code) return;
       const cleanCode = String(code).trim();
 
@@ -1460,37 +1460,39 @@
       const totalHL = hudaHL + preHL;
 
       let html = '';
+      let step = 1;
       let zaloLines = [`🏪 ĐIỂM BÁN: ${outletName} (${cleanCode})`, `👤 Phụ trách: ${srName}`];
 
       // 1. Doanh số MTD
       html += `
-        <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
+        <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
           <div class="flex justify-between items-center text-xs">
-            <span class="font-extrabold text-[#1F4E79]">📊 1. DOANH SỐ LŨY KẾ THÁNG</span>
+            <span class="font-extrabold text-[#1F4E79]">📊 ${step++}. DOANH SỐ LŨY KẾ THÁNG</span>
             <span class="font-black text-blue-950">${totalHL.toFixed(2)} HL (${Math.round(totalHL / CASE_VOLUME)} th)</span>
           </div>
-          <div class="flex justify-between text-[11px] text-gray-600 pt-1 border-t border-blue-100">
+          <div class="flex justify-between text-[11px] text-gray-600 pt-1.5 border-t border-blue-100">
             <span>🍺 Main: <b class="text-emerald-700">${hudaHL.toFixed(2)} HL</b></span>
             <span>👑 Pre: <b class="text-amber-700">${preHL.toFixed(2)} HL</b></span>
           </div>
         </div>`;
       zaloLines.push(`📊 Doanh số MTD: ${totalHL.toFixed(2)} HL (Main: ${hudaHL.toFixed(2)} | Pre: ${preHL.toFixed(2)})`);
 
-      // 2. Chi tiết sản phẩm đã mua (Tối ưu giao diện cân đối, rõ ràng)
-      let prodHTML = '';
+      // 2. Chi tiết sản phẩm đã mua
       if (Object.keys(prodMap).length > 0) {
+        let prodHTML = '';
         Object.entries(prodMap).forEach(([pName, pData]) => {
-          prodHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium pr-1">• ${pName}</span><span class="font-bold text-gray-900 whitespace-nowrap">${pData.qty} th <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
+          prodHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium pr-2">• ${pName}</span><span class="font-bold text-gray-900 whitespace-nowrap">${pData.qty} th <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
         });
         html += `
-          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 space-y-1">
-            <span class="font-extrabold text-gray-800 text-[11px] block">📦 2. SẢN PHẨM ĐÃ MUA TRONG THÁNG</span>
-            <div class="bg-white p-2 rounded-xl border border-gray-100 space-y-0.5 mt-1">${prodHTML}</div>
+          <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 space-y-1.5">
+            <span class="font-extrabold text-gray-800 text-[11px] block">📦 ${step++}. SẢN PHẨM ĐÃ MUA TRONG THÁNG</span>
+            <div class="bg-white p-2.5 rounded-xl border border-gray-100 space-y-0.5">${prodHTML}</div>
           </div>`;
       } else {
         html += `
-          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-center text-gray-400 text-[11px]">
-            📦 Chưa có đơn hàng phát sinh trong tháng
+          <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 flex justify-between items-center text-[11px]">
+            <span class="font-extrabold text-gray-700">📦 ${step++}. ĐƠN HÀNG TRONG THÁNG</span>
+            <span class="text-gray-400 font-semibold italic">Chưa phát sinh đơn</span>
           </div>`;
       }
 
@@ -1504,11 +1506,15 @@
         const cPre = gP > 0.005 ? Math.min(minPre, Math.ceil((gP - 0.005) / CASE_VOLUME)) : 0;
         const cHu = gH > 0.005 ? Math.ceil((gH + 0.001) / HUDA_CAN20_VOL) : 0;
 
-        let statusText = isPass ? '✓ ĐÃ ĐẠT DISPLAY' : `Thiếu: ${cHu > 0 ? cHu + ' th Huda lon 20 ' : ''}${cPre > 0 ? cPre + ' th Pre' : ''}`;
+        const missArr = [];
+        if (cHu > 0) missArr.push(`${cHu} th Huda lon 20`);
+        if (cPre > 0) missArr.push(`${cPre} th Pre`);
+        const statusText = isPass ? '✓ ĐÃ ĐẠT DISPLAY' : `Thiếu: ${missArr.join(' • ')}`;
+
         html += `
-          <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'} border space-y-1">
+          <div class="p-3.5 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'} border space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-gray-800 text-[11px]">🎯 3. TRƯNG BÀY (${tbItem.level})</span>
+              <span class="font-extrabold text-gray-800 text-[11px]">🎯 ${step++}. TRƯNG BÀY (${tbItem.level})</span>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
             </div>
             <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusText}</div>
@@ -1523,12 +1529,12 @@
         const isPass = aHL >= (lfItem.tarHL - 0.001);
         const gap = Math.max(0, lfItem.tarHL - aHL);
         const missCases = isTONT ? Math.ceil(gap / CASE_VOLUME) : Math.ceil(gap / HUDA_CAN20_VOL);
-        const statusLF = isPass ? '✓ ĐÃ ĐẠT LF' : `Thiếu ${missCases} thùng ${isTONT ? 'Pre tiêu chuẩn' : 'Huda lon 20'}`;
+        const statusLF = isPass ? '✓ ĐÃ ĐẠT LF' : `Thiếu: ${missCases} th ${isTONT ? 'Pre tiêu chuẩn' : 'Huda lon 20'}`;
 
         html += `
-          <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-amber-50/80 border-amber-200'} border space-y-1">
+          <div class="p-3.5 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-amber-50/80 border-amber-200'} border space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-gray-800 text-[11px]">💰 4. LISTING FEE (${lfItem.channelType})</span>
+              <span class="font-extrabold text-gray-800 text-[11px]">💰 ${step++}. LISTING FEE (${lfItem.channelType})</span>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
             </div>
             <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusLF}</div>
@@ -1538,14 +1544,21 @@
 
       // 5. Chụp Trưng Bày
       if (auditItem) {
-        const stAudit = auditItem.count >= 2 ? 'Đủ 2/2 lần' : (auditItem.count === 1 ? '⚠️ Mới chụp 1 lần (Thiếu lần 2)' : '❌ Chưa chụp lần nào');
+        const stAudit = auditItem.count >= 2 ? '✓ Đủ 2/2 lần chụp' : (auditItem.count === 1 ? '⚠️ Mới chụp 1 lần (Thiếu lần 2)' : '❌ Chưa chụp lần nào');
+        let auditDatesHTML = '';
+        if (auditItem.audits && auditItem.audits.length > 0) {
+          auditDatesHTML = `<div class="pt-1.5 mt-1 border-t border-purple-200/60 space-y-0.5 text-[10px] text-purple-900">` +
+            auditItem.audits.map((a, idx) => `<div class="flex justify-between"><span>• Lần ${idx + 1}: ${a.date}</span><b class="${a.result.includes('Đạt') ? 'text-emerald-700' : 'text-rose-600'}">${a.result}</b></div>`).join('') +
+            `</div>`;
+        }
         html += `
-          <div class="p-3 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1">
+          <div class="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-purple-950 text-[11px]">📸 5. CHỤP TRƯNG BÀY (DIP-01)</span>
-              <span class="font-black text-[10px] text-purple-700">${auditItem.count}/2 lần</span>
+              <span class="font-extrabold text-purple-950 text-[11px]">📸 ${step++}. CHỤP TRƯNG BÀY (DIP-01)</span>
+              <span class="font-black text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">${auditItem.count}/2 lần</span>
             </div>
             <div class="text-[11px] font-bold ${auditItem.count >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${stAudit}</div>
+            ${auditDatesHTML}
           </div>`;
         zaloLines.push(`📸 Chụp TB: ${stAudit}`);
       }
@@ -1554,12 +1567,12 @@
       if (covItem) {
         const isLapsed = covItem.covNote === 'Lapsed';
         html += `
-          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 flex justify-between items-center">
+          <div class="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 flex justify-between items-center">
             <div>
-              <span class="font-extrabold text-gray-800 text-[11px] block">📍 6. COVERAGE L28D (${covItem.channel})</span>
-              <span class="text-[10px] text-gray-500">Ghé cuối: <b>${covItem.lastVisit || 'Chưa rõ'}</b></span>
+              <span class="font-extrabold text-gray-800 text-[11px] block">📍 ${step++}. COVERAGE L28D (${covItem.channel})</span>
+              <span class="text-[10px] text-gray-500 mt-0.5 block">Ghé cuối: <b class="text-gray-800">${covItem.lastVisit || 'Chưa rõ'}</b></span>
             </div>
-            <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${isLapsed ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${covItem.covNote}</span>
+            <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold ${isLapsed ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${covItem.covNote}</span>
           </div>`;
         zaloLines.push(`📍 Coverage: ${covItem.covNote} (Ghé cuối: ${covItem.lastVisit || 'Chưa rõ'})`);
       }
@@ -2568,14 +2581,15 @@
       return s.substring(0, 10);
     }
 
-    function formatAuditDate(serial) {
+        function formatAuditDate(serial) {
       if (!serial) return '';
       const s = String(serial).trim();
       if (s.includes('-') || s.includes('/')) return s;
       const num = parseFloat(s);
       if (!isNaN(num) && num > 30000) {
         const d = new Date(Math.floor(num - 25569) * 86400 * 1000);
-        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} ${String(Math.round((num % 1) * 24)).padStart(2, '0')}:${String(Math.round(((num % 1) * 24 * 6) % 60)).padStart(2, '0')}`;
+        const totalMins = Math.round((num % 1) * 1440);
+        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} ${String(Math.floor(totalMins / 60) % 24).padStart(2, '0')}:${String(totalMins % 60).padStart(2, '0')}`;
       }
       return s;
     }
