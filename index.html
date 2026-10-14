@@ -1252,13 +1252,11 @@
         }
       }
 
-      // Xóa password khỏi localStorage để bảo mật cho SR, riêng Admin giữ lại để xem khi cần
       if (currentUser && currentUser.role !== 'ADMIN' && currentUser.password) {
         delete currentUser.password;
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
       }
       
-      // Ẩn nút Nạp file nếu là SR
       const btnUpload = document.getElementById('btnTopUpload');
       const topGrid = document.getElementById('topActionGrid');
       if (btnUpload && topGrid) {
@@ -1429,7 +1427,7 @@
       }
     }
 
-    // ================= HỒ SƠ 360° ĐIỂM BÁN (ALL-IN-ONE) =================
+    // ================= HỒ SƠ 360° ĐIỂM BÁN (CÓ HIỂN THỊ SẢN PHẨM BÊN TRONG) =================
     let current360ReportText = "";
 
     function openOutlet360(code) {
@@ -1451,20 +1449,25 @@
       setText('o360Name', outletName);
 
       let hudaHL = 0, preHL = 0;
+      const prodMap = {};
       orders.forEach(o => {
         if (o.category === "Mainstream") hudaHL += o.vol;
         else preHL += o.vol;
+        if (!prodMap[o.product]) prodMap[o.product] = { qty: 0, vol: 0 };
+        prodMap[o.product].qty += o.qty;
+        prodMap[o.product].vol += o.vol;
       });
       const totalHL = hudaHL + preHL;
 
       let html = '';
       let zaloLines = [`🏪 ĐIỂM BÁN: ${outletName} (${cleanCode})`, `👤 Phụ trách: ${srName}`];
 
+      // 1. Doanh số MTD
       html += `
         <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-[#1F4E79] text-[11px]">📊 1. DOANH SỐ LŨY KẾ THÁNG</span>
-            <span class="font-black text-blue-950 text-xs">${totalHL.toFixed(2)} HL (${Math.round(totalHL / CASE_VOLUME)} th)</span>
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-extrabold text-[#1F4E79]">📊 1. DOANH SỐ LŨY KẾ THÁNG</span>
+            <span class="font-black text-blue-950">${totalHL.toFixed(2)} HL (${Math.round(totalHL / CASE_VOLUME)} th)</span>
           </div>
           <div class="flex justify-between text-[11px] text-gray-600 pt-1 border-t border-blue-100">
             <span>🍺 Main: <b class="text-emerald-700">${hudaHL.toFixed(2)} HL</b></span>
@@ -1473,6 +1476,25 @@
         </div>`;
       zaloLines.push(`📊 Doanh số MTD: ${totalHL.toFixed(2)} HL (Main: ${hudaHL.toFixed(2)} | Pre: ${preHL.toFixed(2)})`);
 
+      // 2. Chi tiết sản phẩm đã mua (Tối ưu giao diện cân đối, rõ ràng)
+      let prodHTML = '';
+      if (Object.keys(prodMap).length > 0) {
+        Object.entries(prodMap).forEach(([pName, pData]) => {
+          prodHTML += `<div class="flex justify-between items-center py-1 border-b border-gray-100 last:border-0 text-[11px]"><span class="text-gray-700 font-medium pr-1">• ${pName}</span><span class="font-bold text-gray-900 whitespace-nowrap">${pData.qty} th <span class="text-gray-400 font-normal">(${pData.vol.toFixed(2)} HL)</span></span></div>`;
+        });
+        html += `
+          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 space-y-1">
+            <span class="font-extrabold text-gray-800 text-[11px] block">📦 2. SẢN PHẨM ĐÃ MUA TRONG THÁNG</span>
+            <div class="bg-white p-2 rounded-xl border border-gray-100 space-y-0.5 mt-1">${prodHTML}</div>
+          </div>`;
+      } else {
+        html += `
+          <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-center text-gray-400 text-[11px]">
+            📦 Chưa có đơn hàng phát sinh trong tháng
+          </div>`;
+      }
+
+      // 3. Trưng bày (Display)
       if (tbItem) {
         const minPre = (tbItem.level === "LV1") ? 5 : (tbItem.level === "LV2" ? 3 : 2);
         const effPre = Number((minPre * CASE_VOLUME).toFixed(4));
@@ -1486,7 +1508,7 @@
         html += `
           <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'} border space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-gray-800 text-[11px]">🎯 2. TRƯNG BÀY (${tbItem.level})</span>
+              <span class="font-extrabold text-gray-800 text-[11px]">🎯 3. TRƯNG BÀY (${tbItem.level})</span>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
             </div>
             <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusText}</div>
@@ -1494,6 +1516,7 @@
         zaloLines.push(`🎯 Display (${tbItem.level}): ${statusText}`);
       }
 
+      // 4. Listing Fee
       if (lfItem) {
         const isTONT = (lfItem.channelType === "TONT");
         const aHL = isTONT ? preHL : hudaHL;
@@ -1505,7 +1528,7 @@
         html += `
           <div class="p-3 rounded-2xl ${isPass ? 'bg-emerald-50/70 border-emerald-200' : 'bg-amber-50/80 border-amber-200'} border space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-gray-800 text-[11px]">💰 3. LISTING FEE (${lfItem.channelType})</span>
+              <span class="font-extrabold text-gray-800 text-[11px]">💰 4. LISTING FEE (${lfItem.channelType})</span>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isPass ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">${isPass ? 'ĐẠT' : 'CHƯA ĐẠT'}</span>
             </div>
             <div class="text-[11px] font-bold ${isPass ? 'text-emerald-700' : 'text-rose-600'}">${statusLF}</div>
@@ -1513,12 +1536,13 @@
         zaloLines.push(`💰 Listing Fee (${lfItem.channelType}): ${statusLF}`);
       }
 
+      // 5. Chụp Trưng Bày
       if (auditItem) {
         const stAudit = auditItem.count >= 2 ? 'Đủ 2/2 lần' : (auditItem.count === 1 ? '⚠️ Mới chụp 1 lần (Thiếu lần 2)' : '❌ Chưa chụp lần nào');
         html += `
           <div class="p-3 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1">
             <div class="flex justify-between items-center">
-              <span class="font-extrabold text-purple-950 text-[11px]">📸 4. CHỤP TRƯNG BÀY (DIP-01)</span>
+              <span class="font-extrabold text-purple-950 text-[11px]">📸 5. CHỤP TRƯNG BÀY (DIP-01)</span>
               <span class="font-black text-[10px] text-purple-700">${auditItem.count}/2 lần</span>
             </div>
             <div class="text-[11px] font-bold ${auditItem.count >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${stAudit}</div>
@@ -1526,12 +1550,13 @@
         zaloLines.push(`📸 Chụp TB: ${stAudit}`);
       }
 
+      // 6. Coverage
       if (covItem) {
         const isLapsed = covItem.covNote === 'Lapsed';
         html += `
           <div class="p-3 rounded-2xl bg-gray-50 border border-gray-200 flex justify-between items-center">
             <div>
-              <span class="font-extrabold text-gray-800 text-[11px] block">📍 5. COVERAGE L28D (${covItem.channel})</span>
+              <span class="font-extrabold text-gray-800 text-[11px] block">📍 6. COVERAGE L28D (${covItem.channel})</span>
               <span class="text-[10px] text-gray-500">Ghé cuối: <b>${covItem.lastVisit || 'Chưa rõ'}</b></span>
             </div>
             <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${isLapsed ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${covItem.covNote}</span>
@@ -1982,7 +2007,6 @@
           setText('txtAggCount', `${sortedOt.length} điểm bán`);
           const visibleOt = sortedOt.slice(0, limits.agg);
           visibleOt.forEach(ot => {
-            // Đã ẩn danh sách product bên ngoài cho cực gọn, bấm vào tên quán sẽ mở Modal 360 xem chi tiết
             aggBox.innerHTML += `
               <div onclick="openOutlet360('${ot.code}')" class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 flex justify-between items-center cursor-pointer hover:border-blue-300 transition-all">
                 <div class="pr-2">
@@ -2158,7 +2182,7 @@
         const cADone = document.getElementById('cardAuditDone'), cANeed2 = document.getElementById('cardAuditNeed2'), cANone = document.getElementById('cardAuditNone');
         if (cADone && cANeed2 && cANone) {
           cADone.className = (currentAuditStatus === 'DONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
-          cANeed2.className = (currentAuditStatus === 'NEED_SECOND') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
+          cANeed2.className = (currentAuditStatus === 'NEED_SECOND') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-emerald-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
           cANone.className = (currentAuditStatus === 'NONE') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-100 border-rose-500 ring-2 ring-rose-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-rose-50/70 border-rose-200" + (currentAuditStatus !== 'ALL' ? " opacity-50" : "");
         }
         const btnResetAudit = document.getElementById('btnResetAuditStatus');
@@ -2343,7 +2367,6 @@
         data.forEach(u => {
           const div = document.createElement('div');
           div.className = "p-2.5 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs";
-          // Admin có thể thấy trực tiếp mật khẩu của nhân viên ở đây
           div.innerHTML = `
             <div>
               <div class="font-bold text-gray-800">${u.fullname} <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-black">${u.role}</span></div>
