@@ -772,7 +772,7 @@
           <h3 class="text-sm font-black text-[#1F4E79] flex items-center gap-1.5">
             📊 BẢNG TIẾN ĐỘ FIT-10 (CHUẨN SS LỢI)
           </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảng snapshot 9 SR • Chuẩn dữ liệu file Incentive[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)</p>
+          <p class="text-[10px] text-gray-400 font-medium">Bảng snapshot 9 SR • Chuẩn dữ liệu file Incentive[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)</p>
         </div>
         <button onclick="closeFitSnapshotModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold flex items-center justify-center transition-all cursor-pointer">✕</button>
       </div>
@@ -835,9 +835,9 @@
         <button onclick="triggerCopyReport('FIT_SNAPSHOT_MODAL')" class="w-full p-2.5 bg-indigo-50/80 hover:bg-indigo-100 active:scale-95 rounded-2xl border border-indigo-200 text-left transition-all">
           <div class="flex justify-between items-center">
             <span class="text-xs font-black text-indigo-950">📊 Mở Bảng FIT-10 Của SS Lợi</span>
-            <span class="text-[9px] bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Snapshot[span_6](start_span)[span_6](end_span)</span>
+            <span class="text-[9px] bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Snapshot</span>
           </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Xem và copy 5 bảng: Call Per Day, Sales Vol, MEP, IR/SAT, FIT Score[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span)</p>
+          <p class="text-[10px] text-gray-500 mt-0.5">Xem và copy 5 bảng: Call Per Day, Sales Vol, MEP, IR/SAT, FIT Score[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span)[span_10](start_span)[span_10](end_span)</p>
         </button>
 
         <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
@@ -936,7 +936,7 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng[span_10](start_span)[span_10](end_span). Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong[span_11](start_span)[span_11](end_span)!
+          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng[span_11](start_span)[span_11](end_span). Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong[span_12](start_span)[span_12](end_span)!
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
@@ -981,7 +981,7 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT ĐƯỢC TỐI ƯU CỰC ĐỘ ================= -->
+  <!-- ================= JAVASCRIPT ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -1003,7 +1003,6 @@
     let isManagerVerified = false, currentUser = null;
     let currentFitView = 1;
 
-    // Giới hạn số lượng điểm bán render mỗi tab
     const PAGE_SIZE = 30;
     let limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE };
 
@@ -1089,7 +1088,7 @@
       }
     }
 
-    // ================= XỬ LÝ ĐĂNG NHẬP NHANH =================
+    // ================= XỬ LÝ ĐĂNG NHẬP =================
     async function handleLogin(e) {
       e.preventDefault();
       const uEl = document.getElementById('loginUsername');
@@ -1172,7 +1171,6 @@
       }
     }
 
-    // ================= PHÂN QUYỀN VÀ MỞ GIAO DIỆN SIÊU TỐC =================
     function applyUserPermissions() {
       const loginScr = document.getElementById('loginScreen');
       if (loginScr) loginScr.classList.add('hidden');
@@ -1193,7 +1191,7 @@
           srSelectEl.value = currentUser.sr_key;
         } else if (isManagerVerified) {
           const savedSR = localStorage.getItem('SAVED_SR');
-          srSelectEl.value = savedSR || 'ALL';[span_12](start_span)[span_12](end_span)
+          srSelectEl.value = savedSR || 'ALL';[span_13](start_span)[span_13](end_span)
         }
       }
 
@@ -1240,7 +1238,7 @@
       }
     }
 
-    // ================= TẢI DỮ LIỆU TỪ SUPABASE =================
+    // ================= TẢI DỮ LIỆU TỪ CLOUD =================
     async function loadDataFromCloud() {
       setText('lblLastUpdate', "Đang kiểm tra dữ liệu mới...");
       try {
@@ -1725,7 +1723,6 @@
       const btnClear = document.getElementById('btnClearSearch');
       if (btnClear) btnClear.classList.toggle('hidden', !searchKeyword);
 
-      // Phân bổ sản lượng theo điểm bán
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -2490,8 +2487,11 @@
       const fTarget = document.getElementById('fileTarget')?.files[0];
       const fCov = document.getElementById('fileCov')?.files[0];
 
-      if (!fTrack && MASTER.length === 0) { alert("Chưa có file Tracking Master!"); return; }
-      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget && !fCov) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
+      // Đã mở khóa: Chỉ cần chọn ít nhất 1 file bất kỳ là được nạp
+      if (!fTrack && !fSec && !fAudit && !fTarget && !fCov) { 
+        alert("Vui lòng chọn ít nhất một file để nạp dữ liệu!"); 
+        return; 
+      }
 
       const btn = document.getElementById('btnSaveData');
       if (btn) btn.textContent = "Đang xử lý dữ liệu...";
