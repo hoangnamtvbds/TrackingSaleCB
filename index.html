@@ -6,6 +6,7 @@
   <title>Carlsberg Sale Tracking</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F9FA; }
@@ -13,6 +14,10 @@
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     input, button, select { touch-action: manipulation; }
+    /* Bảng ma trận FIT-10 cuộn tự do không khóa */
+    .table-fit-matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 680px; font-size: 11px; }
+    .table-fit-matrix th, .table-fit-matrix td { border: 1px solid #d1d5db; padding: 5px 8px; text-align: center; white-space: nowrap; }
+    .table-fit-matrix th { font-weight: 800; }
   </style>
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
@@ -166,15 +171,18 @@
         </div>
       </div>
 
-      <!-- 3 Nút chức năng -->
-      <div class="grid grid-cols-3 gap-2">
-        <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
+      <!-- 4 Nút chức năng phía trên -->
+      <div class="grid grid-cols-4 gap-1.5">
+        <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           📦 Đơn ngày
         </button>
-        <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
+        <button onclick="openFit10Modal()" class="py-2 px-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
+          🏆 FIT-10
+        </button>
+        <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           📋 Báo cáo
         </button>
-        <button onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
+        <button onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
           ⚙️ Nạp file
         </button>
       </div>
@@ -655,6 +663,51 @@
     </div>
   </div>
 
+  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CUỘN TỰ DO) ================= -->
+  <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
+    <div class="bg-white w-full max-w-4xl rounded-3xl p-4 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[92vh] flex flex-col">
+      <!-- Header Modal -->
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-sm">🏆</div>
+          <div>
+            <h3 class="text-sm font-black text-[#1F4E79] tracking-tight">5 BẢNG THI ĐUA FIT-10 (CHỈ TIÊU & THỰC THI)</h3>
+            <p class="text-[10px] text-gray-400 font-semibold">Dữ liệu trích xuất chuẩn xác từ file FIT-10.SalesIncentive của SS</p>
+          </div>
+        </div>
+        <button onclick="closeFit10Modal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
+      </div>
+
+      <!-- Thanh chọn 5 bảng FIT-10 -->
+      <div class="grid grid-cols-5 p-1 bg-gray-100 rounded-xl gap-1 text-[10px] font-bold text-center">
+        <button id="fitTabBtn1" onclick="switchFit10SubTab(1)" class="py-1.5 rounded-lg bg-white text-indigo-900 shadow-sm cursor-pointer">1. MCP Đi Tuyến</button>
+        <button id="fitTabBtn2" onclick="switchFit10SubTab(2)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">2. Sản Lượng</button>
+        <button id="fitTabBtn3" onclick="switchFit10SubTab(3)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">3. MEP Thực Thi</button>
+        <button id="fitTabBtn4" onclick="switchFit10SubTab(4)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">4. IR / SAT</button>
+        <button id="fitTabBtn5" onclick="switchFit10SubTab(5)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">5. FIT Score</button>
+      </div>
+
+      <!-- Nút chức năng: Tải ảnh PNG đầy đủ (Đã bỏ sao chép text) -->
+      <div class="flex justify-between items-center gap-2">
+        <span class="text-[11px] text-gray-600 font-bold" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
+        <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+          📸 Tải ảnh PNG đầy đủ
+        </button>
+      </div>
+
+      <!-- Container chứa bảng cuộn ngang tự do -->
+      <div class="flex-1 overflow-x-auto overflow-y-auto rounded-xl border border-gray-200 bg-white" id="fit10CaptureContainer">
+        <div id="fit10TableWrap" class="p-2 min-w-full inline-block bg-white"></div>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
+        <span>* Bảng ma trận cuộn ngang tự do thoải mái trên màn hình điện thoại.</span>
+        <button onclick="closeFit10Modal()" class="px-4 py-1.5 bg-gray-100 text-gray-600 font-bold rounded-lg cursor-pointer">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= MODAL TOTAL KPI CHUYÊN SÂU ================= -->
   <div id="totalKpiModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
@@ -886,7 +939,7 @@
 
       <div id="uploadBox" class="hidden space-y-3">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng[span_1](start_span)[span_1](end_span). Hằng ngày chỉ cần chọn file <b>SEC-06</b> và file <b>Chụp TB</b> rồi bấm xác nhận là xong[span_2](start_span)[span_2](end_span)!
+          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng. Hằng ngày có thể nạp riêng file <b>FIT-10.SalesIncentive</b> hoặc <b>SEC-06</b> mà không bị hệ thống chặn!
         </div>
         <div>
           <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
@@ -931,28 +984,37 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT ĐƯỢC TỐI ƯU CỰC ĐỘ (ZERO LAG) ================= -->
+  <!-- ================= JAVASCRIPT ĐÃ LOẠI BỎ STICKY & RÚT GỌN NÚT BẤM ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
-    const TEAM_SR_MAP = {
-      "Tai Nguyen Ngoc": "Nguyễn Ngọc Tài", "Thuong Hoang Van": "Hoàng Văn Thương",
-      "Luan Nguyen Van": "Nguyễn Văn Luân", "Oanh Nguyen Kieu": "Nguyễn Kiều Oanh",
-      "Nam Le Hoang": "Lê Hoàng Nam", "Phu Tran Trong": "Trần Trọng Phú",
-      "Huynh Mai Trong": "Mai Trọng Huỳnh", "Lien Dinh Thi": "Đinh Thị Liễn",
-      "Tuan Nguyen Hoang": "Nguyễn Hoàng Tuấn"
-    };
-    const TEAM_SRS = Object.keys(TEAM_SR_MAP);
+    const TEAM_SR_ORDER = [
+      { key: "Tai Nguyen Ngoc", hrid: "HCM-0767", cvtcsr: "Nguyen Ngoc Tai", name: "Nguyễn Ngọc Tài" },
+      { key: "Thuong Hoang Van", hrid: "HCM-0775", cvtcsr: "Hoang Van Thuong", name: "Hoàng Văn Thương" },
+      { key: "Luan Nguyen Van", hrid: "HCM-0972", cvtcsr: "Nguyen Van Luan", name: "Nguyễn Văn Luân" },
+      { key: "Oanh Nguyen Kieu", hrid: "HCM-1204", cvtcsr: "Nguyen Kieu Oanh", name: "Nguyễn Kiều Oanh" },
+      { key: "Nam Le Hoang", hrid: "HCM-1443", cvtcsr: "Le Hoang Nam", name: "Lê Hoàng Nam" },
+      { key: "Phu Tran Trong", hrid: "HCM-1476", cvtcsr: "Tran Trong Phu", name: "Trần Trọng Phú" },
+      { key: "Huynh Mai Trong", hrid: "HCM-1541", cvtcsr: "Mai Trong Huynh", name: "Mai Trọng Huỳnh" },
+      { key: "Lien Dinh Thi", hrid: "HCM-2082", cvtcsr: "Dinh Thi Lien", name: "Đinh Thị Liễn" },
+      { key: "Tuan Nguyen Hoang", hrid: "SPS-010", cvtcsr: "Nguyen Hoang Tuan", name: "Nguyễn Hoàng Tuấn" }
+    ];
 
-    let activeTab = 1;
+    const TEAM_SR_MAP = {};
+    const TEAM_SRS = [];
+    TEAM_SR_ORDER.forEach(item => {
+      TEAM_SR_MAP[item.key] = item.name;
+      TEAM_SRS.push(item.key);
+    });
+
+    let activeTab = 1, currentFitSubTab = 1;
     let currentLFChannel = "ALL", currentTBStatus = "ALL", currentLFStatus = "ALL", currentTBLevel = "ALL", currentAuditStatus = "ALL";
     let currentCovStatus = "ALL", currentCovChannel = "ALL", currentModalFilter = "ALL";
     let isManagerVerified = false, currentUser = null;
 
-    // Giới hạn số lượng điểm bán render mỗi tab (Giải pháp 3)
     const PAGE_SIZE = 30;
     let limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE };
 
@@ -967,7 +1029,7 @@
       const s = String(name).trim();
       const sLower = s.toLowerCase();
       if (sLower.includes("phan tuan vu") || sLower.includes("vu2") || sLower.includes("phan tuấn vũ")) return "Vu2 Phan Tuan";
-      if (sLower.includes("tuan nguyen hoang") || sLower.includes("nguyễn hoàng tuấn") || sLower.includes("nguyen hoang tuan")) return "Tuan Nguyen Hoang";
+      if (sLower.includes("tuan nguyen hoang") || sLower.includes("nguyễn hoàng tuấn") || sLower.includes("nguyen hoang tuan") || sLower.includes("sps-010")) return "Tuan Nguyen Hoang";
       if (s.includes("Tai") || s.includes("Tài")) return "Tai Nguyen Ngoc";
       if (s.includes("Thuong") || s.includes("Thương") || s.includes("Thưởng")) return "Thuong Hoang Van";
       if (s.includes("Luan") || s.includes("Luân")) return "Luan Nguyen Van";
@@ -994,6 +1056,18 @@
       if (p.includes('huda')) return 'Huda';
       if (p.includes('halida')) return 'Halida';
       return 'Premium Khác';
+    }
+
+    function updateLatestOrderDateBanner() {
+      if (SEC_ORDERS && SEC_ORDERS.length > 0) {
+        const dates = SEC_ORDERS.map(o => o.date).filter(Boolean).sort().reverse();
+        if (dates.length > 0) {
+          setText('lblLatestOrderDate', dates[0]);
+          document.getElementById('latestOrderBanner')?.classList.remove('hidden');
+          return dates[0];
+        }
+      }
+      return null;
     }
 
     // ================= KHỞI TẠO =================
@@ -1141,16 +1215,12 @@
         if (role === 'SR' && currentUser.sr_key) {
           srSelectEl.value = currentUser.sr_key;
         } else if (isManagerVerified) {
-          // Ưu tiên nạp lại lựa chọn SR đã lưu, nếu không có thì mặc định chọn ALL[span_3](start_span)[span_3](end_span)
           const savedSR = localStorage.getItem('SAVED_SR');
           srSelectEl.value = savedSR || 'ALL';
         }
       }
 
-      // Hiện dữ liệu đã có trong máy ngay lập tức (0.05s)
       loadLocalCacheFast();
-
-      // Đồng bộ ngầm với Supabase sau đó
       setTimeout(() => {
         loadDataFromCloud();
       }, 100);
@@ -1192,7 +1262,7 @@
       }
     }
 
-    // ================= TẢI DỮ LIỆU TỪ SUPABASE (CHẠY NGẦM KHÔNG TREO UI) =================
+    // ================= TẢI DỮ LIỆU TỪ SUPABASE =================
     async function loadDataFromCloud() {
       setText('lblLastUpdate', "Đang kiểm tra dữ liệu mới...");
       try {
@@ -1252,7 +1322,7 @@
       }
     }
 
-    // ================= CHUYỂN TAB & BỘ LỌC (GIẢI PHÁP 2: LAZY RENDER) =================
+    // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
       activeTab = tab;
       [1, 2, 3, 4, 5].forEach(i => {
@@ -1261,7 +1331,7 @@
         if (c) c.classList.toggle('hidden', i !== tab);
         if (b) b.className = (i === tab) ? "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer" : "py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer";
       });
-      renderAll(); // Chỉ render đúng tab vừa chuyển tới
+      renderAll();
     }
 
     function resetLimitsAndRender() {
@@ -1305,18 +1375,6 @@
       const bFail = document.getElementById('btnFilterLFFail'); if (bFail) bFail.className = (status === 'FAIL') ? (act + " text-rose-600") : inact;
       const bPass = document.getElementById('btnFilterLFPass'); if (bPass) bPass.className = (status === 'PASS') ? (act + " text-emerald-600") : inact;
       renderAll();
-    }
-
-    function updateLatestOrderDateBanner() {
-      if (SEC_ORDERS && SEC_ORDERS.length > 0) {
-        const dates = SEC_ORDERS.map(o => o.date).filter(Boolean).sort().reverse();
-        if (dates.length > 0) {
-          setText('lblLatestOrderDate', dates[0]);
-          document.getElementById('latestOrderBanner')?.classList.remove('hidden');
-          return dates[0];
-        }
-      }
-      return null;
     }
 
     function onSRChange() { 
@@ -1380,6 +1438,302 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
+    // ================= XỬ LÝ 5 BẢNG MA TRẬN FIT-10 (BỎ STICKY, CUỘN TỰ DO) =================
+    function openFit10Modal() {
+      document.getElementById('fit10Modal')?.classList.remove('hidden');
+      switchFit10SubTab(currentFitSubTab || 1);
+    }
+
+    function closeFit10Modal() {
+      document.getElementById('fit10Modal')?.classList.add('hidden');
+    }
+
+    function switchFit10SubTab(tab) {
+      currentFitSubTab = tab;
+      for (let i = 1; i <= 5; i++) {
+        const b = document.getElementById(`fitTabBtn${i}`);
+        if (b) {
+          b.className = (i === tab) ? "py-1.5 rounded-lg bg-white text-indigo-900 shadow-sm font-black cursor-pointer" : "py-1.5 rounded-lg text-gray-600 font-bold cursor-pointer";
+        }
+      }
+      renderFit10Table(tab);
+    }
+
+    function renderFit10Table(tab) {
+      const container = document.getElementById('fit10TableWrap');
+      const titleEl = document.getElementById('lblFit10TableTitle');
+      if (!container) return;
+
+      const titles = [
+        "",
+        "Bảng 1: MCP Đi Tuyến (Call Per Day & Visit On Route)",
+        "Bảng 2: Sản Lượng Toàn Đội & Focused SKUs (Premium)",
+        "Bảng 3: Monthly Execution Priority (MEP 12 Cột Thực Thi)",
+        "Bảng 4: Chất Lượng Chụp Ảnh & Tủ Lạnh (IR Visit & SAT Scanned)",
+        "Bảng 5: Tổng Kết Điểm Thi Đua (FIT Score)"
+      ];
+      if (titleEl) titleEl.textContent = titles[tab];
+
+      let html = '';
+
+      // BẢNG 1: MCP Đi Tuyến
+      if (tab === 1) {
+        html = `
+          <table class="table-fit-matrix" id="fitTableActive">
+            <thead>
+              <tr class="bg-gray-100 text-gray-800">
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
+                <th rowspan="2" class="text-gray-700">% Working</th>
+                <th colspan="3" class="bg-blue-100 text-blue-900">Call Per Day</th>
+                <th colspan="3" class="bg-indigo-100 text-indigo-900">Visit On Route</th>
+              </tr>
+              <tr class="bg-blue-50/70 text-gray-700">
+                <th>Target</th><th>Actual</th><th>Achieved</th>
+                <th>Target</th><th>Actual</th><th>Achieved</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const cpdT = Math.round(d.cpd_tar || 16);
+          const cpdA = Math.round(d.cpd_act || 0);
+          const isCpdPass = (cpdA >= cpdT && cpdT > 0);
+          const vorT = Math.round(d.vor_tar || 0);
+          const vorA = Math.round(d.vor_act || 0);
+          const vorPct = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
+          const isVorLow = vorPct < 80;
+          const isRedSr = (!isCpdPass || isVorLow);
+
+          html += `
+            <tr class="hover:bg-blue-50/40">
+              <td class="font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.hrid}</td>
+              <td class="text-left font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.cvtcsr}</td>
+              <td class="font-medium text-gray-700">100 %</td>
+              <td class="font-semibold">${cpdT}</td>
+              <td class="font-bold ${!isCpdPass ? 'text-rose-600' : 'text-gray-900'}">${cpdA}</td>
+              <td class="font-black ${isCpdPass ? 'text-emerald-700' : 'text-rose-600'}">${isCpdPass ? 'TRUE' : 'FALSE'}</td>
+              <td class="font-semibold">${vorT}</td>
+              <td class="font-bold text-gray-900">${vorA}</td>
+              <td class="font-black ${vorPct >= 95 ? 'text-emerald-700' : (vorPct >= 80 ? 'text-gray-800' : 'text-rose-600')}">${vorPct}%</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      // BẢNG 2: Sản Lượng & Focused SKUs
+      else if (tab === 2) {
+        html = `
+          <table class="table-fit-matrix" id="fitTableActive">
+            <thead>
+              <tr class="bg-gray-100 text-gray-800">
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
+                <th colspan="3" class="bg-amber-100 text-amber-950">Sales Volume</th>
+                <th colspan="4" class="bg-emerald-100 text-emerald-950">Focused SKUs</th>
+              </tr>
+              <tr class="bg-gray-50 text-gray-700">
+                <th>Target</th><th>Actual</th><th>Achieved</th>
+                <th>Type</th><th>Target</th><th>Actual</th><th>Achieved</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const vT = Math.round(d.volume_target || 0);
+          const vA = Math.round(d.volume_actual || 0);
+          const vAch = Math.round((d.vol_ach || (vT > 0 ? (vA / vT) : 0)) * 100);
+          const pT = (d.premium_target || 0).toFixed(2);
+          const pA = (d.premium_actual || 0).toFixed(2);
+          const pAch = Math.round((d.sku_ach || (parseFloat(pT) > 0 ? (parseFloat(pA) / parseFloat(pT)) : 0)) * 100);
+          const isVolLow = vAch < 30;
+          const isPreLow = pAch < 30;
+
+          html += `
+            <tr class="hover:bg-blue-50/40">
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-semibold">${vT}</td>
+              <td class="font-bold ${isVolLow ? 'text-rose-600' : 'text-gray-900'}">${vA}</td>
+              <td class="font-black ${isVolLow ? 'text-rose-600' : 'text-gray-800'}">${vAch}%</td>
+              <td class="font-medium text-emerald-800">Premium</td>
+              <td class="font-semibold">${pT}</td>
+              <td class="font-bold ${isPreLow ? 'text-rose-600' : 'text-gray-900'}">${pA}</td>
+              <td class="font-black ${isPreLow ? 'text-rose-600' : 'text-gray-800'}">${pAch}%</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      // BẢNG 3: Monthly Execution Priority (MEP 12 Cột)
+      else if (tab === 3) {
+        html = `
+          <table class="table-fit-matrix" id="fitTableActive">
+            <thead>
+              <tr class="bg-gray-100 text-gray-800">
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
+                <th rowspan="2" class="text-gray-700">Type</th>
+                <th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th>
+                <th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th>
+                <th rowspan="2" class="bg-cyan-100 text-blue-950 font-black">Achieved</th>
+              </tr>
+              <tr class="bg-gray-50 text-gray-700">
+                <th class="bg-cyan-50">MPTar</th><th class="bg-cyan-50">CovTar</th><th class="bg-cyan-50">TBTar</th><th class="bg-cyan-50">HUDTar</th>
+                <th class="bg-amber-100">MPAct</th><th class="bg-amber-100">CovAct</th><th class="bg-amber-100">TBAct</th><th class="bg-amber-100">HUDAct</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const mpT = Math.round(d.mep_tar || 0);
+          const covT = Math.round(d.cov_tar || 0);
+          const tbT = Math.round(d.sku_pri_tar || 0);
+          const hudT = Math.max(0, mpT - covT - tbT);
+          const mpA = Math.round(d.mep_act || 0);
+          const covA = Math.round(d.cov_act || 0);
+          const tbA = Math.round(d.sku_pri_act || 0);
+          const hudA = Math.max(0, mpA - covA - tbA);
+          const achPct = Math.round((d.mep_ach || (mpT > 0 ? (mpA / mpT) : 0)) * 100);
+          const isHudLow = hudA < hudT;
+          const isTbLow = tbA < tbT;
+          const isCovLow = covA < covT;
+
+          html += `
+            <tr class="hover:bg-blue-50/40">
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="text-[10px] text-gray-500 font-semibold">NewCovDis2024</td>
+              <td class="font-bold bg-cyan-50/50">${mpT}</td>
+              <td class="font-semibold bg-cyan-50/50 ${isCovLow ? 'text-rose-600 font-bold' : ''}">${covT}</td>
+              <td class="font-semibold bg-cyan-50/50 ${isTbLow ? 'text-rose-600 font-bold' : ''}">${tbT}</td>
+              <td class="font-semibold bg-cyan-50/50 ${isHudLow ? 'text-rose-600 font-bold' : ''}">${hudT}</td>
+              <td class="font-bold bg-amber-50">${mpA}</td>
+              <td class="font-semibold bg-amber-50 ${isCovLow ? 'text-rose-600 font-bold' : ''}">${covA}</td>
+              <td class="font-semibold bg-amber-50 ${isTbLow ? 'text-rose-600 font-bold' : ''}">${tbA}</td>
+              <td class="font-semibold bg-amber-50 ${isHudLow ? 'text-rose-600 font-bold' : ''}">${hudA}</td>
+              <td class="font-black ${achPct >= 100 ? 'text-emerald-700 bg-emerald-50/50' : (achPct >= 85 ? 'text-blue-900' : 'text-rose-600')}">${achPct}%</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      // BẢNG 4: IR Visit & SAT Scanned
+      else if (tab === 4) {
+        html = `
+          <table class="table-fit-matrix" id="fitTableActive">
+            <thead>
+              <tr class="bg-gray-100 text-gray-800">
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
+                <th colspan="7" class="bg-indigo-100 text-indigo-950">IR Visit</th>
+                <th colspan="3" class="bg-sky-100 text-sky-950">SAT Scanned</th>
+              </tr>
+              <tr class="bg-gray-50 text-gray-700">
+                <th>Target IR</th><th>Total Visit</th><th>IR Product</th><th>Total Visibility</th><th>IR Visibility</th><th>IR Actual</th><th>Achieved</th>
+                <th>Total SAT</th><th>SAT Scanned</th><th>SAT Actual</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const tarIr = (sr.hrid === 'SPS-010') ? '80%' : '90%';
+          const totVis = Math.round(d.total_visit || 0);
+          const irProd = Math.round(d.ir_product || 0);
+          const totVisib = Math.round(d.total_visibility || 0);
+          const irVisib = Math.round(d.ir_visibility || 0);
+          const irAct = Math.round((d.ir_act || (totVis > 0 ? (irProd / totVis) : 0)) * 100);
+          const irAch = Math.round((d.ir_ach || 0) * 100) || (irAct > 0 ? Math.round(irAct / 90 * 100) : 0);
+          const totSat = Math.round(d.total_sat || 0);
+          const satScan = Math.round(d.sat_scanned || 0);
+          const satAct = Math.round((d.sat_act || (totSat > 0 ? (satScan / totSat) : 0)) * 100);
+          const isSatLow = satScan < totSat;
+
+          html += `
+            <tr class="hover:bg-blue-50/40">
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-semibold text-gray-700">${tarIr}</td>
+              <td class="font-medium">${totVis}</td>
+              <td class="font-medium">${irProd}</td>
+              <td class="font-medium">${totVisib}</td>
+              <td class="font-medium">${irVisib || '-'}</td>
+              <td class="font-bold text-gray-900">${irAct}%</td>
+              <td class="font-black ${irAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${irAch}%</td>
+              <td class="font-medium">${totSat}</td>
+              <td class="font-bold ${isSatLow ? 'text-rose-600' : 'text-gray-900'}">${satScan}</td>
+              <td class="font-black ${satAct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${satAct}%</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      // BẢNG 5: FIT Score
+      else if (tab === 5) {
+        html = `
+          <table class="table-fit-matrix" id="fitTableActive">
+            <thead>
+              <tr class="bg-gray-100 text-gray-800">
+                <th class="text-[#1F4E79]">HRID</th>
+                <th class="text-[#1F4E79] text-left">CVTCSR</th>
+                <th class="bg-cyan-100 text-cyan-950">Target</th>
+                <th class="bg-amber-100 text-amber-950">Actual</th>
+                <th class="bg-emerald-100 text-emerald-950">Achieved</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        TEAM_SR_ORDER.forEach(sr => {
+          const d = SALES_TARGETS[sr.key] || {};
+          const fT = ((d.fit_tar || 0) * 100).toFixed(2);
+          const fA = ((d.fit_act || 0) * 100).toFixed(2);
+          const fAch = Math.round((d.fit_ach || (parseFloat(fT) > 0 ? (parseFloat(fA) / parseFloat(fT)) : 0)) * 100);
+
+          html += `
+            <tr class="hover:bg-blue-50/40">
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-bold text-cyan-900">${fT}%</td>
+              <td class="font-bold text-amber-900">${fA}%</td>
+              <td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}.00%</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Xuất ảnh PNG hoàn chỉnh với html2canvas bằng scrollWidth
+    async function exportFit10PngImage() {
+      const btn = document.getElementById('btnExportFitPng');
+      const tableWrap = document.getElementById('fit10TableWrap');
+      if (!tableWrap) return;
+
+      const origText = btn.innerHTML;
+      btn.innerHTML = "⏳ Đang tạo ảnh...";
+      btn.disabled = true;
+
+      try {
+        const canvas = await html2canvas(tableWrap, {
+          backgroundColor: '#FFFFFF',
+          scale: 2,
+          useCORS: true,
+          width: tableWrap.scrollWidth,
+          windowWidth: tableWrap.scrollWidth
+        });
+
+        const link = document.createElement('a');
+        link.download = `Bang_FIT10_Carlsberg_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert("Lỗi khi tạo ảnh: " + err.message);
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    }
+
     // ================= HÀM RENDER AN TOÀN VỚI LAZY TAB & PHÂN TRANG =================
     function renderAll() {
       const srFilterEl = document.getElementById('srFilter');
@@ -1390,7 +1744,6 @@
       const btnClear = document.getElementById('btnClearSearch');
       if (btnClear) btnClear.classList.toggle('hidden', !searchKeyword);
 
-      // Phân bổ sản lượng theo điểm bán
       const salesByOutlet = {};
       SEC_ORDERS.forEach(o => {
         if (!salesByOutlet[o.code]) salesByOutlet[o.code] = { huda: 0, pre: 0, total: 0 };
@@ -2154,8 +2507,10 @@
       const fTarget = document.getElementById('fileTarget')?.files[0];
       const fCov = document.getElementById('fileCov')?.files[0];
 
-      if (!fTrack && MASTER.length === 0) { alert("Chưa có file Tracking Master!"); return; }
-      if (!fSec && SEC_ORDERS.length === 0 && !fAudit && !fTarget && !fCov) { alert("Vui lòng chọn ít nhất một file để nạp!"); return; }
+      if (!fTrack && !fSec && !fAudit && !fTarget && !fCov) {
+        alert("Vui lòng chọn ít nhất một file để nạp!");
+        return;
+      }
 
       const btn = document.getElementById('btnSaveData');
       if (btn) btn.textContent = "Đang xử lý dữ liệu...";
