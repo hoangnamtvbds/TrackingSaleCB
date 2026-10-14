@@ -2027,7 +2027,7 @@
           if (!isPass) {
             const gP = Math.max(0, effPre - aP), gH = Math.max(0, m.tarHuda - aH);
             const cPre = gP > 0.005 ? Math.min(minPre, Math.ceil((gP - 0.005) / CASE_VOLUME)) : 0;
-            const cHu = gH > 0.005 ? Math.ceil((gH - 0.005) / HUDA_CAN20_VOL) : 0;
+            const cHu = gH > 0.005 ? Math.ceil((gH + 0.001) / HUDA_CAN20_VOL) : 0;
             let mArr = []; 
             if (cHu > 0) mArr.push(`Thiếu <b>${cHu}</b> th Huda lon 20`); 
             if (cPre > 0) mArr.push(`Thiếu <b>${cPre}</b> th Pre tiêu chuẩn`);
