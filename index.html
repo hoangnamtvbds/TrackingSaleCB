@@ -3124,7 +3124,7 @@
       return s;
     }
 
-        async function processAndSave() {
+            async function processAndSave() {
       const fTrack = document.getElementById('fileTrack')?.files[0];
       const fSec = document.getElementById('fileSec')?.files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0];
@@ -3352,7 +3352,7 @@
           }
         }
 
-        // Xử lý File FIT-08 Visit Performance (Làm đêm)
+        // Xử lý File FIT-08 Visit Performance (Lưu vào localStorage trình duyệt)
         if (fVisit) {
           const wb = XLSX.read(await fVisit.arrayBuffer(), { dense: false });
           const sName = wb.SheetNames[0];
@@ -3392,6 +3392,7 @@
                 gps: parseFloat(row[cGps]) || 0
               });
             }
+            localStorage.setItem('VISIT_PERF_DATA', JSON.stringify(VISIT_PERFORMANCE));
           }
         }
 
@@ -3401,7 +3402,7 @@
         const payload = {
           id: 'CURRENT_DATA',
           master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
-          sec: SEC_ORDERS, promo: PROMOTIONS, visit_perf: VISIT_PERFORMANCE, updated_at: nowStr
+          sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
         };
 
         const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
@@ -3415,15 +3416,14 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('VISIT_PERF_DATA', JSON.stringify(VISIT_PERFORMANCE));
-          localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES)); localStorage.setItem('UPDATE_TIME', nowStr);
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('UPDATE_TIME', nowStr);
         } catch (e) {}
 
         setText('lblLastUpdate', `Cập nhật: ${nowStr}`);
         toggleAdminModal();
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        showToast("Đồng bộ dữ liệu thành công!", "success");
+        showToast("Nạp file thành công!", "success");
       } catch (err) {
         showToast("Lỗi khi xử lý file: " + (err.message || err), "error");
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
