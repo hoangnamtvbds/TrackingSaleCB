@@ -14,12 +14,10 @@
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     input, button, select { touch-action: manipulation; }
-    /* Bảng ma trận FIT-10 */
-    .table-fit-matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 640px; font-size: 11px; }
-    .table-fit-matrix th, .table-fit-matrix td { border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; white-space: nowrap; }
+    /* Bảng ma trận FIT-10 cuộn tự do không khóa */
+    .table-fit-matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 680px; font-size: 11px; }
+    .table-fit-matrix th, .table-fit-matrix td { border: 1px solid #d1d5db; padding: 5px 8px; text-align: center; white-space: nowrap; }
     .table-fit-matrix th { font-weight: 800; }
-    .table-fit-matrix .sticky-col-1 { position: sticky; left: 0; z-index: 10; }
-    .table-fit-matrix .sticky-col-2 { position: sticky; left: 75px; z-index: 10; }
   </style>
 </head>
 <body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
@@ -665,7 +663,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CHUẨN FORM EXCEL) ================= -->
+  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CUỘN TỰ DO) ================= -->
   <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-4xl rounded-3xl p-4 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[92vh] flex flex-col">
       <!-- Header Modal -->
@@ -689,27 +687,22 @@
         <button id="fitTabBtn5" onclick="switchFit10SubTab(5)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">5. FIT Score</button>
       </div>
 
-      <!-- Nút chức năng: Chụp ảnh PNG & Copy Zalo -->
+      <!-- Nút chức năng: Tải ảnh PNG đầy đủ (Đã bỏ sao chép text) -->
       <div class="flex justify-between items-center gap-2">
-        <span class="text-[10px] text-gray-500 font-bold italic" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
-        <div class="flex gap-2">
-          <button onclick="copyFit10TextReport()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-lg text-[10px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
-            📋 Sao chép Text Zalo
-          </button>
-          <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-lg text-[10px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
-            📸 Tải ảnh PNG đầy đủ
-          </button>
-        </div>
+        <span class="text-[11px] text-gray-600 font-bold" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
+        <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+          📸 Tải ảnh PNG đầy đủ
+        </button>
       </div>
 
-      <!-- Container chứa bảng để cuộn ngang và html2canvas chụp toàn vẹn -->
-      <div class="flex-1 overflow-auto rounded-xl border border-gray-200 bg-white" id="fit10CaptureContainer">
-        <div id="fit10TableWrap" class="p-1 min-w-full inline-block bg-white"></div>
+      <!-- Container chứa bảng cuộn ngang tự do -->
+      <div class="flex-1 overflow-x-auto overflow-y-auto rounded-xl border border-gray-200 bg-white" id="fit10CaptureContainer">
+        <div id="fit10TableWrap" class="p-2 min-w-full inline-block bg-white"></div>
       </div>
 
       <!-- Footer Modal -->
       <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
-        <span>* Bảng ma trận hỗ trợ vuốt ngang trên di động, cố định cột mã và tên SR.</span>
+        <span>* Bảng ma trận cuộn ngang tự do thoải mái trên màn hình điện thoại.</span>
         <button onclick="closeFit10Modal()" class="px-4 py-1.5 bg-gray-100 text-gray-600 font-bold rounded-lg cursor-pointer">Đóng</button>
       </div>
     </div>
@@ -991,14 +984,13 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT ĐƯỢC TỐI ƯU CỰC ĐỘ & BẢO TOÀN ================= -->
+  <!-- ================= JAVASCRIPT ĐÃ LOẠI BỎ STICKY & RÚT GỌN NÚT BẤM ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
     const SUPABASE_URL = "https://incbokfnoabjhvbwxkli.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluY2Jva2Zub2Fiamh2Ynd4a2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MzY2MzksImV4cCI6MjEwNzExMjYzOX0.r5VHjllA4sX_XqTE7yeczmIue-yVZHMR2LSYjQC-Z5I";
 
-    // Danh sách 9 SR chuẩn với mã HRID và tên chuẩn không dấu theo SS
     const TEAM_SR_ORDER = [
       { key: "Tai Nguyen Ngoc", hrid: "HCM-0767", cvtcsr: "Nguyen Ngoc Tai", name: "Nguyễn Ngọc Tài" },
       { key: "Thuong Hoang Van", hrid: "HCM-0775", cvtcsr: "Hoang Van Thuong", name: "Hoàng Văn Thương" },
@@ -1446,7 +1438,7 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-    // ================= XỬ LÝ 5 BẢNG MA TRẬN FIT-10 =================
+    // ================= XỬ LÝ 5 BẢNG MA TRẬN FIT-10 (BỎ STICKY, CUỘN TỰ DO) =================
     function openFit10Modal() {
       document.getElementById('fit10Modal')?.classList.remove('hidden');
       switchFit10SubTab(currentFitSubTab || 1);
@@ -1490,8 +1482,8 @@
           <table class="table-fit-matrix" id="fitTableActive">
             <thead>
               <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="sticky-col-1 bg-gray-100 text-[#1F4E79] w-[75px]">HRID</th>
-                <th rowspan="2" class="sticky-col-2 bg-gray-100 text-[#1F4E79] text-left min-w-[130px]">CVTCSR</th>
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
                 <th rowspan="2" class="text-gray-700">% Working</th>
                 <th colspan="3" class="bg-blue-100 text-blue-900">Call Per Day</th>
                 <th colspan="3" class="bg-indigo-100 text-indigo-900">Visit On Route</th>
@@ -1505,7 +1497,7 @@
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
           const cpdT = Math.round(d.cpd_tar || 16);
-          const cpdA = Math.round(d.cpd_act || 0); // Làm tròn số nguyên chuẩn
+          const cpdA = Math.round(d.cpd_act || 0);
           const isCpdPass = (cpdA >= cpdT && cpdT > 0);
           const vorT = Math.round(d.vor_tar || 0);
           const vorA = Math.round(d.vor_act || 0);
@@ -1515,8 +1507,8 @@
 
           html += `
             <tr class="hover:bg-blue-50/40">
-              <td class="sticky-col-1 bg-white font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.hrid}</td>
-              <td class="sticky-col-2 bg-white text-left font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.cvtcsr}</td>
+              <td class="font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.hrid}</td>
+              <td class="text-left font-bold ${isRedSr ? 'text-rose-600' : 'text-blue-950'}">${sr.cvtcsr}</td>
               <td class="font-medium text-gray-700">100 %</td>
               <td class="font-semibold">${cpdT}</td>
               <td class="font-bold ${!isCpdPass ? 'text-rose-600' : 'text-gray-900'}">${cpdA}</td>
@@ -1535,8 +1527,8 @@
           <table class="table-fit-matrix" id="fitTableActive">
             <thead>
               <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="sticky-col-1 bg-gray-100 text-[#1F4E79] w-[75px]">HRID</th>
-                <th rowspan="2" class="sticky-col-2 bg-gray-100 text-[#1F4E79] text-left min-w-[130px]">CVTCSR</th>
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
                 <th colspan="3" class="bg-amber-100 text-amber-950">Sales Volume</th>
                 <th colspan="4" class="bg-emerald-100 text-emerald-950">Focused SKUs</th>
               </tr>
@@ -1559,8 +1551,8 @@
 
           html += `
             <tr class="hover:bg-blue-50/40">
-              <td class="sticky-col-1 bg-white font-bold text-blue-950">${sr.hrid}</td>
-              <td class="sticky-col-2 bg-white text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
               <td class="font-semibold">${vT}</td>
               <td class="font-bold ${isVolLow ? 'text-rose-600' : 'text-gray-900'}">${vA}</td>
               <td class="font-black ${isVolLow ? 'text-rose-600' : 'text-gray-800'}">${vAch}%</td>
@@ -1579,8 +1571,8 @@
           <table class="table-fit-matrix" id="fitTableActive">
             <thead>
               <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="sticky-col-1 bg-gray-100 text-[#1F4E79] w-[75px]">HRID</th>
-                <th rowspan="2" class="sticky-col-2 bg-gray-100 text-[#1F4E79] text-left min-w-[130px]">CVTCSR</th>
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
                 <th rowspan="2" class="text-gray-700">Type</th>
                 <th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th>
                 <th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th>
@@ -1609,8 +1601,8 @@
 
           html += `
             <tr class="hover:bg-blue-50/40">
-              <td class="sticky-col-1 bg-white font-bold text-blue-950">${sr.hrid}</td>
-              <td class="sticky-col-2 bg-white text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
               <td class="text-[10px] text-gray-500 font-semibold">NewCovDis2024</td>
               <td class="font-bold bg-cyan-50/50">${mpT}</td>
               <td class="font-semibold bg-cyan-50/50 ${isCovLow ? 'text-rose-600 font-bold' : ''}">${covT}</td>
@@ -1632,8 +1624,8 @@
           <table class="table-fit-matrix" id="fitTableActive">
             <thead>
               <tr class="bg-gray-100 text-gray-800">
-                <th rowspan="2" class="sticky-col-1 bg-gray-100 text-[#1F4E79] w-[75px]">HRID</th>
-                <th rowspan="2" class="sticky-col-2 bg-gray-100 text-[#1F4E79] text-left min-w-[130px]">CVTCSR</th>
+                <th rowspan="2" class="text-[#1F4E79]">HRID</th>
+                <th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th>
                 <th colspan="7" class="bg-indigo-100 text-indigo-950">IR Visit</th>
                 <th colspan="3" class="bg-sky-100 text-sky-950">SAT Scanned</th>
               </tr>
@@ -1659,8 +1651,8 @@
 
           html += `
             <tr class="hover:bg-blue-50/40">
-              <td class="sticky-col-1 bg-white font-bold text-blue-950">${sr.hrid}</td>
-              <td class="sticky-col-2 bg-white text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
               <td class="font-semibold text-gray-700">${tarIr}</td>
               <td class="font-medium">${totVis}</td>
               <td class="font-medium">${irProd}</td>
@@ -1682,8 +1674,8 @@
           <table class="table-fit-matrix" id="fitTableActive">
             <thead>
               <tr class="bg-gray-100 text-gray-800">
-                <th class="sticky-col-1 bg-gray-100 text-[#1F4E79] w-[75px]">HRID</th>
-                <th class="sticky-col-2 bg-gray-100 text-[#1F4E79] text-left min-w-[130px]">CVTCSR</th>
+                <th class="text-[#1F4E79]">HRID</th>
+                <th class="text-[#1F4E79] text-left">CVTCSR</th>
                 <th class="bg-cyan-100 text-cyan-950">Target</th>
                 <th class="bg-amber-100 text-amber-950">Actual</th>
                 <th class="bg-emerald-100 text-emerald-950">Achieved</th>
@@ -1698,8 +1690,8 @@
 
           html += `
             <tr class="hover:bg-blue-50/40">
-              <td class="sticky-col-1 bg-white font-bold text-blue-950">${sr.hrid}</td>
-              <td class="sticky-col-2 bg-white text-left font-bold text-blue-950">${sr.cvtcsr}</td>
+              <td class="font-bold text-blue-950">${sr.hrid}</td>
+              <td class="text-left font-bold text-blue-950">${sr.cvtcsr}</td>
               <td class="font-bold text-cyan-900">${fT}%</td>
               <td class="font-bold text-amber-900">${fA}%</td>
               <td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}.00%</td>
@@ -1724,7 +1716,7 @@
       try {
         const canvas = await html2canvas(tableWrap, {
           backgroundColor: '#FFFFFF',
-          scale: 2, // Độ phân giải nét 2x
+          scale: 2,
           useCORS: true,
           width: tableWrap.scrollWidth,
           windowWidth: tableWrap.scrollWidth
@@ -1740,61 +1732,6 @@
         btn.innerHTML = origText;
         btn.disabled = false;
       }
-    }
-
-    // Sao chép báo cáo Zalo dạng văn bản
-    function copyFit10TextReport() {
-      const tab = currentFitSubTab || 1;
-      let msg = "";
-
-      if (tab === 1) {
-        msg = `🚶‍♂️ BẢNG 1: MCP ĐI TUYẾN (CPD & VOR)\n`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const cpdT = Math.round(d.cpd_tar || 16);
-          const cpdA = Math.round(d.cpd_act || 0);
-          const vorT = Math.round(d.vor_tar || 0);
-          const vorA = Math.round(d.vor_act || 0);
-          const vorPct = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
-          msg += `• ${sr.cvtcsr}: CPD ${cpdA}/${cpdT} (${cpdA >= cpdT ? 'Đạt' : 'Chưa'}) | VOR ${vorA}/${vorT} (${vorPct}%)\n`;
-        });
-      } else if (tab === 2) {
-        msg = `📦 BẢNG 2: SẢN LƯỢNG & PREMIUM FOCUSED\n`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const vT = Math.round(d.volume_target || 0), vA = Math.round(d.volume_actual || 0);
-          const pT = (d.premium_target || 0).toFixed(1), pA = (d.premium_actual || 0).toFixed(1);
-          msg += `• ${sr.cvtcsr}: Vol ${vA}/${vT} HL | Pre ${pA}/${pT} HL\n`;
-        });
-      } else if (tab === 3) {
-        msg = `🎯 BẢNG 3: MEP THỰC THI (12 CỘT)\n`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const mpT = Math.round(d.mep_tar || 0), mpA = Math.round(d.mep_act || 0);
-          const ach = Math.round((d.mep_ach || 0) * 100);
-          msg += `• ${sr.cvtcsr}: MP ${mpA}/${mpT} (${ach}%)\n`;
-        });
-      } else if (tab === 4) {
-        msg = `📸 BẢNG 4: IR VISIT & SAT SCANNED\n`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const irAch = Math.round((d.ir_ach || 0) * 100);
-          const sT = Math.round(d.total_sat || 0), sA = Math.round(d.sat_scanned || 0);
-          msg += `• ${sr.cvtcsr}: IR Ach ${irAch}% | SAT ${sA}/${sT} tủ\n`;
-        });
-      } else {
-        msg = `🏆 BẢNG 5: TỔNG KẾT FIT SCORE\n`;
-        TEAM_SR_ORDER.forEach(sr => {
-          const d = SALES_TARGETS[sr.key] || {};
-          const fT = ((d.fit_tar || 0) * 100).toFixed(1);
-          const fA = ((d.fit_act || 0) * 100).toFixed(1);
-          msg += `• ${sr.cvtcsr}: ${fA}% / ${fT}%\n`;
-        });
-      }
-
-      navigator.clipboard.writeText(msg).then(() => {
-        alert("Đã sao chép nội dung báo cáo!");
-      }).catch(err => alert("Lỗi: " + err));
     }
 
     // ================= HÀM RENDER AN TOÀN VỚI LAZY TAB & PHÂN TRANG =================
@@ -2570,7 +2507,6 @@
       const fTarget = document.getElementById('fileTarget')?.files[0];
       const fCov = document.getElementById('fileCov')?.files[0];
 
-      // Mở khóa: Cho phép nạp độc lập từng file mà không chặn bắt buộc fTrack
       if (!fTrack && !fSec && !fAudit && !fTarget && !fCov) {
         alert("Vui lòng chọn ít nhất một file để nạp!");
         return;
@@ -2703,7 +2639,6 @@
           AUDIT_DATA = Object.values(aMap);
         }
 
-        // BỘ PARSER FIT-10 NÂNG CẤP TRÍCH XUẤT CHUẨN 5 BẢNG
         if (fTarget) {
           const wb = XLSX.read(await fTarget.arrayBuffer(), { dense: false });
           const sTar = wb.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wb.SheetNames[0];
