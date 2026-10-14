@@ -3124,7 +3124,7 @@
       return s;
     }
 
-    async function processAndSave() {
+        async function processAndSave() {
       const fTrack = document.getElementById('fileTrack')?.files[0];
       const fSec = document.getElementById('fileSec')?.files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0];
@@ -3386,7 +3386,7 @@
                 sr: srNorm,
                 outlet_code: String(row[cCode] || '').trim(),
                 outlet_name: String(row[cName] || '').trim(),
-                channel: String(row[cChan] || '').trim(), // 'On' hoặc 'Off'
+                channel: String(row[cChan] || '').trim(),
                 start_time: formatAuditDate(row[cStart]),
                 end_time: formatAuditDate(row[cEnd]),
                 gps: parseFloat(row[cGps]) || 0
@@ -3401,7 +3401,7 @@
         const payload = {
           id: 'CURRENT_DATA',
           master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
-          sec: SEC_ORDERS, promo: PROMOTIONS, visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES, updated_at: nowStr
+          sec: SEC_ORDERS, promo: PROMOTIONS, visit_perf: VISIT_PERFORMANCE, updated_at: nowStr
         };
 
         const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
