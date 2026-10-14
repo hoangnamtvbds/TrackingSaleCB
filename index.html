@@ -663,7 +663,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CUỘN TỰ DO) ================= -->
+  <!-- ================= MODAL BẢNG MA TRẬN FIT-10 (CUỘN TỰ DO & CHIA SẺ ZALO/ALBUM) ================= -->
   <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-4xl rounded-3xl p-4 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[92vh] flex flex-col">
       <!-- Header Modal -->
@@ -687,12 +687,17 @@
         <button id="fitTabBtn5" onclick="switchFit10SubTab(5)" class="py-1.5 rounded-lg text-gray-600 cursor-pointer">5. FIT Score</button>
       </div>
 
-      <!-- Nút chức năng: Tải ảnh PNG đầy đủ (Đã bỏ sao chép text) -->
+      <!-- Nút chức năng: Chia sẻ Zalo/Lưu ảnh & Tải PNG -->
       <div class="flex justify-between items-center gap-2">
         <span class="text-[11px] text-gray-600 font-bold" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
-        <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
-          📸 Tải ảnh PNG đầy đủ
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="shareFit10Image()" id="btnShareFit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
+            📤 Gửi Zalo / Lưu ảnh
+          </button>
+          <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
+            💾 Tải ảnh
+          </button>
+        </div>
       </div>
 
       <!-- Container chứa bảng cuộn ngang tự do -->
@@ -984,7 +989,7 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT ĐÃ LOẠI BỎ STICKY & RÚT GỌN NÚT BẤM ================= -->
+  <!-- ================= JAVASCRIPT ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -1703,14 +1708,56 @@
       container.innerHTML = html;
     }
 
-    // Xuất ảnh PNG hoàn chỉnh với html2canvas bằng scrollWidth
+    // Chia sẻ thẳng sang Zalo hoặc lưu vào Album Ảnh bằng Web Share API
+    async function shareFit10Image() {
+      const btn = document.getElementById('btnShareFit');
+      const tableWrap = document.getElementById('fit10TableWrap');
+      if (!tableWrap) return;
+
+      const origText = btn.innerHTML;
+      btn.innerHTML = "⏳ Đang xử lý...";
+      btn.disabled = true;
+
+      try {
+        const canvas = await html2canvas(tableWrap, {
+          backgroundColor: '#FFFFFF',
+          scale: 2,
+          useCORS: true,
+          width: tableWrap.scrollWidth,
+          windowWidth: tableWrap.scrollWidth
+        });
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const fileName = `Bang_FIT10_${new Date().toISOString().slice(0, 10)}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'Bảng Thi Đua FIT-10 Carlsberg',
+            text: 'Báo cáo chỉ số thi đua FIT-10',
+            files: [file]
+          });
+        } else {
+          exportFit10PngImage();
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert("Lỗi khi chia sẻ: " + err.message);
+        }
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    }
+
+    // Tải ảnh PNG thông thường
     async function exportFit10PngImage() {
       const btn = document.getElementById('btnExportFitPng');
       const tableWrap = document.getElementById('fit10TableWrap');
       if (!tableWrap) return;
 
       const origText = btn.innerHTML;
-      btn.innerHTML = "⏳ Đang tạo ảnh...";
+      btn.innerHTML = "⏳ Đang tạo...";
       btn.disabled = true;
 
       try {
