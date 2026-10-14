@@ -1733,8 +1733,6 @@
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
-            title: 'Bảng Thi Đua FIT-10 Carlsberg',
-            text: 'Báo cáo chỉ số thi đua FIT-10',
             files: [file]
           });
         } else {
