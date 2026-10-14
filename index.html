@@ -1882,7 +1882,7 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-    // ================= QUẢN LÝ LỊCH LÀM ĐÊM (TAB 6) =================
+     // ================= QUẢN LÝ LỊCH LÀM ĐÊM (TAB 6 GỌN GÀNG, SẠCH SẼ) =================
     function openNightScheduleModal() {
       const dateInput = document.getElementById('regNightDate');
       if (dateInput && !dateInput.value) {
@@ -1910,7 +1910,7 @@
         date,
         note: note || 'Đăng ký làm đêm tuyến cơ sở',
         status: isAutoApprove ? 'Approved' : 'Pending',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString().slice(0, 10)
       };
 
       NIGHT_SCHEDULES.push(newItem);
@@ -1959,19 +1959,8 @@
     async function saveNightSchedulesToCloud() {
       try {
         localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
-        const nowStr = new Date().toLocaleString('vi-VN');
-        const payload = {
-          id: 'CURRENT_DATA',
-          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
-          sec: SEC_ORDERS, promo: PROMOTIONS, visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES, updated_at: nowStr
-        };
-        await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
-          method: 'POST',
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-          body: JSON.stringify(payload)
-        });
       } catch (err) {
-        console.warn("Lỗi lưu lịch làm đêm lên cloud:", err);
+        console.warn("Lỗi lưu lịch làm đêm:", err);
       }
     }
 
@@ -1988,21 +1977,21 @@
 
       container.innerHTML = '';
       if (list.length === 0) {
-        container.innerHTML = `<p class="text-center text-gray-400 py-3">Chưa có lịch làm đêm nào được đăng ký.</p>`;
+        container.innerHTML = `<p class="text-center text-gray-400 py-3 text-xs">Chưa có lịch làm đêm nào được đăng ký.</p>`;
         return;
       }
 
       list.forEach(n => {
         const srName = TEAM_SR_MAP[n.sr] || n.sr;
         const isAppr = (n.status === 'Approved');
-        const badge = isAppr ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-extrabold text-[9px]">ĐÃ DUYỆT ✓</span>` : `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-extrabold text-[9px]">CHỜ DUYỆT ⏳</span>`;
+        const badge = isAppr ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-extrabold text-[9px]">ĐÃ DUYỆT</span>` : `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-extrabold text-[9px]">CHỜ DUYỆT</span>`;
         
         let actionBtns = '';
         if (isMgr) {
           if (isAppr) {
-            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Pending')" class="px-2 py-1 bg-amber-500 text-white rounded font-bold text-[9px]">Đưa về Chờ</button>`;
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Pending')" class="px-2 py-1 bg-amber-500 text-white rounded font-bold text-[9px]">Bỏ duyệt</button>`;
           } else {
-            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[9px]">Duyệt ✓</button>`;
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[9px]">Duyệt</button>`;
           }
         }
         if (isMgr || (currentUser?.role === 'SR' && n.sr === currentUser?.sr_key && !isAppr)) {
@@ -2010,15 +1999,14 @@
         }
 
         container.innerHTML += `
-          <div class="p-2.5 rounded-xl border border-indigo-100 bg-white space-y-1.5">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">${srName} • <b class="text-indigo-700">Ngày ${n.date}</b></span>
-              <div>${badge}</div>
+          <div class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/70 flex justify-between items-center text-xs">
+            <div>
+              <div class="font-extrabold text-gray-900">${srName} • <span class="text-indigo-700">${n.date}</span></div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${n.note}</div>
             </div>
-            ${n.note ? `<div class="text-[10px] text-gray-500 italic">📝 ${n.note}</div>` : ''}
-            <div class="flex justify-between items-center pt-1 border-t border-gray-100">
-              <span class="text-[9px] text-gray-400">Đăng ký: ${new Date(n.created_at || Date.now()).toLocaleString('vi-VN')}</span>
-              <div class="flex items-center gap-1">${actionBtns}</div>
+            <div class="flex items-center gap-2">
+              ${badge}
+              ${actionBtns}
             </div>
           </div>`;
       });
@@ -2042,20 +2030,27 @@
         .catch(() => showToast("Lỗi sao chép!", "error"));
     }
 
-    // Phân tích dữ liệu làm đêm từ file FIT-08 (`VISIT_PERFORMANCE`) kết hợp lịch `NIGHT_SCHEDULES`
     function parseNightPerformanceData(selectedSR) {
-      // Nhóm visit theo SR và Date
-      const sessionMap = {}; // key: "SR_YYYY-MM-DD"
+      const sessionMap = {};
       
       VISIT_PERFORMANCE.forEach(v => {
         if (!v.start_time) return;
-        const dt = new Date(v.start_time);
-        if (isNaN(dt.getTime())) return;
+        let timeStr = String(v.start_time).trim();
+        // Chuẩn hóa định dạng ngày từ excel (VD: 2026-10-07 hoặc dạng khác)
+        let dateStr = timeStr.slice(0, 10);
+        let hour = 0;
         
-        const hour = dt.getHours();
-        // Khung giờ hợp lệ tính làm đêm: 18h đến 21h (hoặc start >= 18h và < 21h)
+        if (timeStr.includes(':')) {
+          const parts = timeStr.split(' ');
+          if (parts.length >= 2) {
+            dateStr = parts[0];
+            const hPart = parts[1].split(':');
+            hour = parseInt(hPart[0]) || 0;
+          }
+        }
+
+        // Lọc khung giờ 18h đến dưới 21h (18:00 - 20:59)
         if (hour >= 18 && hour < 21) {
-          const dateStr = dt.toISOString().slice(0, 10);
           const srKey = v.sr;
           const key = `${srKey}_${dateStr}`;
 
@@ -2070,15 +2065,14 @@
           sessionMap[key].visits.push({
             code: v.outlet_code,
             name: v.outlet_name,
-            channel: v.channel, // 'On' hoặc 'Off'
-            startTime: v.start_time.slice(11, 16),
-            endTime: v.end_time ? v.end_time.slice(11, 16) : '',
+            channel: v.channel,
+            startTime: timeStr.slice(11, 16),
+            endTime: v.end_time ? String(v.end_time).slice(11, 16) : '',
             gps: v.gps || 0
           });
         }
       });
 
-      // Bổ sung cả các lịch đã đăng ký/được duyệt nhưng chưa có trong VISIT_PERFORMANCE (để hiển thị Lịch đã ĐK)
       NIGHT_SCHEDULES.forEach(n => {
         const key = `${n.sr}_${n.date}`;
         if (!sessionMap[key]) {
@@ -2090,30 +2084,26 @@
           };
         }
         sessionMap[key].scheduleNote = n.note;
-        sessionMap[key].scheduleStatus = n.status; // 'Approved' hoặc 'Pending'
+        sessionMap[key].scheduleStatus = n.status;
       });
 
       const results = [];
       Object.values(sessionMap).forEach(ses => {
         if (selectedSR !== "ALL" && ses.sr !== selectedSR) return;
 
-        // Đếm số điểm Kênh On (TONT) trong khung 18h-21h
         const tontVisits = ses.visits.filter(v => String(v.channel).trim().toLowerCase() === 'on');
         const tontCount = tontVisits.length;
 
-        // Kiểm tra xem có lịch đăng ký được duyệt không
         const matchedSched = NIGHT_SCHEDULES.find(n => n.sr === ses.sr && n.date === ses.date);
         const hasApprovedSched = (matchedSched && matchedSched.status === 'Approved');
         const hasPendingSched = (matchedSched && matchedSched.status === 'Pending');
 
-        // Điều kiện đạt chuẩn: Có lịch duyệt (hoặc có dữ liệu đi thực tế) VÀ ghé tối thiểu 2 điểm TONT (On)
         const isPass = (tontCount >= 2);
 
         ses.tontCount = tontCount;
         ses.isPass = isPass;
         ses.hasApprovedSched = hasApprovedSched;
         ses.hasPendingSched = hasPendingSched;
-        ses.matchedSched = matchedSched;
 
         results.push(ses);
       });
