@@ -9,8 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F9FA; }
-    .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F4F6F9; }
+    .card-shadow { box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05); }
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     input, button, select { touch-action: manipulation; }
@@ -19,13 +19,13 @@
     .table-fit-matrix th { font-weight: 800; }
   </style>
 </head>
-<body class="p-3 pb-28 max-w-lg mx-auto text-gray-800">
+<body class="p-2.5 sm:p-3 pb-28 max-w-lg mx-auto text-gray-800">
 
   <!-- ================= TOAST NOTIFICATION ================= -->
   <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-none flex flex-col items-center gap-2 w-full max-w-xs px-3"></div>
 
   <!-- ================= MÀN HÌNH ĐĂNG NHẬP ================= -->
-  <div id="loginScreen" class="fixed inset-0 bg-[#F8F9FA] z-[999] flex items-center justify-center p-4">
+  <div id="loginScreen" class="fixed inset-0 bg-[#F4F6F9] z-[999] flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 card-shadow border border-gray-100 space-y-4 shadow-xl">
       <div class="text-center space-y-1">
         <div class="w-14 h-14 bg-blue-50 text-[#1F4E79] rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-inner">🍺</div>
@@ -170,68 +170,150 @@
     </div>
   </div>
 
-  <!-- ================= GIAO DIỆN CHÍNH DASHBOARD ================= -->
-  <div id="mainDashboard">
-    <!-- Header -->
-    <div class="mb-2.5 px-0.5">
-      <div class="flex justify-between items-center mb-2">
-        <div>
-          <h1 class="text-[17px] font-black text-[#1F4E79] tracking-tight flex items-center gap-1.5">
-            🍺 Carlsberg Sale Tracking
-          </h1>
-          <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-400">
-            <span id="lblLastUpdate" class="font-medium">Chưa nạp dữ liệu</span>
-            <button onclick="manualSyncCloud()" id="btnQuickSync" class="text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-1.5 py-0.5 rounded-md active:scale-90 transition-all cursor-pointer" title="Làm mới dữ liệu">🔄 Sync</button>
-            <span class="text-gray-300">•</span>
-            <span class="font-bold text-gray-500 italic">by LHN</span>
+  <!-- ================= MODAL ĐĂNG KÝ & DUYỆT LỊCH LÀM ĐÊM (CHỌN NHIỀU NGÀY) ================= -->
+  <div id="nightScheduleModal" class="fixed inset-0 bg-black/75 z-[140] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" onclick="if(event.target===this) closeNightScheduleModal()">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-black text-sm">🌙</div>
+          <div>
+            <h3 class="text-sm font-black text-[#1F4E79] tracking-tight">ĐĂNG KÝ & PHÊ DUYỆT LÀM ĐÊM</h3>
+            <p class="text-[10px] text-gray-400 font-semibold">Khung giờ hợp lệ: 18:00 - 21:00 (≥ 2 điểm TONT)</p>
           </div>
         </div>
-        <div class="flex items-center gap-1.5">
-          <span id="lblUserBadge" class="text-[10px] font-bold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-xl truncate max-w-[140px]" title="Tài khoản hiện tại">
-            👤 Đang tải...
-          </span>
-          <button id="btnAdminUserManage" onclick="openAdminUserModal()" class="hidden text-[10px] font-extrabold bg-purple-100 text-purple-800 px-2 py-1 rounded-xl shadow-xs cursor-pointer">
-            👥 QL User
+        <button onclick="closeNightScheduleModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center shrink-0 cursor-pointer">✕</button>
+      </div>
+
+      <!-- Form đăng ký mới (Hỗ trợ chọn nhiều ngày 1 lúc) -->
+      <form onsubmit="handleRegisterNightShift(event)" class="bg-indigo-50/70 p-3 rounded-2xl border border-indigo-100 space-y-2.5 text-xs">
+        <div>
+          <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">👤 Nhân viên (SR):</label>
+          <select id="regNightSr" class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none">
+            <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
+            <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
+            <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
+            <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
+            <option value="Nam Le Hoang">Lê Hoàng Nam</option>
+            <option value="Phu Tran Trong">Trần Trọng Phú</option>
+            <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
+            <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
+            <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[10px] font-bold text-indigo-900">📅 Chọn (nhiều) ngày làm đêm:</label>
+            <div class="flex gap-1">
+              <button type="button" onclick="quickSelectCurrentWeekNightDates()" class="text-[9px] font-extrabold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-md cursor-pointer transition-all">+ Tuần này (T2-T6)</button>
+              <button type="button" onclick="clearSelectedNightDates()" class="text-[9px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-md cursor-pointer transition-all">Xóa hết</button>
+            </div>
+          </div>
+          <div class="flex gap-1.5">
+            <input type="date" id="regNightDatePicker" onchange="addNightDateFromPicker()" class="flex-1 p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-gray-800 outline-none">
+            <button type="button" onclick="addNightDateFromPicker()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs cursor-pointer whitespace-nowrap shadow-xs">+ Thêm ngày</button>
+          </div>
+          <!-- Danh sách các ngày đã chọn -->
+          <div id="selectedNightDatesBox" class="flex flex-wrap gap-1.5 mt-2 min-h-[26px] items-center"></div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">📍 Khu vực / Tuyến dự kiến (Tùy chọn):</label>
+          <input type="text" id="regNightNote" placeholder="VD: Khu vực Bến Cát, Dầu Tiếng, Phú Giáo..." class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-semibold text-gray-800 outline-none">
+        </div>
+        <button type="submit" id="btnSubmitNightReg" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm transition-all cursor-pointer">
+          ➕ Gửi Đăng Ký Lịch Làm Đêm
+        </button>
+      </form>
+
+      <!-- Thanh công cụ duyệt nhanh cho SS/Admin -->
+      <div id="nightManagerActionBox" class="hidden flex justify-between items-center px-1 pt-0.5">
+        <span class="text-[10px] font-extrabold text-gray-500 uppercase">Danh sách đăng ký:</span>
+        <button onclick="approveAllPendingNightShifts()" class="text-[10px] font-extrabold bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg shadow-xs active:scale-95 transition-all cursor-pointer">
+          ✓ Duyệt tất cả chờ duyệt
+        </button>
+      </div>
+
+      <!-- Danh sách lịch đã đăng ký trong modal -->
+      <div id="nightRegListInModal" class="overflow-y-auto flex-1 space-y-2 pr-0.5 text-xs"></div>
+
+      <div class="pt-2 border-t border-gray-100 flex justify-end">
+        <button onclick="closeNightScheduleModal()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs cursor-pointer">
+          Đóng cửa sổ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= GIAO DIỆN CHÍNH DASHBOARD ================= -->
+  <div id="mainDashboard">
+    <!-- Header Cân Đối 2 Tầng -->
+    <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-2.5 space-y-2">
+      <!-- Tầng 1: Logo & Cụm Nút Phải -->
+      <div class="flex justify-between items-center gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1F4E79] flex items-center justify-center text-lg shrink-0 font-black shadow-inner">🍺</div>
+          <div class="truncate">
+            <h1 class="text-[15px] sm:text-base font-black text-[#1F4E79] tracking-tight leading-tight truncate">
+              Carlsberg Sale Tracking
+            </h1>
+            <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold mt-0.5">
+              <span id="lblLastUpdate" class="truncate">Chưa nạp dữ liệu</span>
+              <span>•</span>
+              <span class="font-bold text-gray-500 italic shrink-0">by LHN</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="manualSyncCloud()" id="btnQuickSync" class="text-[11px] text-blue-700 hover:bg-blue-100 font-extrabold bg-blue-50 border border-blue-200/70 px-2.5 py-1.5 rounded-xl active:scale-95 transition-all cursor-pointer flex items-center gap-1" title="Đồng bộ dữ liệu mới nhất">
+            <span>🔄</span><span>Sync</span>
           </button>
-          <button onclick="handleLogout()" class="text-[10px] font-extrabold bg-gray-100 hover:bg-rose-50 text-gray-600 hover:text-rose-600 px-2 py-1 rounded-xl transition-all cursor-pointer" title="Đăng xuất">
+          <button onclick="handleLogout()" class="text-xs font-extrabold bg-gray-100 hover:bg-rose-50 text-gray-600 hover:text-rose-600 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer" title="Đăng xuất">
             ⎋
           </button>
         </div>
       </div>
 
-      <!-- 4 Nút chức năng phía trên -->
-      <div id="topActionGrid" class="grid grid-cols-4 gap-1.5">
-        <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
-          📦 Đơn ngày
-        </button>
-        <button onclick="openFit10Modal()" class="py-2 px-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
-          🏆 FIT-10
-        </button>
-        <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
-          📋 Báo cáo
-        </button>
-        <button id="btnTopUpload" onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
-          ⚙️ Nạp file
-        </button>
+      <!-- Tầng 2: Thông tin User & Đơn duyệt gần nhất -->
+      <div class="flex justify-between items-center pt-2 border-t border-gray-100 gap-2 flex-wrap">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span id="lblUserBadge" class="text-[11px] font-bold text-[#1F4E79] bg-blue-50/80 border border-blue-100 px-2.5 py-1 rounded-xl truncate max-w-[180px]" title="Tài khoản hiện tại">
+            👤 Đang tải...
+          </span>
+          <button id="btnAdminUserManage" onclick="openAdminUserModal()" class="hidden text-[10px] font-extrabold bg-purple-100 hover:bg-purple-200 text-purple-800 px-2.5 py-1 rounded-xl shadow-xs shrink-0 cursor-pointer">
+            👥 QL User
+          </button>
+        </div>
+
+        <div id="latestOrderBanner" class="hidden flex items-center gap-1.5 bg-emerald-50/90 border border-emerald-200/70 rounded-xl px-2.5 py-1 text-[10px] shrink-0">
+          <span class="text-emerald-900 font-semibold">📅 Đơn: <b id="lblLatestOrderDate" class="font-black text-emerald-950">--</b></span>
+          <span class="text-[9px] text-emerald-700 font-black bg-white px-1.5 py-0.2 rounded border border-emerald-200">T+1</span>
+        </div>
       </div>
 
-      <!-- Banner ngày đơn gần nhất -->
-      <div id="latestOrderBanner" class="hidden mt-2 bg-blue-50/80 border border-blue-200/60 rounded-xl px-3 py-1.5 flex justify-between items-center text-[11px]">
-        <span class="text-blue-900 font-semibold flex items-center gap-1">
-          📅 Đơn duyệt gần nhất: <b id="lblLatestOrderDate" class="font-bold text-[#1F4E79]">--</b>
-        </span>
-        <span class="text-[10px] text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded-lg border border-blue-200">T+1</span>
+      <!-- Cụm Nút chức năng nhanh (Đã bỏ nút Báo cáo text) -->
+      <div id="topActionGrid" class="grid grid-cols-3 gap-1.5 pt-1">
+        <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
+          <span>📦</span><span>Đơn ngày</span>
+        </button>
+        <button onclick="openFit10Modal()" class="py-2 px-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
+          <span>🏆</span><span>FIT-10</span>
+        </button>
+        <button id="btnTopUpload" onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
+          <span>⚙️</span><span>Nạp file</span>
+        </button>
       </div>
     </div>
 
     <!-- BỘ LỌC TÊN SR -->
-    <div id="srFilterContainer" class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-3">
+    <div id="srFilterContainer" class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-2.5">
       <div class="flex justify-between items-center mb-1">
         <label class="text-[11px] font-bold text-gray-500">NHÂN VIÊN PHỤ TRÁCH (SR):</label>
         <span class="text-[10px] text-gray-400 italic" id="srSaveStatus">Tự lưu máy này</span>
       </div>
       <select id="srFilter" onchange="onSRChange()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-[#1F4E79] outline-none">
-        <option value="ALL">-- Toàn bộ Team --</option>
+        <option value="ALL">-- Toàn bộ Team (9 SR) --</option>
         <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
         <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
         <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
@@ -245,7 +327,7 @@
     </div>
 
     <!-- THANH TÌM KIẾM NHANH ĐIỂM BÁN -->
-    <div class="mb-3">
+    <div class="mb-2.5">
       <div class="relative">
         <input type="text" id="searchInput" oninput="onSearchInputDebounced()" placeholder="Tìm nhanh tên hoặc mã điểm bán (CD / CB)..." 
           class="w-full p-2.5 pl-9 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-800 placeholder-gray-400 card-shadow outline-none focus:border-blue-500">
@@ -254,39 +336,42 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 5 TAB -->
-    <div class="grid grid-cols-5 p-1.5 bg-blue-100/90 border-2 border-blue-300 rounded-2xl mb-3 text-[10px] sm:text-[11px] font-extrabold gap-1 shadow-sm">
-      <button id="tabBtn1" onclick="switchTab(1)" class="py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer">📊 SỐ BÁN</button>
-      <button id="tabBtn2" onclick="switchTab(2)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer">🎯 DISPLAY</button>
-      <button id="tabBtn3" onclick="switchTab(3)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer">💰 LF</button>
-      <button id="tabBtn4" onclick="switchTab(4)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer">📸 CHỤP TB</button>
-      <button id="tabBtn5" onclick="switchTab(5)" class="py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer">📍 COVERAGE</button>
+    <!-- THANH CHUYỂN 6 TAB -->
+    <div class="grid grid-cols-3 p-1.5 bg-blue-100/90 border-2 border-blue-200 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-xs">
+      <button id="tabBtn1" onclick="switchTab(1)" class="py-2 px-1 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer whitespace-nowrap">📊 SỐ BÁN</button>
+      <button id="tabBtn2" onclick="switchTab(2)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">🎯 DISPLAY</button>
+      <button id="tabBtn3" onclick="switchTab(3)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">💰 LISTING FEE</button>
+      <button id="tabBtn4" onclick="switchTab(4)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">📸 CHỤP TB</button>
+      <button id="tabBtn5" onclick="switchTab(5)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">📍 COVERAGE</button>
+      <button id="tabBtn6" onclick="switchTab(6)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">🌙 LÀM ĐÊM</button>
     </div>
 
     <!-- ================= TAB 1: SỐ BÁN TOTAL ================= -->
     <div id="tab1Content" class="space-y-3">
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
-        <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
-          <div class="flex items-center gap-1.5">
-            <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-xs active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
-              <span>🎯</span> TOTAL KPI
+        <div class="flex justify-between items-center gap-2">
+          <span class="text-[11px] sm:text-xs font-extrabold text-gray-500 uppercase tracking-wide whitespace-nowrap">🏆 TIẾN ĐỘ THÁNG & TARGET</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openTotalKpiModal()" class="text-[10px] font-black tracking-tight px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-xs active:scale-95 transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
+              <span>🎯</span><span>TOTAL KPI</span>
             </button>
-            <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">0%</span>
+            <span id="txtTargetPercent" class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 whitespace-nowrap">0%</span>
           </div>
         </div>
-        <div class="flex items-baseline justify-between">
-          <span id="txtTargetAchieved" class="text-2xl font-black text-[#1F4E79]">0.00 / 0.00 HL</span>
-          <span id="txtTargetCases" class="text-xs font-bold text-amber-700">0 / 0 th</span>
+
+        <div class="flex items-baseline justify-between gap-2 flex-wrap">
+          <span id="txtTargetAchieved" class="text-xl sm:text-2xl font-black text-[#1F4E79] whitespace-nowrap">0.00 / 0.00 HL</span>
+          <span id="txtTargetCases" class="text-xs font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 whitespace-nowrap">0 / 0 th</span>
         </div>
-        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+
+        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
           <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- Thanh Run-rate Tốc độ về số -->
-        <div id="boxRunRate" class="bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 flex justify-between items-center text-[11px]">
-          <span class="text-blue-900 font-semibold" id="lblRunRateDays">⏳ Còn -- ngày</span>
-          <span class="text-[#1F4E79] font-extrabold" id="lblRunRateNeed">Cần bán: -- th/ngày</span>
+        <!-- Thanh Run-rate Tốc độ về số (Đã trừ T7 & CN) -->
+        <div id="boxRunRate" class="bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 flex justify-between items-center text-[11px] gap-2 flex-wrap">
+          <span class="text-blue-900 font-semibold whitespace-nowrap" id="lblRunRateDays">⏳ Còn -- ngày làm việc</span>
+          <span class="text-[#1F4E79] font-extrabold whitespace-nowrap" id="lblRunRateNeed">Cần bán: -- th/ngày</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-gray-100">
@@ -295,7 +380,7 @@
               <span>🍺 MAINSTREAM</span>
               <span id="badgeMainPct" class="bg-emerald-200/80 text-emerald-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
             </div>
-            <div class="text-base font-black text-emerald-950" id="valMainAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+            <div class="text-base font-black text-emerald-950 whitespace-nowrap" id="valMainAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
             <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
               <span>Target:</span>
               <b class="text-gray-700" id="valMainTar">0.00 HL</b>
@@ -310,7 +395,7 @@
               <span>👑 PREMIUM</span>
               <span id="badgePrePct" class="bg-amber-200/80 text-amber-900 px-1.5 py-0.5 rounded-md font-black">0%</span>
             </div>
-            <div class="text-base font-black text-amber-950" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
+            <div class="text-base font-black text-amber-950 whitespace-nowrap" id="valPreAct">0.00 <span class="text-[11px] font-normal text-gray-500">HL</span></div>
             <div class="text-[10px] text-gray-500 font-semibold flex justify-between">
               <span>Target:</span>
               <b class="text-gray-700" id="valPreTar">0.00 HL</b>
@@ -324,7 +409,7 @@
         <details class="bg-amber-50/30 rounded-xl border border-amber-100/60 overflow-hidden text-xs">
           <summary class="p-2.5 flex justify-between items-center cursor-pointer select-none text-[11px] font-bold text-amber-900">
             <span>🔍 Xem sản lượng theo Brand Premium</span>
-            <span class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-lg font-bold">Xem chi tiết ▼</span>
+            <span class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-lg font-bold whitespace-nowrap">Xem chi tiết ▼</span>
           </summary>
           <div id="preBrandBreakdown" class="p-2.5 pt-1 border-t border-amber-100/60 space-y-1 text-[11px]"></div>
         </details>
@@ -695,6 +780,75 @@
         </button>
       </div>
     </div>
+
+    <!-- ================= TAB 6: TRACKING LÀM ĐÊM (FIT-08) ================= -->
+    <div id="tab6Content" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center gap-2">
+          <div>
+            <span class="text-xs font-extrabold text-[#1F4E79] uppercase tracking-wide block">🌙 TRACKING LÀM ĐÊM (18H - 21H)</span>
+            <span class="text-[10px] text-gray-400 font-semibold">Điều kiện: Lịch được duyệt & Ghé ≥ 2 điểm TONT (On)</span>
+          </div>
+          <span id="txtNightPercent" class="text-xs font-black text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-xl border border-indigo-100">0%</span>
+        </div>
+
+        <div class="flex items-baseline justify-between">
+          <span id="txtNightAchieved" class="text-2xl font-black text-gray-900">0 / 0 <span class="text-xs font-bold text-gray-400">buổi</span></span>
+          <span id="txtNightValidTotal" class="text-xs font-extrabold text-emerald-600">Thực đi đạt: 0 buổi</span>
+        </div>
+
+        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+          <div id="barNightProgress" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div>
+        </div>
+
+        <!-- Nút Đăng ký / Duyệt lịch (Đã bỏ nút Copy BC text) -->
+        <div class="pt-1">
+          <button onclick="openNightScheduleModal()" class="w-full py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            <span>📝</span><span id="lblBtnNightReg">Đăng ký / Duyệt lịch làm đêm</span>
+          </button>
+        </div>
+
+        <!-- 3 Thẻ Lọc Trạng Thái Làm Đêm -->
+        <div class="pt-2 border-t border-gray-100">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Chạm thẻ để lọc buổi làm đêm:</span>
+            <button id="btnResetNightFilter" onclick="setNightStatusFilter('ALL')" class="hidden text-[10px] font-bold text-indigo-600 hover:underline cursor-pointer">Xem tất cả</button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center select-none">
+            <div id="cardNightPass" onclick="setNightStatusFilter('PASS')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200">
+              <span class="text-[9px] font-bold text-emerald-700 block uppercase">ĐẠT CHUẨN</span>
+              <span id="countNightPass" class="text-sm font-black text-emerald-950 block mt-0.5">0</span>
+              <span class="text-[9px] text-emerald-600 font-semibold block mt-0.5">≥2 TONT (18-21h)</span>
+            </div>
+            <div id="cardNightWarn" onclick="setNightStatusFilter('WARN')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200">
+              <span class="text-[9px] font-bold text-amber-800 block uppercase">CHƯA ĐẠT / LỆCH</span>
+              <span id="countNightWarn" class="text-sm font-black text-amber-950 block mt-0.5">0</span>
+              <span class="text-[9px] text-amber-700 font-semibold block mt-0.5">Thiếu điểm/Chưa ĐK</span>
+            </div>
+            <div id="cardNightSched" onclick="setNightStatusFilter('SCHED')" class="p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-indigo-50/70 border-indigo-200">
+              <span class="text-[9px] font-bold text-indigo-700 block uppercase">LỊCH ĐÃ ĐK</span>
+              <span id="countNightSched" class="text-sm font-black text-indigo-950 block mt-0.5">0</span>
+              <span id="subNightPendingBadge" class="text-[9px] text-indigo-600 font-semibold block mt-0.5">0 chờ duyệt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng Tổng Hợp Nhanh Theo 9 SR (Khi chọn Toàn bộ Team) -->
+      <div id="nightTeamSummaryBox" class="bg-white rounded-2xl p-3.5 card-shadow border border-gray-100 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-[11px] font-extrabold text-[#1F4E79] uppercase">📊 TỔNG HỢP LÀM ĐÊM TOÀN TEAM</span>
+          <span class="text-[10px] text-gray-400 font-semibold">Chạm tên SR để lọc riêng</span>
+        </div>
+        <div id="nightTeamSummaryList" class="space-y-1.5 text-xs"></div>
+      </div>
+
+      <div class="flex justify-between items-center mb-1 px-1">
+        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Chi tiết từng buổi đi đêm</span>
+        <span id="txtNightListCount" class="text-[11px] font-semibold text-gray-400">0 buổi</span>
+      </div>
+      <div id="nightSessionList" class="space-y-2.5"></div>
+    </div>
   </div>
 
   <!-- ================= MODAL BẢNG MA TRẬN FIT-10 ================= -->
@@ -847,63 +1001,6 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TRUNG TÂM BÁO CÁO SS ================= -->
-  <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📋 TRUNG TÂM BÁO CÁO (SS)
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảo mật quản lý • Chọn loại báo cáo cần gửi Zalo</p>
-        </div>
-        <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
-      </div>
-
-      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
-            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
-        </button>
-
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
-        </button>
-
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- ================= MODAL SOI ĐƠN HÀNG NGÀY ================= -->
   <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
@@ -945,19 +1042,15 @@
         <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
       </div>
 
-      <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-        📢 Sao chép nhắc nhở các bạn chưa có đơn
-      </button>
-
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer"></div>
     </div>
   </div>
 
-  <!-- MODAL ADMIN CẬP NHẬT -->
-  <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-4">
+  <!-- MODAL ADMIN CẬP NHẬT FILE -->
+  <div id="adminModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 my-auto max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center">
-        <h3 class="text-sm font-extrabold text-gray-900">🔒 CẬP NHẬT DỮ LIỆU</h3>
+        <h3 class="text-sm font-extrabold text-gray-900">🔒 CẬP NHẬT DỮ LIỆU HỆ THỐNG</h3>
         <button onclick="toggleAdminModal()" class="text-gray-400 font-bold text-lg cursor-pointer">✕</button>
       </div>
 
@@ -969,35 +1062,40 @@
         </div>
       </div>
 
-      <div id="uploadBox" class="hidden space-y-3">
+      <div id="uploadBox" class="hidden space-y-2.5">
         <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          💡 <b>Mẹo:</b> File Tracking Master và Target chỉ cần nạp đầu tháng. Hằng ngày có thể nạp riêng file <b>FIT-10.SalesIncentive</b> hoặc <b>SEC-06</b> mà không bị hệ thống chặn!
+          💡 <b>Mẹo:</b> Có thể nạp lẻ từng file hàng ngày (SEC-06, FIT-10, FIT-08 Làm đêm...) mà không làm mất dữ liệu các file đã lưu trước đó!
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
-          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+          <label class="text-[11px] font-bold text-gray-600 block mb-0.5">1. FILE TRACKING MASTER (.xlsx) <span id="trackStatusText" class="text-gray-400 font-normal">(Đã lưu)</span></label>
+          <input type="file" id="fileTrack" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5 bg-gray-50">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">2. FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
-          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+          <label class="text-[11px] font-bold text-gray-600 block mb-0.5">2. FILE SEC-06 HÀNG NGÀY (.xlsx)</label>
+          <input type="file" id="fileSec" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5 bg-gray-50">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">3. FILE CHỤP TB DIP-01 (.xlsx) <span id="auditStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileAudit" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+          <label class="text-[11px] font-bold text-gray-600 block mb-0.5">3. FILE CHỤP TB DIP-01 (.xlsx) <span id="auditStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+          <input type="file" id="fileAudit" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5 bg-gray-50">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+          <label class="text-[11px] font-bold text-gray-600 block mb-0.5">4. FILE SALES TARGET FIT-10 (.xlsx) <span id="targetStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+          <input type="file" id="fileTarget" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5 bg-gray-50">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-gray-600 block mb-1">5. FILE COVERAGE L28D SEC-19 (.xlsx) <span id="covStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
-          <input type="file" id="fileCov" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-2 bg-gray-50">
+          <label class="text-[11px] font-bold text-gray-600 block mb-0.5">5. FILE COVERAGE L28D SEC-19 (.xlsx) <span id="covStatusText" class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+          <input type="file" id="fileCov" accept=".xlsx" class="text-xs w-full border border-gray-200 rounded-xl p-1.5 bg-gray-50">
         </div>
+        <div class="p-2 rounded-xl bg-indigo-50/60 border border-indigo-200/80">
+          <label class="text-[11px] font-extrabold text-indigo-900 block mb-0.5">6. FILE LÀM ĐÊM FIT-08 (.xlsx) <span id="visitStatusText" class="text-indigo-500 font-normal">(Mới)</span></label>
+          <input type="file" id="fileVisit" accept=".xlsx" class="text-xs w-full border border-indigo-200 rounded-xl p-1.5 bg-white">
+        </div>
+
         <button onclick="processAndSave()" id="btnSaveData" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition-all cursor-pointer">
           ⚡ XÁC NHẬN CẬP NHẬT
         </button>
 
-        <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
           <span class="text-[11px] text-gray-400 font-medium">Bảo mật hệ thống</span>
           <button onclick="promptExportFiles()" class="text-base p-1.5 rounded-full hover:bg-amber-100 active:scale-90 transition-all select-none cursor-pointer" title="Mở khóa tải file">
             🍺
@@ -1015,8 +1113,7 @@
       </div>
     </div>
   </div>
-
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- ================= JAVASCRIPT (PHẦN 2A) ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -1045,16 +1142,44 @@
     let activeTab = 1, currentFitSubTab = 1;
     let currentLFChannel = "ALL", currentTBStatus = "ALL", currentLFStatus = "ALL", currentTBLevel = "ALL", currentAuditStatus = "ALL";
     let currentCovStatus = "ALL", currentCovChannel = "ALL", currentModalFilter = "ALL";
+    let currentNightStatus = "ALL";
     let isManagerVerified = false, currentUser = null;
 
     const PAGE_SIZE = 30;
     let limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE };
 
     let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
+    let VISIT_PERFORMANCE = [], NIGHT_SCHEDULES = [];
+    let selectedNightDates = []; // Mảng lưu nhiều ngày đăng ký làm đêm
 
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
+
+    // Hàm chuẩn hóa mọi định dạng ngày (DD/MM/YYYY hoặc YYYY-MM-DD) về chuẩn ISO YYYY-MM-DD để sắp xếp và khớp lịch
+    function toIsoDate(rawStr) {
+      if (!rawStr) return "";
+      const s = String(rawStr).trim().split(' ')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      if (s.includes('/')) {
+        const parts = s.split('/');
+        if (parts.length === 3) {
+          if (parts[2].length === 4) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+          if (parts[0].length === 4) return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+        }
+      }
+      return s.slice(0, 10);
+    }
+
+    // Hàm chuyển từ chuẩn ISO YYYY-MM-DD sang DD/MM/YYYY để hiển thị đẹp mắt
+    function toVnDate(isoStr) {
+      const iso = toIsoDate(isoStr);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        const [y, m, d] = iso.split('-');
+        return `${d}/${m}/${y}`;
+      }
+      return isoStr || "";
+    }
 
     function normalizeSR(name) {
       if (!name) return "";
@@ -1126,7 +1251,7 @@
 
     function loadLocalCacheFast() {
       try {
-        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lc = localStorage.getItem('COVERAGE_DATA'), lu = localStorage.getItem('UPDATE_TIME');
+        const lm = localStorage.getItem('MASTER_DATA'), ll = localStorage.getItem('LISTING_DATA'), ls = localStorage.getItem('SEC_DATA'), lp = localStorage.getItem('PROMO_DATA'), la = localStorage.getItem('AUDIT_DATA'), lt = localStorage.getItem('SALES_TARGETS'), lc = localStorage.getItem('COVERAGE_DATA'), lv = localStorage.getItem('VISIT_PERF_DATA'), lns = localStorage.getItem('NIGHT_SCHEDULES'), lu = localStorage.getItem('UPDATE_TIME');
         if (lm) MASTER = JSON.parse(lm); 
         if (ll) LISTING_FEE = JSON.parse(ll); 
         if (ls) SEC_ORDERS = JSON.parse(ls); 
@@ -1134,6 +1259,8 @@
         if (la) AUDIT_DATA = JSON.parse(la); 
         if (lt) SALES_TARGETS = JSON.parse(lt); 
         if (lc) COVERAGE_DATA = JSON.parse(lc); 
+        if (lv) VISIT_PERFORMANCE = JSON.parse(lv);
+        if (lns) NIGHT_SCHEDULES = JSON.parse(lns);
         if (lu) setText('lblLastUpdate', `Cập nhật: ${lu}`);
         
         updateLatestOrderDateBanner();
@@ -1238,6 +1365,7 @@
       const srSelectEl = document.getElementById('srFilter');
       const srContainer = document.getElementById('srFilterContainer');
       const btnAdminUser = document.getElementById('btnAdminUserManage');
+      const regSrSel = document.getElementById('regNightSr');
 
       isManagerVerified = (role === 'ADMIN' || role === 'ASM' || role === 'SS');
       if (btnAdminUser) btnAdminUser.classList.toggle('hidden', role !== 'ADMIN');
@@ -1251,6 +1379,10 @@
           srSelectEl.value = savedSR || 'ALL';
         }
       }
+      if (regSrSel && role === 'SR' && currentUser.sr_key) {
+        regSrSel.value = currentUser.sr_key;
+        regSrSel.disabled = true;
+      }
 
       if (currentUser && currentUser.role !== 'ADMIN' && currentUser.password) {
         delete currentUser.password;
@@ -1262,7 +1394,7 @@
       if (btnUpload && topGrid) {
         const isSR = (role === 'SR');
         btnUpload.classList.toggle('hidden', isSR);
-        topGrid.className = isSR ? "grid grid-cols-3 gap-1.5" : "grid grid-cols-4 gap-1.5";
+        topGrid.className = isSR ? "grid grid-cols-2 gap-1.5 pt-1" : "grid grid-cols-3 gap-1.5 pt-1";
       }
 
       loadLocalCacheFast();
@@ -1332,9 +1464,13 @@
         } else if (data.master && typeof data.master === 'object') {
           MASTER = data.master.toft || []; LISTING_FEE = data.master.listing || []; AUDIT_DATA = data.master.audit || data.audit || []; SALES_TARGETS = data.master.targets || data.targets || {};
           COVERAGE_DATA = data.master.coverage || data.coverage || [];
+          if (data.master.visit_perf) VISIT_PERFORMANCE = data.master.visit_perf;
+          if (data.master.night_schedules) NIGHT_SCHEDULES = data.master.night_schedules;
         }
         SEC_ORDERS = data.sec || []; 
         PROMOTIONS = data.promo || [];
+        if (data.visit_perf) VISIT_PERFORMANCE = data.visit_perf;
+        if (data.night_schedules) NIGHT_SCHEDULES = data.night_schedules;
 
         try {
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); 
@@ -1344,6 +1480,8 @@
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); 
           localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
           localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA));
+          localStorage.setItem('VISIT_PERF_DATA', JSON.stringify(VISIT_PERFORMANCE));
+          localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
           localStorage.setItem('UPDATE_TIME', data.updated_at);
         } catch(e) {}
 
@@ -1354,6 +1492,7 @@
         if (AUDIT_DATA.length > 0) setText('auditStatusText', `(Đã có ${AUDIT_DATA.length} điểm)`);
         if (Object.keys(SALES_TARGETS).length > 0) setText('targetStatusText', `(Đã có ${Object.keys(SALES_TARGETS).length} SR)`);
         if (COVERAGE_DATA.length > 0) setText('covStatusText', `(Đã có ${COVERAGE_DATA.length} điểm)`);
+        if (VISIT_PERFORMANCE.length > 0) setText('visitStatusText', `(Đã có ${VISIT_PERFORMANCE.length} cuốc)`);
 
         requestAnimationFrame(() => {
           updateLatestOrderDateBanner(); 
@@ -1408,14 +1547,26 @@
       }, 180);
     }
 
-    // ================= TÍNH RUN-RATE (TỐC ĐỘ VỀ SỐ) =================
+    // ================= TÍNH RUN-RATE: TRỪ THỨ 7 & CHỦ NHẬT (TÍNH CẢ HÔM NAY) =================
     function updateRunRateUI(monthTotalHL, targetVol) {
       const now = new Date();
-      const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      const remainDays = Math.max(1, totalDaysInMonth - now.getDate());
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const todayDate = now.getDate();
+      const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let workingDaysLeft = 0;
+      for (let d = todayDate; d <= totalDaysInMonth; d++) {
+        const dayOfWeek = new Date(year, month, d).getDay();
+        // 0 là Chủ Nhật, 6 là Thứ Bảy -> chỉ đếm Thứ 2 đến Thứ 6
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          workingDaysLeft++;
+        }
+      }
+      const remainDays = Math.max(1, workingDaysLeft);
       const gapHL = Math.max(0, targetVol - monthTotalHL);
 
-      setText('lblRunRateDays', `⏳ Còn ${remainDays} ngày trong tháng`);
+      setText('lblRunRateDays', `⏳ Còn ${workingDaysLeft} ngày làm việc (trừ T7, CN)`);
       if (targetVol <= 0) {
         setText('lblRunRateNeed', 'Chưa nạp Target');
       } else if (gapHL <= 0.005) {
@@ -1427,10 +1578,10 @@
       }
     }
 
-    // ================= HỒ SƠ 360° ĐIỂM BÁN (CÓ HIỂN THỊ SẢN PHẨM BÊN TRONG) =================
+    // ================= HỒ SƠ 360° ĐIỂM BÁN =================
     let current360ReportText = "";
 
-     function openOutlet360(code) {
+    function openOutlet360(code) {
       if (!code) return;
       const cleanCode = String(code).trim();
 
@@ -1463,7 +1614,6 @@
       let step = 1;
       let zaloLines = [`🏪 ĐIỂM BÁN: ${outletName} (${cleanCode})`, `👤 Phụ trách: ${srName}`];
 
-      // 1. Doanh số MTD
       html += `
         <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
           <div class="flex justify-between items-center text-xs">
@@ -1477,7 +1627,6 @@
         </div>`;
       zaloLines.push(`📊 Doanh số MTD: ${totalHL.toFixed(2)} HL (Main: ${hudaHL.toFixed(2)} | Pre: ${preHL.toFixed(2)})`);
 
-      // 2. Chi tiết sản phẩm đã mua
       if (Object.keys(prodMap).length > 0) {
         let prodHTML = '';
         Object.entries(prodMap).forEach(([pName, pData]) => {
@@ -1496,7 +1645,6 @@
           </div>`;
       }
 
-      // 3. Trưng bày (Display)
       if (tbItem) {
         const minPre = (tbItem.level === "LV1") ? 5 : (tbItem.level === "LV2" ? 3 : 2);
         const effPre = Number((minPre * CASE_VOLUME).toFixed(4));
@@ -1522,7 +1670,6 @@
         zaloLines.push(`🎯 Display (${tbItem.level}): ${statusText}`);
       }
 
-      // 4. Listing Fee
       if (lfItem) {
         const isTONT = (lfItem.channelType === "TONT");
         const aHL = isTONT ? preHL : hudaHL;
@@ -1542,7 +1689,6 @@
         zaloLines.push(`💰 Listing Fee (${lfItem.channelType}): ${statusLF}`);
       }
 
-      // 5. Chụp Trưng Bày
       if (auditItem) {
         const stAudit = auditItem.count >= 2 ? '✓ Đủ 2/2 lần chụp' : (auditItem.count === 1 ? '⚠️ Mới chụp 1 lần (Thiếu lần 2)' : '❌ Chưa chụp lần nào');
         let auditDatesHTML = '';
@@ -1563,7 +1709,6 @@
         zaloLines.push(`📸 Chụp TB: ${stAudit}`);
       }
 
-      // 6. Coverage
       if (covItem) {
         const isLapsed = covItem.covNote === 'Lapsed';
         html += `
@@ -1596,11 +1741,11 @@
     // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
       activeTab = tab;
-      [1, 2, 3, 4, 5].forEach(i => {
+      [1, 2, 3, 4, 5, 6].forEach(i => {
         const c = document.getElementById(`tab${i}Content`);
         const b = document.getElementById(`tabBtn${i}`);
         if (c) c.classList.toggle('hidden', i !== tab);
-        if (b) b.className = (i === tab) ? "py-2.5 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer" : "py-2.5 rounded-xl text-gray-600 transition-all text-center cursor-pointer";
+        if (b) b.className = (i === tab) ? "py-2 px-1 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer whitespace-nowrap font-black" : "py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap font-extrabold";
       });
       renderAll();
     }
@@ -1625,6 +1770,10 @@
     function toggleLFChannel(chan) { currentLFChannel = (currentLFChannel === chan && chan !== 'ALL') ? 'ALL' : chan; limits.lf = PAGE_SIZE; renderAll(); }
     function filterLFChannel(chan) { currentLFChannel = chan; limits.lf = PAGE_SIZE; renderAll(); }
     function setAuditStatusFilter(st) { currentAuditStatus = (currentAuditStatus === st && st !== 'ALL') ? 'ALL' : st; limits.audit = PAGE_SIZE; renderAll(); }
+    function setNightStatusFilter(st) {
+      currentNightStatus = (currentNightStatus === st && st !== 'ALL') ? 'ALL' : st;
+      renderAll();
+    }
 
     function setTBStatusFilter(status) {
       currentTBStatus = status;
@@ -1709,6 +1858,324 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
+    // ================= QUẢN LÝ LỊCH LÀM ĐÊM (CHỌN NHIỀU NGÀY + CHUẨN HÓA NGÀY GIẢM DẦN) =================
+    function openNightScheduleModal() {
+      const picker = document.getElementById('regNightDatePicker');
+      const todayIso = new Date().toISOString().slice(0, 10);
+      if (picker && !picker.value) picker.value = todayIso;
+      if (selectedNightDates.length === 0) {
+        selectedNightDates = [todayIso];
+      }
+      renderSelectedNightDateChips();
+      renderNightScheduleModalList();
+      document.getElementById('nightScheduleModal')?.classList.remove('hidden');
+    }
+    function closeNightScheduleModal() { document.getElementById('nightScheduleModal')?.classList.add('hidden'); }
+
+    function addNightDateFromPicker() {
+      const picker = document.getElementById('regNightDatePicker');
+      if (!picker || !picker.value) return;
+      const iso = toIsoDate(picker.value);
+      if (iso && !selectedNightDates.includes(iso)) {
+        selectedNightDates.push(iso);
+        selectedNightDates.sort();
+        renderSelectedNightDateChips();
+      }
+    }
+
+    function removeSelectedNightDate(iso) {
+      selectedNightDates = selectedNightDates.filter(d => d !== iso);
+      renderSelectedNightDateChips();
+    }
+
+    function clearSelectedNightDates() {
+      selectedNightDates = [];
+      renderSelectedNightDateChips();
+    }
+
+    function quickSelectCurrentWeekNightDates() {
+      const now = new Date();
+      const day = now.getDay(); // 0: CN, 1: T2 ... 6: T7
+      const diffToMonday = (day === 0 ? -6 : 1 - day);
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday);
+
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (!selectedNightDates.includes(iso)) {
+          selectedNightDates.push(iso);
+        }
+      }
+      selectedNightDates.sort();
+      renderSelectedNightDateChips();
+      showToast("Đã thêm Thứ 2 - Thứ 6 tuần này!", "info");
+    }
+
+    function renderSelectedNightDateChips() {
+      const box = document.getElementById('selectedNightDatesBox');
+      if (!box) return;
+      if (selectedNightDates.length === 0) {
+        box.innerHTML = `<span class="text-[10px] text-gray-400 italic">Chưa chọn ngày nào. Hãy chạm ô lịch trên để thêm.</span>`;
+        return;
+      }
+      box.innerHTML = selectedNightDates.map(iso => `
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-indigo-600 text-white text-[10px] font-extrabold shadow-xs">
+          <span>${toVnDate(iso)}</span>
+          <button type="button" onclick="removeSelectedNightDate('${iso}')" class="hover:text-rose-200 font-black ml-0.5 cursor-pointer">✕</button>
+        </span>
+      `).join('');
+    }
+
+    async function handleRegisterNightShift(e) {
+      e.preventDefault();
+      const sr = document.getElementById('regNightSr').value;
+      const note = document.getElementById('regNightNote').value.trim();
+
+      if (selectedNightDates.length === 0) {
+        addNightDateFromPicker();
+      }
+      if (!sr || selectedNightDates.length === 0) {
+        showToast("Vui lòng chọn ít nhất 1 ngày làm đêm!", "error");
+        return;
+      }
+
+      const isAutoApprove = (currentUser?.role === 'ADMIN' || currentUser?.role === 'SS' || currentUser?.role === 'ASM');
+      let addedCount = 0;
+
+      selectedNightDates.forEach((isoDate, idx) => {
+        const exists = NIGHT_SCHEDULES.find(n => n.sr === sr && toIsoDate(n.date) === isoDate);
+        if (!exists) {
+          NIGHT_SCHEDULES.push({
+            id: 'NS_' + Date.now() + '_' + idx + '_' + Math.floor(Math.random() * 1000),
+            sr,
+            date: isoDate,
+            note: note || 'Đăng ký làm đêm tuyến cơ sở',
+            status: isAutoApprove ? 'Approved' : 'Pending',
+            created_at: new Date().toISOString().slice(0, 10)
+          });
+          addedCount++;
+        } else if (note) {
+          exists.note = note;
+        }
+      });
+
+      if (addedCount === 0) {
+        showToast("Các ngày chọn đều đã được đăng ký trước đó!", "info");
+        return;
+      }
+
+      await saveNightSchedulesToCloud();
+      showToast(isAutoApprove ? `Đã đăng ký & duyệt ${addedCount} ngày làm đêm!` : `Đã gửi đăng ký ${addedCount} ngày, chờ SS duyệt!`, "success");
+      document.getElementById('regNightNote').value = '';
+      selectedNightDates = [];
+      renderSelectedNightDateChips();
+      renderNightScheduleModalList();
+      renderAll();
+    }
+
+    async function updateNightScheduleStatus(id, newStatus) {
+      const item = NIGHT_SCHEDULES.find(n => n.id === id);
+      if (item) {
+        item.status = newStatus;
+        await saveNightSchedulesToCloud();
+        showToast(`Đã cập nhật trạng thái: ${newStatus}`, "success");
+        renderNightScheduleModalList();
+        renderAll();
+      }
+    }
+
+    async function deleteNightSchedule(id) {
+      if (!confirm("Bạn có chắc chắn muốn xóa lịch đăng ký này không?")) return;
+      NIGHT_SCHEDULES = NIGHT_SCHEDULES.filter(n => n.id !== id);
+      await saveNightSchedulesToCloud();
+      showToast("Đã xóa lịch!", "success");
+      renderNightScheduleModalList();
+      renderAll();
+    }
+
+    async function approveAllPendingNightShifts() {
+      let count = 0;
+      NIGHT_SCHEDULES.forEach(n => {
+        if (n.status === 'Pending') { n.status = 'Approved'; count++; }
+      });
+      if (count > 0) {
+        await saveNightSchedulesToCloud();
+        showToast(`Đã duyệt tất cả ${count} lịch chờ!`, "success");
+        renderNightScheduleModalList();
+        renderAll();
+      } else {
+        showToast("Không có lịch nào đang chờ duyệt.", "info");
+      }
+    }
+
+    async function saveNightSchedulesToCloud() {
+      try {
+        localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
+        const nowStr = localStorage.getItem('UPDATE_TIME') || new Date().toLocaleString('vi-VN');
+        const payload = {
+          id: 'CURRENT_DATA',
+          master: {
+            toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
+            targets: SALES_TARGETS, coverage: COVERAGE_DATA,
+            visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES
+          },
+          sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
+        };
+        await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn("Lỗi lưu lịch làm đêm:", err);
+      }
+    }
+
+    function renderNightScheduleModalList() {
+      const container = document.getElementById('nightRegListInModal');
+      const boxMgr = document.getElementById('nightManagerActionBox');
+      if (!container) return;
+
+      const isMgr = (currentUser?.role === 'ADMIN' || currentUser?.role === 'SS' || currentUser?.role === 'ASM');
+      if (boxMgr) boxMgr.classList.toggle('hidden', !isMgr);
+
+      const list = (currentUser?.role === 'SR' && currentUser?.sr_key)
+        ? [...NIGHT_SCHEDULES.filter(n => n.sr === currentUser.sr_key)]
+        : [...NIGHT_SCHEDULES];
+
+      // Sắp xếp ngày gần nhất giảm dần chuẩn xác bằng chuỗi ISO YYYY-MM-DD
+      list.sort((a, b) => toIsoDate(b.date).localeCompare(toIsoDate(a.date)));
+
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-400 py-3 text-xs">Chưa có lịch làm đêm nào được đăng ký.</p>`;
+        return;
+      }
+
+      list.forEach(n => {
+        const srName = TEAM_SR_MAP[n.sr] || n.sr;
+        const isAppr = (n.status === 'Approved');
+        const badge = isAppr ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-extrabold text-[9px]">ĐÃ DUYỆT</span>` : `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-extrabold text-[9px]">CHỜ DUYỆT</span>`;
+        
+        let actionBtns = '';
+        if (isMgr) {
+          if (isAppr) {
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Pending')" class="px-2 py-1 bg-amber-500 text-white rounded font-bold text-[9px] cursor-pointer">Bỏ duyệt</button>`;
+          } else {
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[9px] cursor-pointer">Duyệt</button>`;
+          }
+        }
+        if (isMgr || (currentUser?.role === 'SR' && n.sr === currentUser?.sr_key && !isAppr)) {
+          actionBtns += `<button onclick="deleteNightSchedule('${n.id}')" class="px-2 py-1 bg-rose-500 text-white rounded font-bold text-[9px] cursor-pointer">Xóa</button>`;
+        }
+
+        container.innerHTML += `
+          <div class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/70 flex justify-between items-center text-xs">
+            <div>
+              <div class="font-extrabold text-gray-900">${srName} • <span class="text-indigo-700">${toVnDate(n.date)}</span></div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${n.note}</div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${badge}
+              ${actionBtns}
+            </div>
+          </div>`;
+      });
+    }
+
+        function parseNightPerformanceData(selectedSR) {
+      const sessionMap = {};
+      
+      VISIT_PERFORMANCE.forEach(v => {
+        if (!v.start_time) return;
+        const timeStr = String(v.start_time).trim();
+        const parts = timeStr.split(' ');
+        const rawDate = parts[0] || '';
+        const isoDate = toIsoDate(rawDate);
+        let hour = 0;
+        let startTimeShort = '';
+        
+        if (parts.length >= 2 && parts[1].includes(':')) {
+          startTimeShort = parts[1].slice(0, 5);
+          hour = parseInt(parts[1].split(':')[0], 10) || 0;
+        }
+
+        let endTimeShort = '';
+        if (v.end_time) {
+          const eParts = String(v.end_time).trim().split(' ');
+          if (eParts.length >= 2) endTimeShort = eParts[1].slice(0, 5);
+        }
+
+        if (hour >= 18 && hour < 21 && isoDate) {
+          const srKey = v.sr;
+          if (selectedSR !== "ALL" && srKey !== selectedSR) return;
+          const key = `${srKey}_${isoDate}`;
+
+          if (!sessionMap[key]) {
+            sessionMap[key] = {
+              sr: srKey,
+              srName: TEAM_SR_MAP[srKey] || srKey,
+              isoDate: isoDate,
+              date: toVnDate(isoDate),
+              visits: []
+            };
+          }
+          sessionMap[key].visits.push({
+            code: v.outlet_code,
+            name: v.outlet_name,
+            channel: v.channel,
+            startTime: startTimeShort,
+            endTime: endTimeShort,
+            gps: v.gps || 0
+          });
+        }
+      });
+
+      // Đưa thêm các ngày có đăng ký lịch nhưng hôm đó chưa có cuốc ghé thực tế (nếu cần) vào danh sách
+      NIGHT_SCHEDULES.forEach(n => {
+        const isoDate = toIsoDate(n.date);
+        if (!isoDate) return;
+        if (selectedSR !== "ALL" && n.sr !== selectedSR) return;
+        const key = `${n.sr}_${isoDate}`;
+        if (!sessionMap[key]) {
+          sessionMap[key] = {
+            sr: n.sr,
+            srName: TEAM_SR_MAP[n.sr] || n.sr,
+            isoDate: isoDate,
+            date: toVnDate(isoDate),
+            visits: []
+          };
+        }
+        sessionMap[key].scheduleNote = n.note;
+        sessionMap[key].scheduleStatus = n.status;
+      });
+
+      const results = [];
+      Object.values(sessionMap).forEach(ses => {
+        const tontVisits = ses.visits.filter(v => String(v.channel).trim().toLowerCase() === 'on');
+        const tontCount = tontVisits.length;
+
+        const matchedSched = NIGHT_SCHEDULES.find(n => n.sr === ses.sr && toIsoDate(n.date) === ses.isoDate);
+        const hasApprovedSched = (matchedSched && matchedSched.status === 'Approved');
+        const hasPendingSched = (matchedSched && matchedSched.status === 'Pending');
+        const hasAnySched = hasApprovedSched || hasPendingSched;
+
+        const isPass = (tontCount >= 2 && hasAnySched); // Phải đạt từ 2 điểm TONT VÀ có đăng ký lịch mới tính là đạt chuẩn
+
+        ses.tontCount = tontCount;
+        ses.isPass = isPass;
+        ses.hasApprovedSched = hasApprovedSched;
+        ses.hasPendingSched = hasPendingSched;
+        ses.hasAnySched = hasAnySched;
+
+        results.push(ses);
+      });
+
+      results.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
+      return results;
+    }
     // ================= 5 BẢNG MA TRẬN FIT-10 =================
     function openFit10Modal() {
       document.getElementById('fit10Modal')?.classList.remove('hidden');
@@ -2330,9 +2797,136 @@
         }
         setText('txtCovListCount', `${fCovList.length} điểm bán`);
       }
+
+      // ---------------- TAB 6: TRACKING LÀM ĐÊM (FIT-08) ----------------
+          if (activeTab === 6) {
+        const nightList = parseNightPerformanceData(selectedSR);
+        
+        // Lọc ra các buổi THỰC TẾ ĐÃ ĐĂNG KÝ LỊCH (dùng làm mẫu số chuẩn FIT-08)
+        const registeredList = nightList.filter(n => n.hasAnySched);
+        const totalRegistered = registeredList.length;
+        
+        // Số buổi đã đăng ký và đạt chuẩn (đạt >= 2 TONT)
+        const passRegisteredCount = registeredList.filter(n => n.isPass).length;
+
+        let warnNightCount = 0, schedNightCount = 0, pendingCount = 0;
+        nightList.forEach(n => {
+          if (!n.isPass) warnNightCount++;
+          if (n.hasAnySched) {
+            schedNightCount++;
+            if (n.hasPendingSched) pendingCount++;
+          }
+        });
+
+        const pctNight = totalRegistered > 0 ? Math.round((passRegisteredCount / totalRegistered) * 100) : 0;
+
+        setText('txtNightPercent', `${pctNight}%`);
+        setText('txtNightAchieved', `${passRegisteredCount} / ${totalRegistered}`);
+        setText('txtNightValidTotal', `Đạt chuẩn: ${passRegisteredCount} / Đã ĐK: ${totalRegistered} buổi`);
+        setStyleWidth('barNightProgress', `${Math.min(100, pctNight)}%`);
+
+        setText('countNightPass', passRegisteredCount);
+        setText('countNightWarn', warnNightCount);
+        setText('countNightSched', schedNightCount);
+        setText('subNightPendingBadge', `${pendingCount} chờ duyệt`);
+
+        const cNPass = document.getElementById('cardNightPass');
+        const cNWarn = document.getElementById('cardNightWarn');
+        const cNSched = document.getElementById('cardNightSched');
+        if (cNPass && cNWarn && cNSched) {
+          cNPass.className = (currentNightStatus === 'PASS') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
+          cNWarn.className = (currentNightStatus === 'WARN') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
+          cNSched.className = (currentNightStatus === 'SCHED') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-indigo-100 border-indigo-500 ring-2 ring-indigo-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-indigo-50/70 border-indigo-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
+        }
+        const btnResetNight = document.getElementById('btnResetNightFilter');
+        if (btnResetNight) btnResetNight.classList.toggle('hidden', currentNightStatus === 'ALL');
+
+        let filteredNight = nightList;
+        if (currentNightStatus === 'PASS') filteredNight = filteredNight.filter(n => n.isPass);
+        else if (currentNightStatus === 'WARN') filteredNight = filteredNight.filter(n => !n.isPass);
+        else if (currentNightStatus === 'SCHED') filteredNight = filteredNight.filter(n => n.hasApprovedSched || n.hasPendingSched);
+
+        const teamSumBox = document.getElementById('nightTeamSummaryBox');
+        const teamSumList = document.getElementById('nightTeamSummaryList');
+        if (teamSumBox && teamSumList) {
+          teamSumBox.classList.toggle('hidden', selectedSR !== 'ALL');
+          if (selectedSR === 'ALL') {
+            teamSumList.innerHTML = '';
+            TEAM_SR_ORDER.forEach(srObj => {
+              const srNList = parseNightPerformanceData(srObj.key);
+              const srPass = srNList.filter(x => x.isPass).length;
+              const srSched = srNList.filter(x => x.hasApprovedSched).length;
+              teamSumList.innerHTML += `
+                <div onclick="document.getElementById('srFilter').value='${srObj.key}'; renderAll();" class="flex justify-between items-center p-2 rounded-xl bg-gray-50 hover:bg-indigo-50 cursor-pointer transition-all border border-gray-100">
+                  <span class="font-bold text-gray-800">👤 ${srObj.name}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-indigo-700 font-extrabold bg-indigo-100 px-2 py-0.5 rounded">Lịch ĐK: ${srSched}</span>
+                    <span class="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-2 py-0.5 rounded">Đạt chuẩn: ${srPass} buổi</span>
+                  </div>
+                </div>`;
+            });
+          }
+        }
+
+        const sessionBox = document.getElementById('nightSessionList');
+        if (sessionBox) {
+          sessionBox.innerHTML = '';
+          if (filteredNight.length === 0) {
+            sessionBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Không có dữ liệu làm đêm phù hợp. Hãy nạp file FIT-08.</div>`;
+          } else {
+            filteredNight.forEach(ses => {
+              let visitRows = '';
+              const visitCount = ses.visits ? ses.visits.length : 0;
+              if (visitCount > 0) {
+                ses.visits.forEach(v => {
+                  const isTont = String(v.channel).trim().toLowerCase() === 'on';
+                  visitRows += `
+                    <div class="flex justify-between items-center text-[10px] py-1 border-b border-gray-100 last:border-0">
+                      <div class="truncate pr-2">
+                        <span class="font-bold text-gray-800">${v.name}</span> 
+                        <span class="text-gray-400">(${v.code})</span>
+                        <div class="text-[9px] text-gray-500">${v.startTime} - ${v.endTime} • GPS: ${v.gps}m</div>
+                      </div>
+                      <span class="px-2 py-0.5 rounded font-bold whitespace-nowrap ${isTont ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}">${isTont ? 'TONT (Quán nhậu)' : 'TOFT (Tạp hóa)'}</span>
+                    </div>`;
+                });
+              } else {
+                visitRows = `<div class="text-[10px] text-gray-400 italic py-1">Chưa có cuốc ghé thăm thực tế trong khung 18h-21h ngày này.</div>`;
+              }
+
+              const schedBadge = ses.hasApprovedSched ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 font-extrabold rounded text-[9px]">Lịch ĐK: ĐÃ DUYỆT ✓</span>` : (ses.hasPendingSched ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-extrabold rounded text-[9px]">Lịch ĐK: CHỜ DUYỆT ⏳</span>` : `<span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded text-[9px]">Chưa đăng ký lịch</span>`);
+
+              // Đã thu gọn chi tiết điểm bán ghé thăm thành <details> theo yêu cầu mới
+              sessionBox.innerHTML += `
+                <div class="bg-white rounded-2xl p-3.5 card-shadow border ${ses.isPass ? 'border-emerald-200/80' : 'border-amber-200/80'} space-y-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="text-[10px] font-bold text-gray-400 tracking-wide">${ses.srName} • <b class="text-indigo-700">Ngày ${ses.date}</b></div>
+                      <div class="text-xs font-black text-[#1F4E79] mt-0.5">🌙 Khung 18h-21h: <b class="${ses.tontCount >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${ses.tontCount} điểm TONT</b></div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                      <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${ses.isPass ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${ses.isPass ? 'ĐẠT CHUẨN' : 'CHƯA ĐẠT'}</span>
+                      ${schedBadge}
+                    </div>
+                  </div>
+                  <div class="pt-1 border-t border-gray-100">
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-extrabold text-indigo-900 py-1 flex justify-between items-center select-none">
+                        <span>📍 Chi tiết các quán ghé thăm (${visitCount} điểm)</span>
+                        <span class="text-indigo-600 text-xs">Xem ▼</span>
+                      </summary>
+                      <div class="mt-1 bg-gray-50/80 p-2 rounded-xl border border-gray-100 space-y-0.5">${visitRows}</div>
+                    </details>
+                  </div>
+                </div>`;
+            });
+          }
+        }
+        setText('txtNightListCount', `${filteredNight.length} buổi`);
+      }
     }
 
-    // ================= QUẢN TRỊ USER & BÁO CÁO =================
+    // ================= QUẢN TRỊ USER & ĐƠN NGÀY =================
     function openAdminUserModal() { 
       if (currentUser?.role === 'ADMIN') { 
         document.getElementById('adminUserModal')?.classList.remove('hidden'); 
@@ -2431,64 +3025,6 @@
       } catch (err) { showToast("Lỗi xuất file: " + err.message, "error"); }
     }
 
-    function copyZaloReport() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
-        if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { showToast("Mã PIN không chính xác!", "error"); return; } else return;
-      }
-      document.getElementById('reportHubModal')?.classList.remove('hidden');
-    }
-    function closeReportHubModal() { document.getElementById('reportHubModal')?.classList.add('hidden'); }
-
-    function triggerCopyReport(type) {
-      closeReportHubModal();
-      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
-      else if (type === 'INDIVIDUAL_SR') {
-        const sf = document.getElementById('srFilter');
-        if (!sf || sf.value === 'ALL') { showToast("Vui lòng chọn 1 SR cụ thể!", "error"); return; }
-        executeCopyIndividualReport();
-      }
-      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
-      else if (type === 'AUDIT_TB') executeCopyAuditReport();
-      else if (type === 'NO_ORDER_REMIND') { openDailyOrdersModal(); setModalFilter('NO_ORDER'); copyManagerReminderReport(); }
-    }
-
-    function executeCopyTeamReport() {
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", ut = localStorage.getItem('UPDATE_TIME') || "";
-      let tM = 0, tD = 0, sMap = {};
-      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
-        tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
-      });
-      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
-      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Báo cáo Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyIndividualReport() {
-      const sf = document.getElementById('srFilter');
-      if (!sf) return;
-      const sr = sf.value, name = sf.options[sf.selectedIndex].text;
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
-      let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
-      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
-      navigator.clipboard.writeText(msg).then(() => showToast(`Đã sao chép báo cáo ${name}!`, "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyIncentiveTeamReport() {
-      const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Bảng thưởng Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyAuditReport() {
-      const sr = document.getElementById('srFilter')?.value || "ALL";
-      const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
-      const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
-      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép báo cáo Chụp TB!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
     function promptDailyOrdersModal() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
@@ -2549,15 +3085,6 @@
       setText('modalSummaryHasOrder', `${hCount}/9 SR`); setText('modalSummaryNoOrder', `${nCount}/9 SR`);
     }
 
-    function copyManagerReminderReport() {
-      const dt = document.getElementById('modalOrderDateSelect')?.value; if (!dt) return;
-      const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
-      SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
-      const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
-      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép nhắc nhở!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
     function promptExportFiles() {
       if (prompt("Nhập mật khẩu mở khóa tải file:") === EXPORT_PIN) {
         document.getElementById('exportActionBox')?.classList.remove('hidden'); showToast("Mở khóa thành công!", "success");
@@ -2581,7 +3108,7 @@
       return s.substring(0, 10);
     }
 
-        function formatAuditDate(serial) {
+    function formatAuditDate(serial) {
       if (!serial) return '';
       const s = String(serial).trim();
       if (s.includes('-') || s.includes('/')) return s;
@@ -2600,8 +3127,9 @@
       const fAudit = document.getElementById('fileAudit')?.files[0];
       const fTarget = document.getElementById('fileTarget')?.files[0];
       const fCov = document.getElementById('fileCov')?.files[0];
+      const fVisit = document.getElementById('fileVisit')?.files[0];
 
-      if (!fTrack && !fSec && !fAudit && !fTarget && !fCov) {
+      if (!fTrack && !fSec && !fAudit && !fTarget && !fCov && !fVisit) {
         showToast("Vui lòng chọn ít nhất một file để nạp!", "error");
         return;
       }
@@ -2821,12 +3349,59 @@
           }
         }
 
+        if (fVisit) {
+          const wb = XLSX.read(await fVisit.arrayBuffer(), { dense: false });
+          const sName = wb.SheetNames[0];
+          if (wb.Sheets[sName]) {
+            const raw = XLSX.utils.sheet_to_json(wb.Sheets[sName], { header: 1 });
+            let hIdx = 0;
+            for (let i = 0; i < Math.min(5, raw.length); i++) {
+              const rowStr = (raw[i] || []).join(' ').toLowerCase();
+              if (rowStr.includes('outlet code') || rowStr.includes('start time')) { hIdx = i; break; }
+            }
+            const h = (raw[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
+            let cSr = -1, cCode = -1, cName = -1, cChan = -1, cStart = -1, cEnd = -1, cGps = -1;
+
+            h.forEach((v, idx) => {
+              if (v === 'sr') cSr = idx;
+              if (v.includes('outlet code') || v.includes('mã điểm bán')) cCode = idx;
+              if (v.includes('outlet name') || v.includes('tên điểm bán')) cName = idx;
+              if (v === 'channel' || v.includes('kênh')) cChan = idx;
+              if (v.includes('start time')) cStart = idx;
+              if (v.includes('end time')) cEnd = idx;
+              if (v.includes('gps') && v.includes('m')) cGps = idx;
+            });
+
+            VISIT_PERFORMANCE = [];
+            for (let r = hIdx + 1; r < raw.length; r++) {
+              const row = raw[r]; if (!row || !row[cCode]) continue;
+              const srNorm = normalizeSR(row[cSr]);
+              if (!TEAM_SRS.includes(srNorm)) continue;
+
+              VISIT_PERFORMANCE.push({
+                sr: srNorm,
+                outlet_code: String(row[cCode] || '').trim(),
+                outlet_name: String(row[cName] || '').trim(),
+                channel: String(row[cChan] || '').trim(),
+                start_time: formatAuditDate(row[cStart]),
+                end_time: formatAuditDate(row[cEnd]),
+                gps: parseFloat(row[cGps]) || 0
+              });
+            }
+            localStorage.setItem('VISIT_PERF_DATA', JSON.stringify(VISIT_PERFORMANCE));
+          }
+        }
+
         const nowStr = new Date().toLocaleString('vi-VN');
         if (btn) btn.textContent = "Đang gửi lên Cloud...";
 
         const payload = {
           id: 'CURRENT_DATA',
-          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
+          master: {
+            toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
+            targets: SALES_TARGETS, coverage: COVERAGE_DATA,
+            visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES
+          },
           sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
         };
 
@@ -2841,14 +3416,15 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('UPDATE_TIME', nowStr);
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
+          localStorage.setItem('UPDATE_TIME', nowStr);
         } catch (e) {}
 
         setText('lblLastUpdate', `Cập nhật: ${nowStr}`);
         toggleAdminModal();
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
         updateLatestOrderDateBanner(); populateDateFilter(); renderAll();
-        showToast("Đồng bộ dữ liệu thành công!", "success");
+        showToast("Nạp file thành công!", "success");
       } catch (err) {
         showToast("Lỗi khi xử lý file: " + (err.message || err), "error");
         if (btn) btn.textContent = "⚡ XÁC NHẬN CẬP NHẬT";
