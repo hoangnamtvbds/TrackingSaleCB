@@ -1281,7 +1281,7 @@
       btn.textContent = "Đang kiểm tra...";
 
       if (u === 'admin' && (p === '123456' || p === '6868')) {
-        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Admin', role: 'QTV', is_first_login: (p === '123456') };
+        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Quản Trị Viên', role: 'ADMIN', is_first_login: (p === '123456') };
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
         if (currentUser.is_first_login) {
           document.getElementById('changePasswordModal')?.classList.remove('hidden');
@@ -1928,7 +1928,7 @@
       `).join('');
     }
 
-    async function handleRegisterNightShift(e) {
+            async function handleRegisterNightShift(e) {
       e.preventDefault();
       const sr = document.getElementById('regNightSr')?.value;
 
@@ -1940,28 +1940,35 @@
         return;
       }
 
-      let addedCount = 0;
+      const btn = document.getElementById('btnSubmitNightReg');
+      if (btn) { btn.disabled = true; btn.textContent = "⏳ Đang đồng bộ & lưu..."; }
+
+      const newItems = [];
       selectedNightDates.forEach((isoDate, idx) => {
         const exists = NIGHT_SCHEDULES.find(n => n.sr === sr && toIsoDate(n.date) === isoDate);
         if (!exists) {
-          NIGHT_SCHEDULES.push({
+          const item = {
             id: 'NS_' + Date.now() + '_' + idx + '_' + Math.floor(Math.random() * 1000),
             sr,
             date: isoDate,
             status: 'Approved',
             created_at: getLocalTodayIso()
-          });
-          addedCount++;
+          };
+          NIGHT_SCHEDULES.push(item);
+          newItems.push(item);
         }
       });
 
-      if (addedCount === 0) {
+      if (newItems.length === 0) {
         showToast("Các ngày chọn đều đã có trong danh sách đăng ký!", "info");
+        if (btn) { btn.disabled = false; btn.textContent = "💾 Lưu Ngày Làm Đêm Đã Chọn"; }
         return;
       }
 
-      await saveNightSchedulesToCloud();
-      showToast(`Đã lưu ${addedCount} ngày làm đêm!`, "success");
+      await saveNightSchedulesToCloud({ added: newItems });
+      if (btn) { btn.disabled = false; btn.textContent = "💾 Lưu Ngày Làm Đêm Đã Chọn"; }
+
+      showToast(`Đã lưu ${newItems.length} ngày làm đêm!`, "success");
       selectedNightDates = [];
       renderSelectedNightDateChips();
       renderNightScheduleModalList();
@@ -1971,25 +1978,65 @@
     async function deleteNightSchedule(id) {
       if (!confirm("Xóa ngày đăng ký làm đêm này?")) return;
       NIGHT_SCHEDULES = NIGHT_SCHEDULES.filter(n => n.id !== id);
-      await saveNightSchedulesToCloud();
+      await saveNightSchedulesToCloud({ deletedId: id });
       showToast("Đã xóa ngày làm đêm!", "success");
       renderNightScheduleModalList();
       renderAll();
     }
 
-    async function saveNightSchedulesToCloud() {
+    async function saveNightSchedulesToCloud(change = {}) {
       try {
+        const getRes = await fetch(`${SUPABASE_URL}/rest/v1/sales_data?id=eq.CURRENT_DATA&select=*`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+
+        let cloudRow = null;
+        if (getRes.ok) {
+          const list = await getRes.json();
+          cloudRow = list && list[0];
+        }
+
+        let cloudSchedules = [];
+        if (cloudRow && cloudRow.master && Array.isArray(cloudRow.master.night_schedules)) {
+          cloudSchedules = cloudRow.master.night_schedules;
+        } else if (cloudRow && Array.isArray(cloudRow.night_schedules)) {
+          cloudSchedules = cloudRow.night_schedules;
+        } else {
+          cloudSchedules = [...NIGHT_SCHEDULES];
+        }
+
+        if (change.added && change.added.length > 0) {
+          change.added.forEach(item => {
+            const exists = cloudSchedules.some(n => n.sr === item.sr && toIsoDate(n.date) === toIsoDate(item.date));
+            if (!exists) cloudSchedules.push(item);
+          });
+        }
+        if (change.deletedId) {
+          cloudSchedules = cloudSchedules.filter(n => n.id !== change.deletedId);
+        }
+
+        NIGHT_SCHEDULES = cloudSchedules;
         localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
-        const nowStr = localStorage.getItem('UPDATE_TIME') || new Date().toLocaleString('vi-VN');
+
+        const baseMaster = (cloudRow && cloudRow.master && typeof cloudRow.master === 'object' && !Array.isArray(cloudRow.master))
+          ? cloudRow.master
+          : {
+              toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
+              targets: SALES_TARGETS, coverage: COVERAGE_DATA,
+              visit_perf: VISIT_PERFORMANCE
+            };
+
+        baseMaster.night_schedules = NIGHT_SCHEDULES;
+        const nowStr = (cloudRow && cloudRow.updated_at) || localStorage.getItem('UPDATE_TIME') || new Date().toLocaleString('vi-VN');
+
         const payload = {
           id: 'CURRENT_DATA',
-          master: {
-            toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
-            targets: SALES_TARGETS, coverage: COVERAGE_DATA,
-            visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES
-          },
-          sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
+          master: baseMaster,
+          sec: (cloudRow && cloudRow.sec) ? cloudRow.sec : SEC_ORDERS,
+          promo: (cloudRow && cloudRow.promo) ? cloudRow.promo : PROMOTIONS,
+          updated_at: nowStr
         };
+
         await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
           method: 'POST',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
@@ -1997,6 +2044,7 @@
         });
       } catch (err) {
         console.warn("Lỗi lưu lịch làm đêm:", err);
+        showToast("Lưu máy thành công, nhưng mạng chập chờn chưa lên Cloud!", "error");
       }
     }
 
@@ -2055,14 +2103,15 @@
       if (!sr || !isoDate) return;
       const exists = NIGHT_SCHEDULES.find(n => n.sr === sr && toIsoDate(n.date) === isoDate);
       if (!exists) {
-        NIGHT_SCHEDULES.push({
+        const newItem = {
           id: 'NS_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
           sr,
           date: isoDate,
           status: 'Approved',
           created_at: getLocalTodayIso()
-        });
-        await saveNightSchedulesToCloud();
+        };
+        NIGHT_SCHEDULES.push(newItem);
+        await saveNightSchedulesToCloud({ added: [newItem] });
         showToast(`Đã bổ sung lịch làm đêm ngày ${toVnDate(isoDate)}!`, "success");
         renderAll();
       }
@@ -3047,17 +3096,18 @@
       const dOrders = SEC_ORDERS.filter(o => o.date === dt);
       let tHL = 0, hCount = 0, nCount = 0, sMap = {};
       TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
-      dOrders.forEach(o => {
-        if (sMap[o.sr]) {
-          sMap[o.sr].vol += o.vol; sMap[o.sr].cases += Math.round(o.vol / CASE_VOLUME); tHL += o.vol;
-          if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
-          sMap[o.sr].outlets.get(o.code).vol += o.vol;
-        }
-      });
+         dOrders.forEach(o => {
+     if (sMap[o.sr]) {
+       sMap[o.sr].vol += o.vol; tHL += o.vol;
+       if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
+       sMap[o.sr].outlets.get(o.code).vol += o.vol;
+     }
+   });
 
-      const rend = [];
-      TEAM_SRS.forEach(k => {
-        const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
+   const rend = [];
+   TEAM_SRS.forEach(k => {
+     sMap[k].cases = Math.round(sMap[k].vol / CASE_VOLUME);
+     const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
         if (currentModalFilter === 'HAS_ORDER' && !has) return;
         if (currentModalFilter === 'NO_ORDER' && has) return;
         rend.push({ key: k, name: TEAM_SR_MAP[k], data: sMap[k], has });
