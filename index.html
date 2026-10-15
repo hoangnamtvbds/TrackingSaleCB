@@ -2085,7 +2085,7 @@
       });
     }
 
-    function parseNightPerformanceData(selectedSR) {
+        function parseNightPerformanceData(selectedSR) {
       const sessionMap = {};
       
       VISIT_PERFORMANCE.forEach(v => {
@@ -2108,9 +2108,9 @@
           if (eParts.length >= 2) endTimeShort = eParts[1].slice(0, 5);
         }
 
-        // Lọc khung giờ 18h đến dưới 21h (18:00 - 20:59)
         if (hour >= 18 && hour < 21 && isoDate) {
           const srKey = v.sr;
+          if (selectedSR !== "ALL" && srKey !== selectedSR) return;
           const key = `${srKey}_${isoDate}`;
 
           if (!sessionMap[key]) {
@@ -2133,9 +2133,11 @@
         }
       });
 
+      // Đưa thêm các ngày có đăng ký lịch nhưng hôm đó chưa có cuốc ghé thực tế (nếu cần) vào danh sách
       NIGHT_SCHEDULES.forEach(n => {
         const isoDate = toIsoDate(n.date);
         if (!isoDate) return;
+        if (selectedSR !== "ALL" && n.sr !== selectedSR) return;
         const key = `${n.sr}_${isoDate}`;
         if (!sessionMap[key]) {
           sessionMap[key] = {
@@ -2152,26 +2154,25 @@
 
       const results = [];
       Object.values(sessionMap).forEach(ses => {
-        if (selectedSR !== "ALL" && ses.sr !== selectedSR) return;
-
         const tontVisits = ses.visits.filter(v => String(v.channel).trim().toLowerCase() === 'on');
         const tontCount = tontVisits.length;
 
         const matchedSched = NIGHT_SCHEDULES.find(n => n.sr === ses.sr && toIsoDate(n.date) === ses.isoDate);
         const hasApprovedSched = (matchedSched && matchedSched.status === 'Approved');
         const hasPendingSched = (matchedSched && matchedSched.status === 'Pending');
+        const hasAnySched = hasApprovedSched || hasPendingSched;
 
-        const isPass = (tontCount >= 2);
+        const isPass = (tontCount >= 2 && hasAnySched); // Phải đạt từ 2 điểm TONT VÀ có đăng ký lịch mới tính là đạt chuẩn
 
         ses.tontCount = tontCount;
         ses.isPass = isPass;
         ses.hasApprovedSched = hasApprovedSched;
         ses.hasPendingSched = hasPendingSched;
+        ses.hasAnySched = hasAnySched;
 
         results.push(ses);
       });
 
-      // Sắp xếp chuẩn theo isoDate giảm dần (ngày mới nhất nằm trên cùng)
       results.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
       return results;
     }
@@ -2798,27 +2799,33 @@
       }
 
       // ---------------- TAB 6: TRACKING LÀM ĐÊM (FIT-08) ----------------
-      if (activeTab === 6) {
+          if (activeTab === 6) {
         const nightList = parseNightPerformanceData(selectedSR);
-        let passNightCount = 0, warnNightCount = 0, schedNightCount = 0, pendingCount = 0;
+        
+        // Lọc ra các buổi THỰC TẾ ĐÃ ĐĂNG KÝ LỊCH (dùng làm mẫu số chuẩn FIT-08)
+        const registeredList = nightList.filter(n => n.hasAnySched);
+        const totalRegistered = registeredList.length;
+        
+        // Số buổi đã đăng ký và đạt chuẩn (đạt >= 2 TONT)
+        const passRegisteredCount = registeredList.filter(n => n.isPass).length;
 
+        let warnNightCount = 0, schedNightCount = 0, pendingCount = 0;
         nightList.forEach(n => {
-          if (n.isPass) passNightCount++; else warnNightCount++;
-          if (n.hasApprovedSched || n.hasPendingSched) {
+          if (!n.isPass) warnNightCount++;
+          if (n.hasAnySched) {
             schedNightCount++;
             if (n.hasPendingSched) pendingCount++;
           }
         });
 
-        const totalNight = nightList.length;
-        const pctNight = totalNight > 0 ? Math.round((passNightCount / totalNight) * 100) : 0;
+        const pctNight = totalRegistered > 0 ? Math.round((passRegisteredCount / totalRegistered) * 100) : 0;
 
         setText('txtNightPercent', `${pctNight}%`);
-        setText('txtNightAchieved', `${passNightCount} / ${totalNight}`);
-        setText('txtNightValidTotal', `Đạt chuẩn: ${passNightCount} buổi`);
+        setText('txtNightAchieved', `${passRegisteredCount} / ${totalRegistered}`);
+        setText('txtNightValidTotal', `Đạt chuẩn: ${passRegisteredCount} / Đã ĐK: ${totalRegistered} buổi`);
         setStyleWidth('barNightProgress', `${Math.min(100, pctNight)}%`);
 
-        setText('countNightPass', passNightCount);
+        setText('countNightPass', passRegisteredCount);
         setText('countNightWarn', warnNightCount);
         setText('countNightSched', schedNightCount);
         setText('subNightPendingBadge', `${pendingCount} chờ duyệt`);
