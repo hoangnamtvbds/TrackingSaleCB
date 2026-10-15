@@ -249,7 +249,7 @@
           <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1F4E79] flex items-center justify-center text-lg shrink-0 font-black shadow-inner">🍺</div>
           <div class="truncate">
             <h1 class="text-[15px] sm:text-base font-black text-[#1F4E79] tracking-tight leading-tight truncate">
-              Carlsberg Sale Tracking
+              CB Sale Tracking
             </h1>
             <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold mt-0.5">
               <span id="lblLastUpdate" class="truncate">Chưa nạp dữ liệu</span>
@@ -874,7 +874,7 @@
         <span class="text-[11px] text-gray-600 font-bold" id="lblFit10TableTitle">Bảng 1: MCP Đi Tuyến (CPD & VOR)</span>
         <div class="flex items-center gap-1.5">
           <button onclick="shareFit10Image()" id="btnShareFit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
-            📤 Gửi Zalo / Lưu ảnh
+            📤 Gửi Zalo
           </button>
           <button onclick="exportFit10PngImage()" id="btnExportFitPng" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer">
             💾 Tải ảnh
@@ -1281,7 +1281,7 @@
       btn.textContent = "Đang kiểm tra...";
 
       if (u === 'admin' && (p === '123456' || p === '6868')) {
-        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Quản Trị Viên', role: 'ADMIN', is_first_login: (p === '123456') };
+        currentUser = { id: 'admin-root', username: 'admin', fullname: 'Admin', role: 'QTV', is_first_login: (p === '123456') };
         localStorage.setItem('CURRENT_AUTH_USER', JSON.stringify(currentUser));
         if (currentUser.is_first_login) {
           document.getElementById('changePasswordModal')?.classList.remove('hidden');
