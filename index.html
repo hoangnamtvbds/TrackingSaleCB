@@ -2090,12 +2090,15 @@
           const eParts = String(v.end_time).trim().split(' ');
           if (eParts.length >= 2) endTimeShort = eParts[1].slice(0, 5);
         }
-
         if (hour >= 18 && hour < 21 && isoDate) {
           const srKey = v.sr;
           if (selectedSR !== "ALL" && srKey !== selectedSR) return;
-          const key = `${srKey}_${isoDate}`;
+          
+          // CHỈ LẤY KÊNH TONT (ON), LOẠI BỎ HOÀN TOÀN TẠP HÓA (TOFT / OFF)
+          const isTont = String(v.channel).trim().toLowerCase() === 'on';
+          if (!isTont) return; 
 
+          const key = `${srKey}_${isoDate}`;
           if (!sessionMap[key]) {
             sessionMap[key] = {
               sr: srKey,
