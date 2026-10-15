@@ -844,7 +844,11 @@
         <span class="text-xs font-bold text-gray-600 uppercase tracking-wide" id="lblNightListHeader">Chi tiết các buổi (18h - 21h)</span>
         <span id="txtNightListCount" class="text-[11px] font-semibold text-gray-400">0 buổi</span>
       </div>
-      <div id="nightSessionList" class="space-y-2.5"></div>
+ <div id="nightSessionList" class="space-y-2.5"></div>
+   <div id="loadMoreNightBox" class="hidden text-center pt-1">
+     <button onclick="increaseLimit('night')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-all cursor-pointer">
+       Xem thêm buổi làm đêm...
+     </button>
     </div>
   </div>
 
@@ -1142,8 +1146,8 @@
     let currentNightStatus = "ALL";
     let isManagerVerified = false, currentUser = null;
 
-    const PAGE_SIZE = 30;
-    let limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE };
+     const PAGE_SIZE = 20;
+ let limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE, night: PAGE_SIZE };
 
     let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
     let VISIT_PERFORMANCE = [], NIGHT_SCHEDULES = [];
@@ -1736,10 +1740,10 @@
       renderAll();
     }
 
-    function resetLimitsAndRender() {
-      limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE };
-      renderAll();
-    }
+     function resetLimitsAndRender() {
+   limits = { agg: PAGE_SIZE, tb: PAGE_SIZE, lf: PAGE_SIZE, audit: PAGE_SIZE, cov: PAGE_SIZE, night: PAGE_SIZE };
+   renderAll();
+ }
 
     function increaseLimit(type) {
       limits[type] = (limits[type] || PAGE_SIZE) + PAGE_SIZE;
@@ -1756,10 +1760,11 @@
     function toggleLFChannel(chan) { currentLFChannel = (currentLFChannel === chan && chan !== 'ALL') ? 'ALL' : chan; limits.lf = PAGE_SIZE; renderAll(); }
     function filterLFChannel(chan) { currentLFChannel = chan; limits.lf = PAGE_SIZE; renderAll(); }
     function setAuditStatusFilter(st) { currentAuditStatus = (currentAuditStatus === st && st !== 'ALL') ? 'ALL' : st; limits.audit = PAGE_SIZE; renderAll(); }
-    function setNightStatusFilter(st) {
-      currentNightStatus = (currentNightStatus === st && st !== 'ALL') ? 'ALL' : st;
-      renderAll();
-    }
+     function setNightStatusFilter(st) {
+   currentNightStatus = (currentNightStatus === st && st !== 'ALL') ? 'ALL' : st;
+   limits.night = PAGE_SIZE;
+   renderAll();
+ }
 
     function setTBStatusFilter(status) {
       currentTBStatus = status;
@@ -2897,13 +2902,17 @@
           }
         }
 
-        const sessionBox = document.getElementById('nightSessionList');
-        if (sessionBox) {
-          sessionBox.innerHTML = '';
-          if (filteredNight.length === 0) {
-            sessionBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Không có buổi nào trong mục lọc này.</div>`;
-          } else {
-            filteredNight.forEach(ses => {
+             const sessionBox = document.getElementById('nightSessionList');
+     const loadMoreNightBtn = document.getElementById('loadMoreNightBox');
+     if (sessionBox) {
+       sessionBox.innerHTML = '';
+       if (filteredNight.length === 0) {
+         sessionBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Không có buổi nào trong mục lọc này.</div>`;
+         if (loadMoreNightBtn) loadMoreNightBtn.classList.add('hidden');
+       } else {
+         const visibleNight = filteredNight.slice(0, limits.night || PAGE_SIZE);
+         if (loadMoreNightBtn) loadMoreNightBtn.classList.toggle('hidden', filteredNight.length <= (limits.night || PAGE_SIZE));
+         visibleNight.forEach(ses => {
               let visitRows = '';
               const visitCount = ses.visits ? ses.visits.length : 0;
               if (visitCount > 0) {
