@@ -169,6 +169,7 @@
       </div>
     </div>
   </div>
+
   <!-- ================= MODAL LỊCH LÀM ĐÊM (ĐÃ GỌN & BỎ DUYỆT) ================= -->
   <div id="nightScheduleModal" class="fixed inset-0 bg-black/75 z-[140] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-y-auto" onclick="if(event.target===this) closeNightScheduleModal()">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4 sm:p-5 card-shadow space-y-3 shadow-2xl border border-gray-100 my-auto max-h-[90vh] overflow-y-auto">
@@ -285,7 +286,7 @@
         </div>
       </div>
 
-      <!-- Cụm Nút chức năng nhanh (Đã bỏ nút Báo cáo text) -->
+      <!-- Cụm Nút chức năng nhanh -->
       <div id="topActionGrid" class="grid grid-cols-3 gap-1.5 pt-1">
         <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
           <span>📦</span><span>Đơn ngày</span>
@@ -774,7 +775,7 @@
       </div>
     </div>
 
-       <!-- ================= TAB 6: TRACKING LÀM ĐÊM (FIT-08) ================= -->
+    <!-- ================= TAB 6: TRACKING LÀM ĐÊM (FIT-08) ================= -->
     <div id="tab6Content" class="hidden space-y-3">
       <div class="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-3">
         <div class="flex justify-between items-center gap-2">
@@ -845,6 +846,7 @@
       </div>
       <div id="nightSessionList" class="space-y-2.5"></div>
     </div>
+  </div>
 
   <!-- ================= MODAL BẢNG MA TRẬN FIT-10 ================= -->
   <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
@@ -1108,7 +1110,7 @@
       </div>
     </div>
   </div>
-  <!-- ================= JAVASCRIPT (PHẦN 2A) ================= -->
+  <!-- ================= JAVASCRIPT (PHẦN 2/3) ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -1145,13 +1147,12 @@
 
     let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
     let VISIT_PERFORMANCE = [], NIGHT_SCHEDULES = [];
-    let selectedNightDates = []; // Mảng lưu nhiều ngày đăng ký làm đêm
+    let selectedNightDates = [];
 
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
 
-    // Hàm chuẩn hóa mọi định dạng ngày (DD/MM/YYYY hoặc YYYY-MM-DD) về chuẩn ISO YYYY-MM-DD để sắp xếp và khớp lịch
     function toIsoDate(rawStr) {
       if (!rawStr) return "";
       const s = String(rawStr).trim().split(' ')[0];
@@ -1166,7 +1167,6 @@
       return s.slice(0, 10);
     }
 
-    // Hàm chuyển từ chuẩn ISO YYYY-MM-DD sang DD/MM/YYYY để hiển thị đẹp mắt
     function toVnDate(isoStr) {
       const iso = toIsoDate(isoStr);
       if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
@@ -1222,7 +1222,6 @@
       return null;
     }
 
-    // ================= KHỞI TẠO =================
     window.addEventListener('DOMContentLoaded', () => {
       const savedUserStr = localStorage.getItem('CURRENT_AUTH_USER');
       if (savedUserStr) {
@@ -1266,7 +1265,6 @@
       }
     }
 
-    // ================= XỬ LÝ ĐĂNG NHẬP =================
     async function handleLogin(e) {
       e.preventDefault();
       const uEl = document.getElementById('loginUsername');
@@ -1349,7 +1347,6 @@
       }
     }
 
-    // ================= PHÂN QUYỀN & BẢO MẬT USER =================
     function applyUserPermissions() {
       const loginScr = document.getElementById('loginScreen');
       if (loginScr) loginScr.classList.add('hidden');
@@ -1433,7 +1430,6 @@
       }
     }
 
-    // ================= TẢI DỮ LIỆU TỪ SUPABASE & SYNC =================
     async function loadDataFromCloud() {
       setText('lblLastUpdate', "Đang kiểm tra dữ liệu mới...");
       try {
@@ -1509,7 +1505,6 @@
       showToast('Đã đồng bộ dữ liệu mới nhất!', 'info');
     }
 
-    // ================= TOAST NOTIFICATION & DEBOUNCE =================
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
@@ -1542,7 +1537,6 @@
       }, 180);
     }
 
-    // ================= TÍNH RUN-RATE: TRỪ THỨ 7 & CHỦ NHẬT (TÍNH CẢ HÔM NAY) =================
     function updateRunRateUI(monthTotalHL, targetVol) {
       const now = new Date();
       const year = now.getFullYear();
@@ -1553,7 +1547,6 @@
       let workingDaysLeft = 0;
       for (let d = todayDate; d <= totalDaysInMonth; d++) {
         const dayOfWeek = new Date(year, month, d).getDay();
-        // 0 là Chủ Nhật, 6 là Thứ Bảy -> chỉ đếm Thứ 2 đến Thứ 6
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
           workingDaysLeft++;
         }
@@ -1573,7 +1566,6 @@
       }
     }
 
-    // ================= HỒ SƠ 360° ĐIỂM BÁN =================
     let current360ReportText = "";
 
     function openOutlet360(code) {
@@ -1733,7 +1725,6 @@
         .catch(() => showToast("Lỗi sao chép!", "error"));
     }
 
-    // ================= CHUYỂN TAB & BỘ LỌC =================
     function switchTab(tab) {
       activeTab = tab;
       [1, 2, 3, 4, 5, 6].forEach(i => {
@@ -1853,7 +1844,7 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-        // ================= QUẢN LÝ LỊCH LÀM ĐÊM (ĐƠN GIẢN HÓA - KHÔNG CẦN DUYỆT) =================
+    // ================= QUẢN LÝ LỊCH LÀM ĐÊM (ĐƠN GIẢN HÓA - KHÔNG CẦN DUYỆT) =================
     function getLocalTodayIso() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -2016,7 +2007,6 @@
       const selectedSrInModal = document.getElementById('regNightSr')?.value;
       const isSR = (currentUser?.role === 'SR' && currentUser?.sr_key);
 
-      // Lọc theo SR đang được chọn trong dropdown của Modal để dễ nhìn và dễ kiểm tra
       const filterSr = isSR ? currentUser.sr_key : (selectedSrInModal || 'ALL');
       const list = filterSr === 'ALL'
         ? [...NIGHT_SCHEDULES]
@@ -2031,7 +2021,6 @@
         return;
       }
 
-      // Tính nhanh số điểm TONT thực tế của từng ngày đã đăng ký để hiện ngay trong danh sách
       list.forEach(n => {
         const srName = TEAM_SR_MAP[n.sr] || n.sr;
         const iso = toIsoDate(n.date);
@@ -2062,7 +2051,6 @@
       });
     }
 
-    // Nhập trực tiếp 1 ngày từ thẻ "Ngoài lịch ĐK" bên ngoài Tab 6 chỉ với 1 chạm
     async function quickRegisterSingleNight(sr, isoDate) {
       if (!sr || !isoDate) return;
       const exists = NIGHT_SCHEDULES.find(n => n.sr === sr && toIsoDate(n.date) === isoDate);
@@ -2128,7 +2116,6 @@
         }
       });
 
-      // Ghép các ngày đã đăng ký lịch làm đêm vào danh sách
       NIGHT_SCHEDULES.forEach(n => {
         const isoDate = toIsoDate(n.date);
         if (!isoDate) return;
@@ -2788,15 +2775,12 @@
         setText('txtCovListCount', `${fCovList.length} điểm bán`);
       }
 
-          // ---------------- TAB 6: TRACKING LÀM ĐÊM (FIT-08) ----------------
+      // ---------------- TAB 6: TRACKING LÀM ĐÊM (FIT-08) ----------------
       if (activeTab === 6) {
         const nightList = parseNightPerformanceData(selectedSR);
 
-        // Nhóm 1: Đã ĐK và đạt >= 2 TONT
         const passList = nightList.filter(n => n.hasAnySched && n.tontCount >= 2);
-        // Nhóm 2: Đã ĐK nhưng thiếu điểm (< 2 TONT)
         const failSchedList = nightList.filter(n => n.hasAnySched && n.tontCount < 2);
-        // Nhóm 3: Có phát sinh đi sau 18h nhưng chưa đăng ký lịch
         const unregList = nightList.filter(n => !n.hasAnySched);
 
         const totalRegistered = passList.length + failSchedList.length;
@@ -2887,7 +2871,6 @@
                 visitRows = `<div class="text-[10px] text-gray-400 italic py-1">Chưa có cuốc ghé thăm thực tế trong khung 18h-21h ngày này.</div>`;
               }
 
-              // Nhãn trạng thái & Nút bấm nhanh tiện lợi ngay trên thẻ
               let statusBadge = '';
               let quickActionBtn = '';
 
@@ -2928,6 +2911,7 @@
         }
         setText('txtNightListCount', `${filteredNight.length} buổi`);
       }
+    }
 
     // ================= QUẢN TRỊ USER & ĐƠN NGÀY =================
     function openAdminUserModal() { 
@@ -3094,7 +3078,6 @@
       } else showToast("Mật khẩu không chính xác!", "error");
     }
 
-    // ================= XỬ LÝ FILE & SUPABASE =================
     function parseExcelDate(val) {
       if (!val) return '';
       const s = String(val).trim();
