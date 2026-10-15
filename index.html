@@ -170,9 +170,9 @@
     </div>
   </div>
 
-  <!-- ================= MODAL ĐĂNG KÝ & DUYỆT LỊCH LÀM ĐÊM ================= -->
+  <!-- ================= MODAL ĐĂNG KÝ & DUYỆT LỊCH LÀM ĐÊM (CHỌN NHIỀU NGÀY) ================= -->
   <div id="nightScheduleModal" class="fixed inset-0 bg-black/75 z-[140] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden" onclick="if(event.target===this) closeNightScheduleModal()">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto max-h-[88vh] flex flex-col">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto max-h-[90vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-black text-sm">🌙</div>
@@ -184,33 +184,44 @@
         <button onclick="closeNightScheduleModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center shrink-0 cursor-pointer">✕</button>
       </div>
 
-      <!-- Form đăng ký mới -->
+      <!-- Form đăng ký mới (Hỗ trợ chọn nhiều ngày 1 lúc) -->
       <form onsubmit="handleRegisterNightShift(event)" class="bg-indigo-50/70 p-3 rounded-2xl border border-indigo-100 space-y-2.5 text-xs">
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">👤 Nhân viên (SR):</label>
-            <select id="regNightSr" class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none">
-              <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
-              <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
-              <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
-              <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
-              <option value="Nam Le Hoang">Lê Hoàng Nam</option>
-              <option value="Phu Tran Trong">Trần Trọng Phú</option>
-              <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
-              <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
-              <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">📅 Ngày làm đêm:</label>
-            <input type="date" id="regNightDate" required class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-gray-800 outline-none">
-          </div>
+        <div>
+          <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">👤 Nhân viên (SR):</label>
+          <select id="regNightSr" class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none">
+            <option value="Tai Nguyen Ngoc">Nguyễn Ngọc Tài</option>
+            <option value="Thuong Hoang Van">Hoàng Văn Thương</option>
+            <option value="Luan Nguyen Van">Nguyễn Văn Luân</option>
+            <option value="Oanh Nguyen Kieu">Nguyễn Kiều Oanh</option>
+            <option value="Nam Le Hoang">Lê Hoàng Nam</option>
+            <option value="Phu Tran Trong">Trần Trọng Phú</option>
+            <option value="Huynh Mai Trong">Mai Trọng Huỳnh</option>
+            <option value="Lien Dinh Thi">Đinh Thị Liễn</option>
+            <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
+          </select>
         </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[10px] font-bold text-indigo-900">📅 Chọn (nhiều) ngày làm đêm:</label>
+            <div class="flex gap-1">
+              <button type="button" onclick="quickSelectCurrentWeekNightDates()" class="text-[9px] font-extrabold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-md cursor-pointer transition-all">+ Tuần này (T2-T6)</button>
+              <button type="button" onclick="clearSelectedNightDates()" class="text-[9px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-md cursor-pointer transition-all">Xóa hết</button>
+            </div>
+          </div>
+          <div class="flex gap-1.5">
+            <input type="date" id="regNightDatePicker" onchange="addNightDateFromPicker()" class="flex-1 p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-gray-800 outline-none">
+            <button type="button" onclick="addNightDateFromPicker()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs cursor-pointer whitespace-nowrap shadow-xs">+ Thêm ngày</button>
+          </div>
+          <!-- Danh sách các ngày đã chọn -->
+          <div id="selectedNightDatesBox" class="flex flex-wrap gap-1.5 mt-2 min-h-[26px] items-center"></div>
+        </div>
+
         <div>
           <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">📍 Khu vực / Tuyến dự kiến (Tùy chọn):</label>
           <input type="text" id="regNightNote" placeholder="VD: Khu vực Bến Cát, Dầu Tiếng, Phú Giáo..." class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-semibold text-gray-800 outline-none">
         </div>
-        <button type="submit" id="btnSubmitNightReg" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm transition-all cursor-pointer">
+        <button type="submit" id="btnSubmitNightReg" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm transition-all cursor-pointer">
           ➕ Gửi Đăng Ký Lịch Làm Đêm
         </button>
       </form>
@@ -236,7 +247,7 @@
 
   <!-- ================= GIAO DIỆN CHÍNH DASHBOARD ================= -->
   <div id="mainDashboard">
-    <!-- Header Cân Đối 2 Tầng Mới -->
+    <!-- Header Cân Đối 2 Tầng -->
     <div class="bg-white rounded-2xl p-3 card-shadow border border-gray-100 mb-2.5 space-y-2">
       <!-- Tầng 1: Logo & Cụm Nút Phải -->
       <div class="flex justify-between items-center gap-2">
@@ -281,16 +292,13 @@
         </div>
       </div>
 
-      <!-- 4 Nút chức năng nhanh -->
-      <div id="topActionGrid" class="grid grid-cols-4 gap-1.5 pt-1">
+      <!-- Cụm Nút chức năng nhanh (Đã bỏ nút Báo cáo text) -->
+      <div id="topActionGrid" class="grid grid-cols-3 gap-1.5 pt-1">
         <button onclick="promptDailyOrdersModal()" class="py-2 px-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
           <span>📦</span><span>Đơn ngày</span>
         </button>
         <button onclick="openFit10Modal()" class="py-2 px-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
           <span>🏆</span><span>FIT-10</span>
-        </button>
-        <button onclick="copyZaloReport()" class="py-2 px-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
-          <span>📋</span><span>Báo cáo</span>
         </button>
         <button id="btnTopUpload" onclick="toggleAdminModal()" class="py-2 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl text-[11px] font-bold shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap">
           <span>⚙️</span><span>Nạp file</span>
@@ -328,7 +336,7 @@
       </div>
     </div>
 
-    <!-- THANH CHUYỂN 6 TAB (LƯỚI 3 CỘT x 2 HÀNG CÂN ĐỐI TUYỆT ĐỐI) -->
+    <!-- THANH CHUYỂN 6 TAB -->
     <div class="grid grid-cols-3 p-1.5 bg-blue-100/90 border-2 border-blue-200 rounded-2xl mb-3 text-[11px] font-extrabold gap-1.5 shadow-xs">
       <button id="tabBtn1" onclick="switchTab(1)" class="py-2 px-1 rounded-xl bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer whitespace-nowrap">📊 SỐ BÁN</button>
       <button id="tabBtn2" onclick="switchTab(2)" class="py-2 px-1 rounded-xl text-gray-600 hover:bg-white/50 transition-all text-center cursor-pointer whitespace-nowrap">🎯 DISPLAY</button>
@@ -360,9 +368,9 @@
           <div id="barTargetVol" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- Thanh Run-rate Tốc độ về số -->
+        <!-- Thanh Run-rate Tốc độ về số (Đã trừ T7 & CN) -->
         <div id="boxRunRate" class="bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 flex justify-between items-center text-[11px] gap-2 flex-wrap">
-          <span class="text-blue-900 font-semibold whitespace-nowrap" id="lblRunRateDays">⏳ Còn -- ngày</span>
+          <span class="text-blue-900 font-semibold whitespace-nowrap" id="lblRunRateDays">⏳ Còn -- ngày làm việc</span>
           <span class="text-[#1F4E79] font-extrabold whitespace-nowrap" id="lblRunRateNeed">Cần bán: -- th/ngày</span>
         </div>
 
@@ -793,13 +801,10 @@
           <div id="barNightProgress" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div>
         </div>
 
-        <!-- 2 Nút Thao tác Đăng ký & Copy Báo Cáo Làm Đêm -->
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="openNightScheduleModal()" class="py-2.5 px-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-            <span>📝</span><span id="lblBtnNightReg">Đăng ký / Duyệt lịch</span>
-          </button>
-          <button onclick="copyNightReportZalo()" class="py-2.5 px-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-            <span>📋</span><span>Copy BC Làm đêm</span>
+        <!-- Nút Đăng ký / Duyệt lịch (Đã bỏ nút Copy BC text) -->
+        <div class="pt-1">
+          <button onclick="openNightScheduleModal()" class="w-full py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            <span>📝</span><span id="lblBtnNightReg">Đăng ký / Duyệt lịch làm đêm</span>
           </button>
         </div>
 
@@ -996,71 +1001,6 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TRUNG TÂM BÁO CÁO SS ================= -->
-  <div id="reportHubModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 card-shadow space-y-3.5 shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
-        <div>
-          <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📋 TRUNG TÂM BÁO CÁO (SS)
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Bảo mật quản lý • Chọn loại báo cáo cần gửi Zalo</p>
-        </div>
-        <button onclick="closeReportHubModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
-      </div>
-
-      <div class="space-y-2 max-h-[65vh] overflow-y-auto pr-0.5">
-        <button onclick="triggerCopyReport('TEAM_SUMMARY')" class="w-full p-2.5 bg-blue-50/80 hover:bg-blue-100 active:scale-95 rounded-2xl border border-blue-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-[#1F4E79]">🏆 Báo Cáo Tổng Tiến Độ Team</span>
-            <span class="text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Nhóm Zalo</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày duyệt, lũy kế tháng, Top 3 SR, tiến độ Display & LF toàn đội</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INDIVIDUAL_SR')" class="w-full p-2.5 bg-emerald-50/80 hover:bg-emerald-100 active:scale-95 rounded-2xl border border-emerald-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-emerald-900">🎯 Báo Cáo Riêng SR Đang Chọn</span>
-            <span class="text-[9px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Gửi Riêng</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Sản lượng ngày, Target tháng, chi tiết tiền thưởng Incentive và điểm thiếu</p>
-        </button>
-
-        <button onclick="triggerCopyReport('INCENTIVE_TEAM')" class="w-full p-2.5 bg-amber-50/80 hover:bg-amber-100 active:scale-95 rounded-2xl border border-amber-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-amber-900">💵 Bảng Thưởng Incentive Toàn Đội</span>
-            <span class="text-[9px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-10</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Bảng xếp hạng tiền thưởng tạm tính MTD của tất cả nhân viên trong team</p>
-        </button>
-
-        <button onclick="triggerCopyReport('AUDIT_TB')" class="w-full p-2.5 bg-purple-50/80 hover:bg-purple-100 active:scale-95 rounded-2xl border border-purple-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-purple-900">📸 Báo Cáo Chụp Ảnh Trưng Bày</span>
-            <span class="text-[9px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">DIP-01</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Tổng hợp toàn team hoặc danh sách cụ thể các điểm chưa chấm / thiếu lần 2</p>
-        </button>
-
-        <button onclick="triggerCopyReport('NIGHT_WORK')" class="w-full p-2.5 bg-indigo-50/80 hover:bg-indigo-100 active:scale-95 rounded-2xl border border-indigo-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-indigo-900">🌙 Báo Cáo Tracking Làm Đêm</span>
-            <span class="text-[9px] bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">FIT-08</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Đối soát lịch đăng ký làm đêm và kết quả đi thực tế 18h-21h (≥2 TONT)</p>
-        </button>
-
-        <button onclick="triggerCopyReport('NO_ORDER_REMIND')" class="w-full p-2.5 bg-rose-50/80 hover:bg-rose-100 active:scale-95 rounded-2xl border border-rose-200 text-left transition-all cursor-pointer">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-rose-900">📦 Đôn Đốc Các Bạn Chưa Có Đơn</span>
-            <span class="text-[9px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-xs">Đơn ngày</span>
-          </div>
-          <p class="text-[10px] text-gray-500 mt-0.5">Lọc nhanh và nhắc nhở các bạn hôm qua chưa có đơn duyệt trên hệ thống</p>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- ================= MODAL SOI ĐƠN HÀNG NGÀY ================= -->
   <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
     <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
@@ -1101,10 +1041,6 @@
         <span id="modalFilterLabel" class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Hiển thị: Tất cả 9 SR</span>
         <span id="modalCountBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">9 bạn</span>
       </div>
-
-      <button id="btnCopyModalReport" onclick="copyManagerReminderReport()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-        📢 Sao chép nhắc nhở các bạn chưa có đơn
-      </button>
 
       <div class="overflow-y-auto flex-1 space-y-2 pr-0.5" id="modalSRListContainer"></div>
     </div>
@@ -1177,7 +1113,7 @@
       </div>
     </div>
   </div>
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- ================= JAVASCRIPT (PHẦN 2A) ================= -->
   <script>
     const ADMIN_PIN = "6868", EXPORT_PIN = "8888";
     const CASE_VOLUME = 0.0792, HUDA_CAN20_VOL = 0.066;
@@ -1214,10 +1150,36 @@
 
     let MASTER = [], LISTING_FEE = [], SEC_ORDERS = [], PROMOTIONS = [], AUDIT_DATA = [], SALES_TARGETS = {}, COVERAGE_DATA = [];
     let VISIT_PERFORMANCE = [], NIGHT_SCHEDULES = [];
+    let selectedNightDates = []; // Mảng lưu nhiều ngày đăng ký làm đêm
 
     const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setHTML = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
     const setStyleWidth = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct; };
+
+    // Hàm chuẩn hóa mọi định dạng ngày (DD/MM/YYYY hoặc YYYY-MM-DD) về chuẩn ISO YYYY-MM-DD để sắp xếp và khớp lịch
+    function toIsoDate(rawStr) {
+      if (!rawStr) return "";
+      const s = String(rawStr).trim().split(' ')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      if (s.includes('/')) {
+        const parts = s.split('/');
+        if (parts.length === 3) {
+          if (parts[2].length === 4) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+          if (parts[0].length === 4) return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+        }
+      }
+      return s.slice(0, 10);
+    }
+
+    // Hàm chuyển từ chuẩn ISO YYYY-MM-DD sang DD/MM/YYYY để hiển thị đẹp mắt
+    function toVnDate(isoStr) {
+      const iso = toIsoDate(isoStr);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        const [y, m, d] = iso.split('-');
+        return `${d}/${m}/${y}`;
+      }
+      return isoStr || "";
+    }
 
     function normalizeSR(name) {
       if (!name) return "";
@@ -1432,7 +1394,7 @@
       if (btnUpload && topGrid) {
         const isSR = (role === 'SR');
         btnUpload.classList.toggle('hidden', isSR);
-        topGrid.className = isSR ? "grid grid-cols-3 gap-1.5" : "grid grid-cols-4 gap-1.5";
+        topGrid.className = isSR ? "grid grid-cols-2 gap-1.5 pt-1" : "grid grid-cols-3 gap-1.5 pt-1";
       }
 
       loadLocalCacheFast();
@@ -1502,11 +1464,13 @@
         } else if (data.master && typeof data.master === 'object') {
           MASTER = data.master.toft || []; LISTING_FEE = data.master.listing || []; AUDIT_DATA = data.master.audit || data.audit || []; SALES_TARGETS = data.master.targets || data.targets || {};
           COVERAGE_DATA = data.master.coverage || data.coverage || [];
+          if (data.master.visit_perf) VISIT_PERFORMANCE = data.master.visit_perf;
+          if (data.master.night_schedules) NIGHT_SCHEDULES = data.master.night_schedules;
         }
         SEC_ORDERS = data.sec || []; 
         PROMOTIONS = data.promo || [];
-        VISIT_PERFORMANCE = data.visit_perf || [];
-        NIGHT_SCHEDULES = data.night_schedules || [];
+        if (data.visit_perf) VISIT_PERFORMANCE = data.visit_perf;
+        if (data.night_schedules) NIGHT_SCHEDULES = data.night_schedules;
 
         try {
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); 
@@ -1583,14 +1547,26 @@
       }, 180);
     }
 
-    // ================= TÍNH RUN-RATE (TỐC ĐỘ VỀ SỐ) =================
+    // ================= TÍNH RUN-RATE: TRỪ THỨ 7 & CHỦ NHẬT (TÍNH CẢ HÔM NAY) =================
     function updateRunRateUI(monthTotalHL, targetVol) {
       const now = new Date();
-      const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      const remainDays = Math.max(1, totalDaysInMonth - now.getDate());
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const todayDate = now.getDate();
+      const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let workingDaysLeft = 0;
+      for (let d = todayDate; d <= totalDaysInMonth; d++) {
+        const dayOfWeek = new Date(year, month, d).getDay();
+        // 0 là Chủ Nhật, 6 là Thứ Bảy -> chỉ đếm Thứ 2 đến Thứ 6
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          workingDaysLeft++;
+        }
+      }
+      const remainDays = Math.max(1, workingDaysLeft);
       const gapHL = Math.max(0, targetVol - monthTotalHL);
 
-      setText('lblRunRateDays', `⏳ Còn ${remainDays} ngày trong tháng`);
+      setText('lblRunRateDays', `⏳ Còn ${workingDaysLeft} ngày làm việc (trừ T7, CN)`);
       if (targetVol <= 0) {
         setText('lblRunRateNeed', 'Chưa nạp Target');
       } else if (gapHL <= 0.005) {
@@ -1882,41 +1858,119 @@
       setText('lblIncentiveToggleText', isH ? 'Chi tiết' : 'Thu gọn');
     }
 
-     // ================= QUẢN LÝ LỊCH LÀM ĐÊM (TAB 6 GỌN GÀNG, SẠCH SẼ) =================
+    // ================= QUẢN LÝ LỊCH LÀM ĐÊM (CHỌN NHIỀU NGÀY + CHUẨN HÓA NGÀY GIẢM DẦN) =================
     function openNightScheduleModal() {
-      const dateInput = document.getElementById('regNightDate');
-      if (dateInput && !dateInput.value) {
-        dateInput.value = new Date().toISOString().slice(0, 10);
+      const picker = document.getElementById('regNightDatePicker');
+      const todayIso = new Date().toISOString().slice(0, 10);
+      if (picker && !picker.value) picker.value = todayIso;
+      if (selectedNightDates.length === 0) {
+        selectedNightDates = [todayIso];
       }
+      renderSelectedNightDateChips();
       renderNightScheduleModalList();
       document.getElementById('nightScheduleModal')?.classList.remove('hidden');
     }
     function closeNightScheduleModal() { document.getElementById('nightScheduleModal')?.classList.add('hidden'); }
 
+    function addNightDateFromPicker() {
+      const picker = document.getElementById('regNightDatePicker');
+      if (!picker || !picker.value) return;
+      const iso = toIsoDate(picker.value);
+      if (iso && !selectedNightDates.includes(iso)) {
+        selectedNightDates.push(iso);
+        selectedNightDates.sort();
+        renderSelectedNightDateChips();
+      }
+    }
+
+    function removeSelectedNightDate(iso) {
+      selectedNightDates = selectedNightDates.filter(d => d !== iso);
+      renderSelectedNightDateChips();
+    }
+
+    function clearSelectedNightDates() {
+      selectedNightDates = [];
+      renderSelectedNightDateChips();
+    }
+
+    function quickSelectCurrentWeekNightDates() {
+      const now = new Date();
+      const day = now.getDay(); // 0: CN, 1: T2 ... 6: T7
+      const diffToMonday = (day === 0 ? -6 : 1 - day);
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday);
+
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (!selectedNightDates.includes(iso)) {
+          selectedNightDates.push(iso);
+        }
+      }
+      selectedNightDates.sort();
+      renderSelectedNightDateChips();
+      showToast("Đã thêm Thứ 2 - Thứ 6 tuần này!", "info");
+    }
+
+    function renderSelectedNightDateChips() {
+      const box = document.getElementById('selectedNightDatesBox');
+      if (!box) return;
+      if (selectedNightDates.length === 0) {
+        box.innerHTML = `<span class="text-[10px] text-gray-400 italic">Chưa chọn ngày nào. Hãy chạm ô lịch trên để thêm.</span>`;
+        return;
+      }
+      box.innerHTML = selectedNightDates.map(iso => `
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-indigo-600 text-white text-[10px] font-extrabold shadow-xs">
+          <span>${toVnDate(iso)}</span>
+          <button type="button" onclick="removeSelectedNightDate('${iso}')" class="hover:text-rose-200 font-black ml-0.5 cursor-pointer">✕</button>
+        </span>
+      `).join('');
+    }
+
     async function handleRegisterNightShift(e) {
       e.preventDefault();
       const sr = document.getElementById('regNightSr').value;
-      const date = document.getElementById('regNightDate').value;
       const note = document.getElementById('regNightNote').value.trim();
 
-      if (!sr || !date) { showToast("Vui lòng chọn SR và ngày làm đêm!", "error"); return; }
+      if (selectedNightDates.length === 0) {
+        addNightDateFromPicker();
+      }
+      if (!sr || selectedNightDates.length === 0) {
+        showToast("Vui lòng chọn ít nhất 1 ngày làm đêm!", "error");
+        return;
+      }
 
-      const newId = 'NS_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
       const isAutoApprove = (currentUser?.role === 'ADMIN' || currentUser?.role === 'SS' || currentUser?.role === 'ASM');
+      let addedCount = 0;
 
-      const newItem = {
-        id: newId,
-        sr,
-        date,
-        note: note || 'Đăng ký làm đêm tuyến cơ sở',
-        status: isAutoApprove ? 'Approved' : 'Pending',
-        created_at: new Date().toISOString().slice(0, 10)
-      };
+      selectedNightDates.forEach((isoDate, idx) => {
+        const exists = NIGHT_SCHEDULES.find(n => n.sr === sr && toIsoDate(n.date) === isoDate);
+        if (!exists) {
+          NIGHT_SCHEDULES.push({
+            id: 'NS_' + Date.now() + '_' + idx + '_' + Math.floor(Math.random() * 1000),
+            sr,
+            date: isoDate,
+            note: note || 'Đăng ký làm đêm tuyến cơ sở',
+            status: isAutoApprove ? 'Approved' : 'Pending',
+            created_at: new Date().toISOString().slice(0, 10)
+          });
+          addedCount++;
+        } else if (note) {
+          exists.note = note;
+        }
+      });
 
-      NIGHT_SCHEDULES.push(newItem);
+      if (addedCount === 0) {
+        showToast("Các ngày chọn đều đã được đăng ký trước đó!", "info");
+        return;
+      }
+
       await saveNightSchedulesToCloud();
-      showToast(isAutoApprove ? "Đã đăng ký & tự động duyệt lịch!" : "Đã gửi đăng ký, chờ SS phê duyệt!", "success");
+      showToast(isAutoApprove ? `Đã đăng ký & duyệt ${addedCount} ngày làm đêm!` : `Đã gửi đăng ký ${addedCount} ngày, chờ SS duyệt!`, "success");
       document.getElementById('regNightNote').value = '';
+      selectedNightDates = [];
+      renderSelectedNightDateChips();
       renderNightScheduleModalList();
       renderAll();
     }
@@ -1959,6 +2013,21 @@
     async function saveNightSchedulesToCloud() {
       try {
         localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
+        const nowStr = localStorage.getItem('UPDATE_TIME') || new Date().toLocaleString('vi-VN');
+        const payload = {
+          id: 'CURRENT_DATA',
+          master: {
+            toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
+            targets: SALES_TARGETS, coverage: COVERAGE_DATA,
+            visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES
+          },
+          sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
+        };
+        await fetch(`${SUPABASE_URL}/rest/v1/sales_data`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify(payload)
+        });
       } catch (err) {
         console.warn("Lỗi lưu lịch làm đêm:", err);
       }
@@ -1972,8 +2041,12 @@
       const isMgr = (currentUser?.role === 'ADMIN' || currentUser?.role === 'SS' || currentUser?.role === 'ASM');
       if (boxMgr) boxMgr.classList.toggle('hidden', !isMgr);
 
-      const list = (currentUser?.role === 'SR' && currentUser?.sr_key) ? NIGHT_SCHEDULES.filter(n => n.sr === currentUser.sr_key) : NIGHT_SCHEDULES;
-      list.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const list = (currentUser?.role === 'SR' && currentUser?.sr_key)
+        ? [...NIGHT_SCHEDULES.filter(n => n.sr === currentUser.sr_key)]
+        : [...NIGHT_SCHEDULES];
+
+      // Sắp xếp ngày gần nhất giảm dần chuẩn xác bằng chuỗi ISO YYYY-MM-DD
+      list.sort((a, b) => toIsoDate(b.date).localeCompare(toIsoDate(a.date)));
 
       container.innerHTML = '';
       if (list.length === 0) {
@@ -1989,22 +2062,22 @@
         let actionBtns = '';
         if (isMgr) {
           if (isAppr) {
-            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Pending')" class="px-2 py-1 bg-amber-500 text-white rounded font-bold text-[9px]">Bỏ duyệt</button>`;
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Pending')" class="px-2 py-1 bg-amber-500 text-white rounded font-bold text-[9px] cursor-pointer">Bỏ duyệt</button>`;
           } else {
-            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[9px]">Duyệt</button>`;
+            actionBtns += `<button onclick="updateNightScheduleStatus('${n.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[9px] cursor-pointer">Duyệt</button>`;
           }
         }
         if (isMgr || (currentUser?.role === 'SR' && n.sr === currentUser?.sr_key && !isAppr)) {
-          actionBtns += `<button onclick="deleteNightSchedule('${n.id}')" class="px-2 py-1 bg-rose-500 text-white rounded font-bold text-[9px]">Xóa</button>`;
+          actionBtns += `<button onclick="deleteNightSchedule('${n.id}')" class="px-2 py-1 bg-rose-500 text-white rounded font-bold text-[9px] cursor-pointer">Xóa</button>`;
         }
 
         container.innerHTML += `
           <div class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/70 flex justify-between items-center text-xs">
             <div>
-              <div class="font-extrabold text-gray-900">${srName} • <span class="text-indigo-700">${n.date}</span></div>
+              <div class="font-extrabold text-gray-900">${srName} • <span class="text-indigo-700">${toVnDate(n.date)}</span></div>
               <div class="text-[10px] text-gray-400 mt-0.5">${n.note}</div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 shrink-0">
               ${badge}
               ${actionBtns}
             </div>
@@ -2012,53 +2085,40 @@
       });
     }
 
-    function copyNightReportZalo() {
-      const sr = document.getElementById('srFilter')?.value || "ALL";
-      const list = parseNightPerformanceData(sr);
-      let lines = [`🌙 BÁO CÁO TRACKING LÀM ĐÊM (18H - 21H)`, `--------------------------------`];
-      
-      let passCount = 0, totalCount = list.length;
-      list.forEach(item => {
-        if (item.isPass) passCount++;
-        lines.push(`• ${item.srName} (${item.date}): ${item.tontCount} điểm TONT (18h-21h) -> ${item.isPass ? 'ĐẠT CHUẨN ✓' : 'CHƯA ĐẠT ⚠️'}`);
-      });
-      lines.push(`\nTổng hợp: Hoàn thành ${passCount}/${totalCount} buổi đạt chuẩn.`);
-
-      const text = lines.join('\n');
-      navigator.clipboard.writeText(text)
-        .then(() => showToast("Đã copy báo cáo Làm đêm!", "success"))
-        .catch(() => showToast("Lỗi sao chép!", "error"));
-    }
-
     function parseNightPerformanceData(selectedSR) {
       const sessionMap = {};
       
       VISIT_PERFORMANCE.forEach(v => {
         if (!v.start_time) return;
-        let timeStr = String(v.start_time).trim();
-        // Chuẩn hóa định dạng ngày từ excel (VD: 2026-10-07 hoặc dạng khác)
-        let dateStr = timeStr.slice(0, 10);
+        const timeStr = String(v.start_time).trim();
+        const parts = timeStr.split(' ');
+        const rawDate = parts[0] || '';
+        const isoDate = toIsoDate(rawDate);
         let hour = 0;
+        let startTimeShort = '';
         
-        if (timeStr.includes(':')) {
-          const parts = timeStr.split(' ');
-          if (parts.length >= 2) {
-            dateStr = parts[0];
-            const hPart = parts[1].split(':');
-            hour = parseInt(hPart[0]) || 0;
-          }
+        if (parts.length >= 2 && parts[1].includes(':')) {
+          startTimeShort = parts[1].slice(0, 5);
+          hour = parseInt(parts[1].split(':')[0], 10) || 0;
+        }
+
+        let endTimeShort = '';
+        if (v.end_time) {
+          const eParts = String(v.end_time).trim().split(' ');
+          if (eParts.length >= 2) endTimeShort = eParts[1].slice(0, 5);
         }
 
         // Lọc khung giờ 18h đến dưới 21h (18:00 - 20:59)
-        if (hour >= 18 && hour < 21) {
+        if (hour >= 18 && hour < 21 && isoDate) {
           const srKey = v.sr;
-          const key = `${srKey}_${dateStr}`;
+          const key = `${srKey}_${isoDate}`;
 
           if (!sessionMap[key]) {
             sessionMap[key] = {
               sr: srKey,
               srName: TEAM_SR_MAP[srKey] || srKey,
-              date: dateStr,
+              isoDate: isoDate,
+              date: toVnDate(isoDate),
               visits: []
             };
           }
@@ -2066,20 +2126,23 @@
             code: v.outlet_code,
             name: v.outlet_name,
             channel: v.channel,
-            startTime: timeStr.slice(11, 16),
-            endTime: v.end_time ? String(v.end_time).slice(11, 16) : '',
+            startTime: startTimeShort,
+            endTime: endTimeShort,
             gps: v.gps || 0
           });
         }
       });
 
       NIGHT_SCHEDULES.forEach(n => {
-        const key = `${n.sr}_${n.date}`;
+        const isoDate = toIsoDate(n.date);
+        if (!isoDate) return;
+        const key = `${n.sr}_${isoDate}`;
         if (!sessionMap[key]) {
           sessionMap[key] = {
             sr: n.sr,
             srName: TEAM_SR_MAP[n.sr] || n.sr,
-            date: n.date,
+            isoDate: isoDate,
+            date: toVnDate(isoDate),
             visits: []
           };
         }
@@ -2094,7 +2157,7 @@
         const tontVisits = ses.visits.filter(v => String(v.channel).trim().toLowerCase() === 'on');
         const tontCount = tontVisits.length;
 
-        const matchedSched = NIGHT_SCHEDULES.find(n => n.sr === ses.sr && n.date === ses.date);
+        const matchedSched = NIGHT_SCHEDULES.find(n => n.sr === ses.sr && toIsoDate(n.date) === ses.isoDate);
         const hasApprovedSched = (matchedSched && matchedSched.status === 'Approved');
         const hasPendingSched = (matchedSched && matchedSched.status === 'Pending');
 
@@ -2108,10 +2171,10 @@
         results.push(ses);
       });
 
-      results.sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Sắp xếp chuẩn theo isoDate giảm dần (ngày mới nhất nằm trên cùng)
+      results.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
       return results;
     }
-
     // ================= 5 BẢNG MA TRẬN FIT-10 =================
     function openFit10Modal() {
       document.getElementById('fit10Modal')?.classList.remove('hidden');
@@ -2765,19 +2828,17 @@
         const cNSched = document.getElementById('cardNightSched');
         if (cNPass && cNWarn && cNSched) {
           cNPass.className = (currentNightStatus === 'PASS') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-100 border-emerald-500 ring-2 ring-emerald-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-emerald-50/70 border-emerald-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
-          cNwarn = cNWarn.className = (currentNightStatus === 'WARN') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
+          cNWarn.className = (currentNightStatus === 'WARN') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-100 border-amber-500 ring-2 ring-amber-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-amber-50/70 border-amber-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
           cNSched.className = (currentNightStatus === 'SCHED') ? "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-indigo-100 border-indigo-500 ring-2 ring-indigo-300 shadow-sm" : "p-2 rounded-2xl border cursor-pointer active:scale-95 transition-all bg-indigo-50/70 border-indigo-200" + (currentNightStatus !== 'ALL' ? " opacity-50" : "");
         }
         const btnResetNight = document.getElementById('btnResetNightFilter');
         if (btnResetNight) btnResetNight.classList.toggle('hidden', currentNightStatus === 'ALL');
 
-        // Lọc hiển thị theo thẻ
         let filteredNight = nightList;
         if (currentNightStatus === 'PASS') filteredNight = filteredNight.filter(n => n.isPass);
         else if (currentNightStatus === 'WARN') filteredNight = filteredNight.filter(n => !n.isPass);
         else if (currentNightStatus === 'SCHED') filteredNight = filteredNight.filter(n => n.hasApprovedSched || n.hasPendingSched);
 
-        // Bảng tổng hợp team ở trên khi chọn ALL SR
         const teamSumBox = document.getElementById('nightTeamSummaryBox');
         const teamSumList = document.getElementById('nightTeamSummaryList');
         if (teamSumBox && teamSumList) {
@@ -2808,7 +2869,8 @@
           } else {
             filteredNight.forEach(ses => {
               let visitRows = '';
-              if (ses.visits && ses.visits.length > 0) {
+              const visitCount = ses.visits ? ses.visits.length : 0;
+              if (visitCount > 0) {
                 ses.visits.forEach(v => {
                   const isTont = String(v.channel).trim().toLowerCase() === 'on';
                   visitRows += `
@@ -2827,6 +2889,7 @@
 
               const schedBadge = ses.hasApprovedSched ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 font-extrabold rounded text-[9px]">Lịch ĐK: ĐÃ DUYỆT ✓</span>` : (ses.hasPendingSched ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-extrabold rounded text-[9px]">Lịch ĐK: CHỜ DUYỆT ⏳</span>` : `<span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded text-[9px]">Chưa đăng ký lịch</span>`);
 
+              // Đã thu gọn chi tiết điểm bán ghé thăm thành <details> theo yêu cầu mới
               sessionBox.innerHTML += `
                 <div class="bg-white rounded-2xl p-3.5 card-shadow border ${ses.isPass ? 'border-emerald-200/80' : 'border-amber-200/80'} space-y-2">
                   <div class="flex justify-between items-start">
@@ -2839,9 +2902,14 @@
                       ${schedBadge}
                     </div>
                   </div>
-                  <div class="pt-1.5 border-t border-gray-100 space-y-0.5">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase block">Chi tiết các quán ghé thăm:</span>
-                    <div class="bg-gray-50/80 p-2 rounded-xl border border-gray-100 space-y-0.5">${visitRows}</div>
+                  <div class="pt-1 border-t border-gray-100">
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-extrabold text-indigo-900 py-1 flex justify-between items-center select-none">
+                        <span>📍 Chi tiết các quán ghé thăm (${visitCount} điểm)</span>
+                        <span class="text-indigo-600 text-xs">Xem ▼</span>
+                      </summary>
+                      <div class="mt-1 bg-gray-50/80 p-2 rounded-xl border border-gray-100 space-y-0.5">${visitRows}</div>
+                    </details>
                   </div>
                 </div>`;
             });
@@ -2851,7 +2919,7 @@
       }
     }
 
-    // ================= QUẢN TRỊ USER & BÁO CÁO =================
+    // ================= QUẢN TRỊ USER & ĐƠN NGÀY =================
     function openAdminUserModal() { 
       if (currentUser?.role === 'ADMIN') { 
         document.getElementById('adminUserModal')?.classList.remove('hidden'); 
@@ -2950,65 +3018,6 @@
       } catch (err) { showToast("Lỗi xuất file: " + err.message, "error"); }
     }
 
-    function copyZaloReport() {
-      if (!isManagerVerified) {
-        const pin = prompt("Nhập mật khẩu Quản lý (SS) để mở Trung tâm Báo cáo:");
-        if (pin === ADMIN_PIN) isManagerVerified = true;
-        else if (pin !== null) { showToast("Mã PIN không chính xác!", "error"); return; } else return;
-      }
-      document.getElementById('reportHubModal')?.classList.remove('hidden');
-    }
-    function closeReportHubModal() { document.getElementById('reportHubModal')?.classList.add('hidden'); }
-
-    function triggerCopyReport(type) {
-      closeReportHubModal();
-      if (type === 'TEAM_SUMMARY') executeCopyTeamReport();
-      else if (type === 'INDIVIDUAL_SR') {
-        const sf = document.getElementById('srFilter');
-        if (!sf || sf.value === 'ALL') { showToast("Vui lòng chọn 1 SR cụ thể!", "error"); return; }
-        executeCopyIndividualReport();
-      }
-      else if (type === 'INCENTIVE_TEAM') executeCopyIncentiveTeamReport();
-      else if (type === 'AUDIT_TB') executeCopyAuditReport();
-      else if (type === 'NIGHT_WORK') copyNightReportZalo();
-      else if (type === 'NO_ORDER_REMIND') { openDailyOrdersModal(); setModalFilter('NO_ORDER'); copyManagerReminderReport(); }
-    }
-
-    function executeCopyTeamReport() {
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", ut = localStorage.getItem('UPDATE_TIME') || "";
-      let tM = 0, tD = 0, sMap = {};
-      SEC_ORDERS.filter(o => TEAM_SRS.includes(o.sr)).forEach(o => {
-        tM += o.vol; if (o.date === dt) { tD += o.vol; sMap[o.sr] = (sMap[o.sr] || 0) + o.vol; }
-      });
-      const top = Object.entries(sMap).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([k, v], i) => `\n  ${i + 1}. ${TEAM_SR_MAP[k] || k}: ${v.toFixed(2)} HL (${Math.round(v / CASE_VOLUME)} th)`).join('');
-      const msg = `🏆 BÁO CÁO TỔNG TIẾN ĐỘ TOÀN TEAM\n📅 Đơn duyệt ngày: ${dt} (${ut ? 'Cập nhật ' + ut : ''})\n\n1️⃣ SỐ DUYỆT TRONG NGÀY (${dt}):\n• Sản lượng: ${tD.toFixed(2)} HL (${Math.round(tD / CASE_VOLUME)} thùng)\n${top ? '• Top bán trong ngày:' + top : '• Chưa ghi nhận đơn phát sinh trong ngày.'}\n\n2️⃣ LŨY KẾ THÁNG (MTD):\n• Tổng bán: ${tM.toFixed(2)} HL (${Math.round(tM / CASE_VOLUME)} thùng)\n\n👉 Anh em bám sát web để về số đúng tiến độ!`;
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Báo cáo Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyIndividualReport() {
-      const sf = document.getElementById('srFilter');
-      if (!sf) return;
-      const sr = sf.value, name = sf.options[sf.selectedIndex].text;
-      const dt = updateLatestOrderDateBanner() || "Gần nhất", d = SALES_TARGETS[sr] || {};
-      let dHL = 0, mHL = 0; SEC_ORDERS.filter(o => o.sr === sr).forEach(o => { mHL += o.vol; if (o.date === dt) dHL += o.vol; });
-      const msg = `🎯 BÁO CÁO TIẾN ĐỘ - ${name.toUpperCase()}\n📅 Đơn duyệt: ${dt}\n• Sản lượng ngày: ${dHL.toFixed(2)} HL (${Math.round(dHL / CASE_VOLUME)} thùng)\n• Lũy kế tháng: ${mHL.toFixed(2)} / ${(d.volume_target || 0).toFixed(2)} HL (${d.volume_target > 0 ? Math.round(mHL / d.volume_target * 100) : 0}%)\n💵 Thưởng Incentive MTD: ${(d.total_inc || 0).toLocaleString('vi-VN')} đ`;
-      navigator.clipboard.writeText(msg).then(() => showToast(`Đã sao chép báo cáo ${name}!`, "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyIncentiveTeamReport() {
-      const list = TEAM_SRS.map(k => ({ name: TEAM_SR_MAP[k] || k, tot: SALES_TARGETS[k]?.total_inc || 0 })).sort((a,b) => b.tot - a.tot);
-      let msg = `💵 BẢNG XẾP HẠNG THƯỞNG INCENTIVE (FIT-10)\n\n` + list.map((item, i) => `${i + 1}. ${item.name}: ${item.tot.toLocaleString('vi-VN')} đ`).join('\n');
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép Bảng thưởng Team!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
-    function executeCopyAuditReport() {
-      const sr = document.getElementById('srFilter')?.value || "ALL";
-      const list = (sr === "ALL") ? AUDIT_DATA.filter(a => TEAM_SRS.includes(a.sr)) : AUDIT_DATA.filter(a => a.sr === sr);
-      const done = list.filter(a => a.count >= 2).length, n2 = list.filter(a => a.count === 1).length, none = list.filter(a => a.count === 0).length;
-      const msg = `📸 TIẾN ĐỘ CHỤP ẢNH TRƯNG BÀY (DIP-01)\n• Hoàn thành (2/2 lần): ${done}/${list.length}\n• Thiếu lần 2: ${n2} điểm\n• Chưa chụp: ${none} điểm`;
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép báo cáo Chụp TB!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
     function promptDailyOrdersModal() {
       if (!isManagerVerified) {
         const pin = prompt("Nhập mật khẩu Quản lý để mở xem đơn ngày:");
@@ -3069,15 +3078,6 @@
       setText('modalSummaryHasOrder', `${hCount}/9 SR`); setText('modalSummaryNoOrder', `${nCount}/9 SR`);
     }
 
-    function copyManagerReminderReport() {
-      const dt = document.getElementById('modalOrderDateSelect')?.value; if (!dt) return;
-      const sMap = {}; TEAM_SRS.forEach(k => sMap[k] = 0);
-      SEC_ORDERS.filter(o => o.date === dt).forEach(o => { if (sMap[o.sr] !== undefined) sMap[o.sr] += o.vol; });
-      const noList = TEAM_SRS.filter(k => sMap[k] <= 0.001).map((k, i) => `${i + 1}. ${TEAM_SR_MAP[k]}`);
-      const msg = `📢 NHẮC NHỞ TIẾN ĐỘ ĐƠN HÀNG - ${dt}\n⚠️ Các bạn chưa có đơn duyệt:\n` + noList.join('\n');
-      navigator.clipboard.writeText(msg).then(() => showToast("Đã sao chép nhắc nhở!", "success")).catch(e => showToast("Lỗi: " + e, "error"));
-    }
-
     function promptExportFiles() {
       if (prompt("Nhập mật khẩu mở khóa tải file:") === EXPORT_PIN) {
         document.getElementById('exportActionBox')?.classList.remove('hidden'); showToast("Mở khóa thành công!", "success");
@@ -3114,7 +3114,7 @@
       return s;
     }
 
-            async function processAndSave() {
+    async function processAndSave() {
       const fTrack = document.getElementById('fileTrack')?.files[0];
       const fSec = document.getElementById('fileSec')?.files[0];
       const fAudit = document.getElementById('fileAudit')?.files[0];
@@ -3342,7 +3342,6 @@
           }
         }
 
-        // Xử lý File FIT-08 Visit Performance (Lưu vào localStorage trình duyệt)
         if (fVisit) {
           const wb = XLSX.read(await fVisit.arrayBuffer(), { dense: false });
           const sName = wb.SheetNames[0];
@@ -3391,7 +3390,11 @@
 
         const payload = {
           id: 'CURRENT_DATA',
-          master: { toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA, targets: SALES_TARGETS, coverage: COVERAGE_DATA },
+          master: {
+            toft: MASTER, listing: LISTING_FEE, audit: AUDIT_DATA,
+            targets: SALES_TARGETS, coverage: COVERAGE_DATA,
+            visit_perf: VISIT_PERFORMANCE, night_schedules: NIGHT_SCHEDULES
+          },
           sec: SEC_ORDERS, promo: PROMOTIONS, updated_at: nowStr
         };
 
@@ -3406,7 +3409,8 @@
           localStorage.setItem('MASTER_DATA', JSON.stringify(MASTER)); localStorage.setItem('LISTING_DATA', JSON.stringify(LISTING_FEE));
           localStorage.setItem('SEC_DATA', JSON.stringify(SEC_ORDERS)); localStorage.setItem('PROMO_DATA', JSON.stringify(PROMOTIONS));
           localStorage.setItem('AUDIT_DATA', JSON.stringify(AUDIT_DATA)); localStorage.setItem('SALES_TARGETS', JSON.stringify(SALES_TARGETS));
-          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('UPDATE_TIME', nowStr);
+          localStorage.setItem('COVERAGE_DATA', JSON.stringify(COVERAGE_DATA)); localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
+          localStorage.setItem('UPDATE_TIME', nowStr);
         } catch (e) {}
 
         setText('lblLastUpdate', `Cập nhật: ${nowStr}`);
