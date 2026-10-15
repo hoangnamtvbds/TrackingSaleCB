@@ -201,10 +201,18 @@
               <option value="Tuan Nguyen Hoang">Nguyễn Hoàng Tuấn</option>
             </select>
           </div>
-          <div>
-            <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">📅 Ngày làm đêm:</label>
-            <input type="date" id="regNightDate" required class="w-full p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-gray-800 outline-none">
-          </div>
+          <div class="col-span-2">
+  <label class="text-[10px] font-bold text-indigo-900 block mb-1">📅 Chọn các ngày làm đêm (Chạm để chọn nhiều ngày):</label>
+  <div class="flex gap-1.5 mb-2">
+    <input type="date" id="regNightDateInput" class="flex-1 p-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-gray-800 outline-none">
+    <button type="button" onclick="addNightDateToList()" class="px-3 py-2 bg-indigo-600 active:scale-95 text-white font-bold rounded-xl text-xs shadow-xs">➕ Thêm ngày</button>
+  </div>
+  <!-- Danh sách các ngày đã chọn gắn tag -->
+  <div id="selectedNightDatesBox" class="flex flex-wrap gap-1.5 min-h-[32px] p-2 bg-white rounded-xl border border-indigo-100">
+    <span class="text-[10px] text-gray-400 italic">Chưa chọn ngày nào...</span>
+  </div>
+</div>
+
         </div>
         <div>
           <label class="text-[10px] font-bold text-indigo-900 block mb-0.5">📍 Khu vực / Tuyến dự kiến (Tùy chọn):</label>
@@ -1897,25 +1905,91 @@
       e.preventDefault();
       const sr = document.getElementById('regNightSr').value;
       const date = document.getElementById('regNightDate').value;
+      const note = document.g    // ================= QUẢN LÝ LỊCH LÀM ĐÊM (CHỌN NHIỀU NGÀY + ẨN CHI TIẾT + PHÂN TRANG) =================
+    let selectedNightDatesList = [];
+    let nightPageLimit = 10; // Giới hạn số buổi hiển thị ban đầu
+
+    function openNightScheduleModal() {
+      selectedNightDatesList = [];
+      const dateInp = document.getElementById('regNightDateInput');
+      if (dateInp) dateInp.value = new Date().toISOString().slice(0, 10);
+      renderSelectedNightDatesTags();
+      renderNightScheduleModalList();
+      document.getElementById('nightScheduleModal')?.classList.remove('hidden');
+    }
+    function closeNightScheduleModal() { document.getElementById('nightScheduleModal')?.classList.add('hidden'); }
+
+    function addNightDateToList() {
+      const inp = document.getElementById('regNightDateInput');
+      if (!inp || !inp.value) return;
+      const d = inp.value;
+      if (!selectedNightDatesList.includes(d)) {
+        selectedNightDatesList.push(d);
+        selectedNightDatesList.sort();
+        renderSelectedNightDatesTags();
+      } else {
+        showToast("Ngày này đã được chọn rồi!", "info");
+      }
+    }
+
+    function removeNightDateFromList(dateStr) {
+      selectedNightDatesList = selectedNightDatesList.filter(d => d !== dateStr);
+      renderSelectedNightDatesTags();
+    }
+
+    function renderSelectedNightDatesTags() {
+      const box = document.getElementById('selectedNightDatesBox');
+      if (!box) return;
+      if (selectedNightDatesList.length === 0) {
+        box.innerHTML = `<span class="text-[10px] text-gray-400 italic self-center">Chưa chọn ngày nào (chọn ngày rồi bấm ➕ Thêm ngày)...</span>`;
+        return;
+      }
+      box.innerHTML = selectedNightDatesList.map(d => `
+        <span class="inline-flex items-center gap-1 bg-indigo-50 border border-indigo-200 text-indigo-900 px-2 py-0.5 rounded-lg text-xs font-bold shadow-xs">
+          📅 ${d}
+          <button type="button" onclick="removeNightDateFromList('${d}')" class="text-rose-500 hover:text-rose-700 font-black ml-0.5 text-xs">✕</button>
+        </span>
+      `).join('');
+    }
+
+    async function handleRegisterNightShift(e) {
+      e.preventDefault();
+      const sr = document.getElementById('regNightSr').value;
       const note = document.getElementById('regNightNote').value.trim();
 
-      if (!sr || !date) { showToast("Vui lòng chọn SR và ngày làm đêm!", "error"); return; }
+      // Nếu chưa bấm nút Thêm ngày mà ô input ngày đang có giá trị thì tự lấy luôn
+      const inpVal = document.getElementById('regNightDateInput')?.value;
+      if (selectedNightDatesList.length === 0 && inpVal) {
+        selectedNightDatesList.push(inpVal);
+      }
 
-      const newId = 'NS_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+      if (!sr || selectedNightDatesList.length === 0) {
+        showToast("Vui lòng chọn ít nhất 1 ngày làm đêm!", "error");
+        return;
+      }
+
       const isAutoApprove = (currentUser?.role === 'ADMIN' || currentUser?.role === 'SS' || currentUser?.role === 'ASM');
 
-      const newItem = {
-        id: newId,
-        sr,
-        date,
-        note: note || 'Đăng ký làm đêm tuyến cơ sở',
-        status: isAutoApprove ? 'Approved' : 'Pending',
-        created_at: new Date().toISOString().slice(0, 10)
-      };
+      selectedNightDatesList.forEach(d => {
+        // Kiểm tra xem đã có lịch ngày đó chưa, tránh trùng lặp
+        const existed = NIGHT_SCHEDULES.find(n => n.sr === sr && n.date === d);
+        if (!existed) {
+          NIGHT_SCHEDULES.push({
+            id: 'NS_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            sr,
+            date: d,
+            note: note || 'Đăng ký làm đêm tuyến cơ sở',
+            status: isAutoApprove ? 'Approved' : 'Pending',
+            created_at: new Date().toISOString().slice(0, 10)
+          });
+        }
+      });
 
-      NIGHT_SCHEDULES.push(newItem);
       await saveNightSchedulesToCloud();
-      showToast(isAutoApprove ? "Đã đăng ký & tự động duyệt lịch!" : "Đã gửi đăng ký, chờ SS phê duyệt!", "success");
+      showToast(isAutoApprove ? `Đã đăng ký & duyệt ${selectedNightDatesList.length} ngày!` : `Đã gửi đăng ký ${selectedNightDatesList.length} ngày!`, "success");
+      
+      selectedNightDatesList = [];
+      renderSelectedNightDatesTags();
       document.getElementById('regNightNote').value = '';
       renderNightScheduleModalList();
       renderAll();
@@ -1926,14 +2000,14 @@
       if (item) {
         item.status = newStatus;
         await saveNightSchedulesToCloud();
-        showToast(`Đã cập nhật trạng thái: ${newStatus}`, "success");
+        showToast(`Đã đổi trạng thái: ${newStatus}`, "success");
         renderNightScheduleModalList();
         renderAll();
       }
     }
 
     async function deleteNightSchedule(id) {
-      if (!confirm("Bạn có chắc chắn muốn xóa lịch đăng ký này không?")) return;
+      if (!confirm("Bạn có chắc muốn xóa lịch ngày này?")) return;
       NIGHT_SCHEDULES = NIGHT_SCHEDULES.filter(n => n.id !== id);
       await saveNightSchedulesToCloud();
       showToast("Đã xóa lịch!", "success");
@@ -1959,9 +2033,7 @@
     async function saveNightSchedulesToCloud() {
       try {
         localStorage.setItem('NIGHT_SCHEDULES', JSON.stringify(NIGHT_SCHEDULES));
-      } catch (err) {
-        console.warn("Lỗi lưu lịch làm đêm:", err);
-      }
+      } catch (err) {}
     }
 
     function renderNightScheduleModalList() {
@@ -2001,33 +2073,15 @@
         container.innerHTML += `
           <div class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/70 flex justify-between items-center text-xs">
             <div>
-              <div class="font-extrabold text-gray-900">${srName} • <span class="text-indigo-700">${n.date}</span></div>
-              <div class="text-[10px] text-gray-400 mt-0.5">${n.note}</div>
+              <div class="font-bold text-gray-900">${srName} • <span class="text-indigo-700">${n.date}</span></div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${n.note || 'Làm đêm'}</div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
               ${badge}
               ${actionBtns}
             </div>
           </div>`;
       });
-    }
-
-    function copyNightReportZalo() {
-      const sr = document.getElementById('srFilter')?.value || "ALL";
-      const list = parseNightPerformanceData(sr);
-      let lines = [`🌙 BÁO CÁO TRACKING LÀM ĐÊM (18H - 21H)`, `--------------------------------`];
-      
-      let passCount = 0, totalCount = list.length;
-      list.forEach(item => {
-        if (item.isPass) passCount++;
-        lines.push(`• ${item.srName} (${item.date}): ${item.tontCount} điểm TONT (18h-21h) -> ${item.isPass ? 'ĐẠT CHUẨN ✓' : 'CHƯA ĐẠT ⚠️'}`);
-      });
-      lines.push(`\nTổng hợp: Hoàn thành ${passCount}/${totalCount} buổi đạt chuẩn.`);
-
-      const text = lines.join('\n');
-      navigator.clipboard.writeText(text)
-        .then(() => showToast("Đã copy báo cáo Làm đêm!", "success"))
-        .catch(() => showToast("Lỗi sao chép!", "error"));
     }
 
     function parseNightPerformanceData(selectedSR) {
@@ -2036,7 +2090,6 @@
       VISIT_PERFORMANCE.forEach(v => {
         if (!v.start_time) return;
         let timeStr = String(v.start_time).trim();
-        // Chuẩn hóa định dạng ngày từ excel (VD: 2026-10-07 hoặc dạng khác)
         let dateStr = timeStr.slice(0, 10);
         let hour = 0;
         
@@ -2049,7 +2102,7 @@
           }
         }
 
-        // Lọc khung giờ 18h đến dưới 21h (18:00 - 20:59)
+        // Khung giờ 18h đến 21h
         if (hour >= 18 && hour < 21) {
           const srKey = v.sr;
           const key = `${srKey}_${dateStr}`;
@@ -2073,6 +2126,7 @@
         }
       });
 
+      // Bổ sung lịch đăng ký
       NIGHT_SCHEDULES.forEach(n => {
         const key = `${n.sr}_${n.date}`;
         if (!sessionMap[key]) {
@@ -2098,10 +2152,8 @@
         const hasApprovedSched = (matchedSched && matchedSched.status === 'Approved');
         const hasPendingSched = (matchedSched && matchedSched.status === 'Pending');
 
-        const isPass = (tontCount >= 2);
-
         ses.tontCount = tontCount;
-        ses.isPass = isPass;
+        ses.isPass = (tontCount >= 2);
         ses.hasApprovedSched = hasApprovedSched;
         ses.hasPendingSched = hasPendingSched;
 
@@ -2110,6 +2162,11 @@
 
       results.sort((a, b) => new Date(b.date) - new Date(a.date));
       return results;
+    }
+
+    function increaseNightLimit() {
+      nightPageLimit += 15;
+      renderAll();
     }
 
     // ================= 5 BẢNG MA TRẬN FIT-10 =================
@@ -2800,13 +2857,16 @@
           }
         }
 
-        const sessionBox = document.getElementById('nightSessionList');
+                const sessionBox = document.getElementById('nightSessionList');
         if (sessionBox) {
           sessionBox.innerHTML = '';
           if (filteredNight.length === 0) {
-            sessionBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Không có dữ liệu làm đêm phù hợp. Hãy nạp file FIT-08.</div>`;
+            sessionBox.innerHTML = `<div class="p-4 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 text-xs">Không có dữ liệu làm đêm phù hợp.</div>`;
           } else {
-            filteredNight.forEach(ses => {
+            // Giới hạn số lượng hiển thị (phân trang gọn gàng)
+            const visibleList = filteredNight.slice(0, nightPageLimit);
+
+            visibleList.forEach(ses => {
               let visitRows = '';
               if (ses.visits && ses.visits.length > 0) {
                 ses.visits.forEach(v => {
@@ -2814,37 +2874,56 @@
                   visitRows += `
                     <div class="flex justify-between items-center text-[10px] py-1 border-b border-gray-100 last:border-0">
                       <div class="truncate pr-2">
-                        <span class="font-bold text-gray-800">${v.name}</span> 
-                        <span class="text-gray-400">(${v.code})</span>
-                        <div class="text-[9px] text-gray-500">${v.startTime} - ${v.endTime} • GPS: ${v.gps}m</div>
+                        <span class="font-bold text-gray-800">${v.name}</span> <span class="text-gray-400">(${v.code})</span>
+                        <div class="text-[9px] text-gray-400">${v.startTime} - ${v.endTime} • GPS: ${v.gps}m</div>
                       </div>
-                      <span class="px-2 py-0.5 rounded font-bold whitespace-nowrap ${isTont ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}">${isTont ? 'TONT (Quán nhậu)' : 'TOFT (Tạp hóa)'}</span>
+                      <span class="px-2 py-0.5 rounded font-extrabold whitespace-nowrap ${isTont ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}">${isTont ? 'TONT' : 'TOFT'}</span>
                     </div>`;
                 });
               } else {
-                visitRows = `<div class="text-[10px] text-gray-400 italic py-1">Chưa có cuốc ghé thăm thực tế trong khung 18h-21h ngày này.</div>`;
+                visitRows = `<div class="text-[10px] text-gray-400 italic py-1">Chưa có cuốc ghé thăm nào từ 18h-21h ngày này.</div>`;
               }
 
-              const schedBadge = ses.hasApprovedSched ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 font-extrabold rounded text-[9px]">Lịch ĐK: ĐÃ DUYỆT ✓</span>` : (ses.hasPendingSched ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-extrabold rounded text-[9px]">Lịch ĐK: CHỜ DUYỆT ⏳</span>` : `<span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded text-[9px]">Chưa đăng ký lịch</span>`);
+              const schedBadge = ses.hasApprovedSched 
+                ? `<span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 font-extrabold rounded text-[9px] border border-indigo-200">Lịch: Đã duyệt ✓</span>` 
+                : (ses.hasPendingSched ? `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 font-extrabold rounded text-[9px] border border-amber-200">Lịch: Chờ duyệt ⏳</span>` 
+                                       : `<span class="px-2 py-0.5 bg-rose-50 text-rose-600 font-extrabold rounded text-[9px] border border-rose-200">Chưa ĐK lịch</span>`);
 
               sessionBox.innerHTML += `
-                <div class="bg-white rounded-2xl p-3.5 card-shadow border ${ses.isPass ? 'border-emerald-200/80' : 'border-amber-200/80'} space-y-2">
-                  <div class="flex justify-between items-start">
+                <div class="bg-white rounded-2xl p-3 card-shadow border ${ses.isPass ? 'border-emerald-200' : 'border-gray-200'} space-y-2">
+                  <div class="flex justify-between items-center">
                     <div>
-                      <div class="text-[10px] font-bold text-gray-400 tracking-wide">${ses.srName} • <b class="text-indigo-700">Ngày ${ses.date}</b></div>
-                      <div class="text-xs font-black text-[#1F4E79] mt-0.5">🌙 Khung 18h-21h: <b class="${ses.tontCount >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${ses.tontCount} điểm TONT</b></div>
+                      <div class="text-[10px] font-bold text-gray-400">${ses.srName} • <b class="text-indigo-900">${ses.date}</b></div>
+                      <div class="text-xs font-black text-[#1F4E79] mt-0.5">🌙 18h-21h: <b class="${ses.tontCount >= 2 ? 'text-emerald-700' : 'text-rose-600'}">${ses.tontCount} điểm TONT</b></div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
-                      <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold ${ses.isPass ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${ses.isPass ? 'ĐẠT CHUẨN' : 'CHƯA ĐẠT'}</span>
+                      <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black ${ses.isPass ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-900'}">${ses.isPass ? 'ĐẠT CHUẨN' : 'CHƯA ĐẠT'}</span>
                       ${schedBadge}
                     </div>
                   </div>
-                  <div class="pt-1.5 border-t border-gray-100 space-y-0.5">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase block">Chi tiết các quán ghé thăm:</span>
-                    <div class="bg-gray-50/80 p-2 rounded-xl border border-gray-100 space-y-0.5">${visitRows}</div>
-                  </div>
+
+                  <!-- Chạm vào đây mới mở chi tiết quán -->
+                  <details class="bg-gray-50 rounded-xl p-2 border border-gray-100 text-xs">
+                    <summary class="cursor-pointer font-bold text-gray-600 flex justify-between items-center select-none text-[10px]">
+                      <span>📍 Xem chi tiết ${ses.visits.length} điểm ghé thăm</span>
+                      <span class="text-gray-400">Chạm để mở ▼</span>
+                    </summary>
+                    <div class="mt-2 pt-1.5 border-t border-gray-200 space-y-0.5">
+                      ${visitRows}
+                    </div>
+                  </details>
                 </div>`;
             });
+
+            // Nút Xem Thêm nếu danh sách dài
+            if (filteredNight.length > nightPageLimit) {
+              sessionBox.innerHTML += `
+                <div class="text-center pt-1">
+                  <button onclick="increaseNightLimit()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-all cursor-pointer">
+                    Xem thêm các buổi trước (${filteredNight.length - nightPageLimit} buổi nữa)...
+                  </button>
+                </div>`;
+            }
           }
         }
         setText('txtNightListCount', `${filteredNight.length} buổi`);
