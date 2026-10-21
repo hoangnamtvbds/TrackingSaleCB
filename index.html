@@ -851,6 +851,7 @@
      </button>
     </div>
   </div>
+ </div>
 
   <!-- ================= MODAL BẢNG MA TRẬN FIT-10 ================= -->
   <div id="fit10Modal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
@@ -1004,11 +1005,32 @@
 
   <!-- ================= MODAL SOI ĐƠN HÀNG NGÀY ================= -->
   <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-2.5 max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
         <div>
           <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📦 ĐƠN DUYỆT THEO NGÀY
+            <span>📦</span><span id="lblDailyModalTitle">ĐƠN ADMIN DUYỆT THEO NGÀY</span>
+          </h3>
+          <p class="text-[10px] text-gray-400 font-medium">Mặc định hiển thị theo ngày Admin duyệt (DeliveriedDate)</p>
+        </div>
+        <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
+      </div>
+
+      <!-- NÚT GẠT CHUYỂN ĐỔI: ADMIN DUYỆT vs SR KEY ĐƠN -->
+      <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl text-[11px] font-extrabold gap-1">
+        <button id="btnModeDelivDate" onclick="setDailyDateMode('DELIV')" class="py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer">
+          ✅ Admin duyệt
+        </button>
+        <button id="btnModeOrderDate" onclick="setDailyDateMode('ORDER')" class="py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer">
+          📱 SR Key đơn
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
+        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5" id="lblModalDateSelect">📅 Ngày duyệt:</label>
+        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm"></select>
+      </div>
+📦 ĐƠN DUYỆT THEO NGÀY
           </h3>
           <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
         </div>
@@ -2233,9 +2255,9 @@
       const titles = [
         "", "Bảng 1: MCP Đi Tuyến (Call Per Day & Visit On Route)",
         "Bảng 2: Sản Lượng Toàn Đội & Focused SKUs (Premium)",
-        "Bảng 3: Monthly Execution Priority (MEP 12 Cột Thực Thi)",
+        "Bảng 3: Monthly Execution Priority (MEP Thực Thi)",
         "Bảng 4: Chất Lượng Chụp Ảnh & Tủ Lạnh (IR Visit & SAT Scanned)",
-        "Bảng 5: Tổng Kết Điểm Thi Đua (FIT Score)"
+        "Bảng 5: Tổng Kết Điểm Thi Đua & Thưởng (FIT Score & Incentive)"
       ];
       if (titleEl) titleEl.textContent = titles[tab];
 
@@ -2244,82 +2266,112 @@
         html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th rowspan="2" class="text-gray-700">% Working</th><th colspan="3" class="bg-blue-100 text-blue-900">Call Per Day</th><th colspan="3" class="bg-indigo-100 text-indigo-900">Visit On Route</th></tr><tr class="bg-blue-50/70 text-gray-700"><th>Target</th><th>Actual</th><th>Achieved</th><th>Target</th><th>Actual</th><th>Achieved</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
-          const cpdT = Math.round(d.cpd_tar || 16), cpdA = Math.round(d.cpd_act || 0), isCpdPass = (cpdA >= cpdT && cpdT > 0);
-          const vorT = Math.round(d.vor_tar || 0), vorA = Math.round(d.vor_act || 0), vorPct = vorT > 0 ? Math.round((vorA / vorT) * 100) : 0;
-          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>100 %</td><td>${cpdT}</td><td>${cpdA}</td><td class="font-black ${isCpdPass ? 'text-emerald-700' : 'text-rose-600'}">${isCpdPass ? 'TRUE' : 'FALSE'}</td><td>${vorT}</td><td>${vorA}</td><td class="font-black">${vorPct}%</td></tr>`;
+          const wPct = Math.round((d.working_pct !== undefined ? d.working_pct : 1) * 100);
+          const cpdT = d.cpd_tar || 16;
+          const cpdA = d.cpd_act || 0;
+          const isCpdPass = (d.cpd_ach === true || String(d.cpd_ach).toLowerCase() === 'true' || (cpdA >= cpdT && cpdT > 0));
+          const vorT = Math.round(d.vor_tar || 0), vorA = Math.round(d.vor_act || 0);
+          const vorPct = d.vor_ach ? Math.round(d.vor_ach * 100) : (vorT > 0 ? Math.round((vorA / vorT) * 100) : 0);
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${wPct}%</td><td>${cpdT}</td><td>${cpdA.toFixed(1)}</td><td class="font-black ${isCpdPass ? 'text-emerald-700' : 'text-rose-600'}">${isCpdPass ? 'TRUE' : 'FALSE'}</td><td>${vorT}</td><td>${vorA}</td><td class="font-black ${vorPct >= 100 ? 'text-emerald-700' : ''}">${vorPct}%</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tab === 2) {
-        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th colspan="3" class="bg-amber-100 text-amber-950">Sales Volume</th><th colspan="4" class="bg-emerald-100 text-emerald-950">Focused SKUs</th></tr><tr class="bg-gray-50 text-gray-700"><th>Target</th><th>Actual</th><th>Achieved</th><th>Type</th><th>Target</th><th>Actual</th><th>Achieved</th></tr></thead><tbody>`;
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th colspan="4" class="bg-amber-100 text-amber-950">Sales Volume</th><th colspan="5" class="bg-emerald-100 text-emerald-950">Focused SKUs</th></tr><tr class="bg-gray-50 text-gray-700"><th>Target</th><th>Actual</th><th>Achieved</th><th>Incentive</th><th>Type</th><th>Target</th><th>Actual</th><th>Achieved</th><th>Incentive</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
-          const vT = Math.round(d.volume_target || 0), vA = Math.round(d.volume_actual || 0), vAch = Math.round((d.vol_ach || 0) * 100);
-          const pT = (d.premium_target || 0).toFixed(2), pA = (d.premium_actual || 0).toFixed(2), pAch = Math.round((d.sku_ach || 0) * 100);
-          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${vT}</td><td>${vA}</td><td class="font-black">${vAch}%</td><td>Premium</td><td>${pT}</td><td>${pA}</td><td class="font-black">${pAch}%</td></tr>`;
+          const vT = Math.round(d.volume_target || 0), vA = (d.volume_actual || 0).toFixed(2), vAch = Math.round((d.vol_ach || 0) * 100), vInc = (d.vol_inc || 0).toLocaleString('vi-VN');
+          const pT = Math.round(d.premium_target || 0), pA = (d.premium_actual || 0).toFixed(2), pAch = Math.round((d.sku_ach || 0) * 100), pInc = (d.sku_inc || 0).toLocaleString('vi-VN');
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${vT}</td><td>${vA}</td><td class="font-black">${vAch}%</td><td class="font-bold text-blue-900">${vInc}</td><td>${d.sku_type || 'Premium'}</td><td>${pT}</td><td>${pA}</td><td class="font-black">${pAch}%</td><td class="font-bold text-emerald-900">${pInc}</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tab === 3) {
-        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th rowspan="2" class="text-gray-700">Type</th><th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th><th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th><th rowspan="2" class="bg-cyan-100 text-blue-950 font-black">Achieved</th></tr><tr class="bg-gray-50 text-gray-700"><th class="bg-cyan-50">MPTar</th><th class="bg-cyan-50">CovTar</th><th class="bg-cyan-50">TBTar</th><th class="bg-cyan-50">HUDTar</th><th class="bg-amber-100">MPAct</th><th class="bg-amber-100">CovAct</th><th class="bg-amber-100">TBAct</th><th class="bg-amber-100">HUDAct</th></tr></thead><tbody>`;
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th rowspan="2" class="text-gray-700">Type</th><th colspan="4" class="bg-cyan-100 text-cyan-950">Chỉ Tiêu (Target)</th><th colspan="4" class="bg-amber-200 text-amber-950">Thực Đạt (Actual)</th><th rowspan="2" class="bg-cyan-100 text-blue-950 font-black">Achieved</th><th rowspan="2" class="bg-emerald-100 text-emerald-950 font-black">Incentive</th></tr><tr class="bg-gray-50 text-gray-700"><th class="bg-cyan-50">MPTar</th><th class="bg-cyan-50">CovTar</th><th class="bg-cyan-50">TBTar</th><th class="bg-cyan-50">HUDTar</th><th class="bg-amber-100">MPAct</th><th class="bg-amber-100">CovAct</th><th class="bg-amber-100">TBAct</th><th class="bg-amber-100">HUDAct</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
-          const mpT = Math.round(d.mep_tar || 0), covT = Math.round(d.cov_tar || 0), tbT = Math.round(d.sku_pri_tar || 0), hudT = Math.max(0, mpT - covT - tbT);
-          const mpA = Math.round(d.mep_act || 0), covA = Math.round(d.cov_act || 0), tbA = Math.round(d.sku_pri_act || 0), hudA = Math.max(0, mpA - covA - tbA);
+          const mpT = Math.round(d.mep_tar || 0), covT = Math.round(d.cov_tar || 0);
+          const tbT = d.tb_tar !== undefined ? Math.round(d.tb_tar) : Math.round(d.sku_pri_tar || 0);
+          const hudT = d.hud_tar !== undefined ? Math.round(d.hud_tar) : Math.max(0, mpT - covT - tbT);
+          const mpA = (d.mep_act || 0).toFixed(1), covA = Math.round(d.cov_act || 0);
+          const tbA = d.tb_act !== undefined ? Math.round(d.tb_act) : Math.round(d.sku_pri_act || 0);
+          const hudA = d.hud_act !== undefined ? Math.round(d.hud_act) : Math.max(0, Math.round(d.mep_act || 0) - covA - tbA);
           const achPct = Math.round((d.mep_ach || 0) * 100);
-          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>NewCovDis</td><td>${mpT}</td><td>${covT}</td><td>${tbT}</td><td>${hudT}</td><td>${mpA}</td><td>${covA}</td><td>${tbA}</td><td>${hudA}</td><td class="font-black ${achPct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${achPct}%</td></tr>`;
+          const mepInc = (d.mep_inc || 0).toLocaleString('vi-VN');
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>NewCovDis</td><td>${mpT}</td><td>${covT}</td><td>${tbT}</td><td>${hudT}</td><td class="font-bold">${mpA}</td><td>${covA}</td><td>${tbA}</td><td>${hudA}</td><td class="font-black ${achPct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${achPct}%</td><td class="font-black text-emerald-800">${mepInc}</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tab === 4) {
         html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th rowspan="2" class="text-[#1F4E79]">HRID</th><th rowspan="2" class="text-[#1F4E79] text-left">CVTCSR</th><th colspan="7" class="bg-indigo-100 text-indigo-950">IR Visit</th><th colspan="3" class="bg-sky-100 text-sky-950">SAT Scanned</th></tr><tr class="bg-gray-50 text-gray-700"><th>Target IR</th><th>Total Visit</th><th>IR Product</th><th>Total Visibility</th><th>IR Visibility</th><th>IR Actual</th><th>Achieved</th><th>Total SAT</th><th>SAT Scanned</th><th>SAT Actual</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
+          const irTar = Math.round((d.ir_visit_tar || 0.9) * 100);
           const totVis = Math.round(d.total_visit || 0), irProd = Math.round(d.ir_product || 0), totVisib = Math.round(d.total_visibility || 0), irVisib = Math.round(d.ir_visibility || 0);
           const irAct = Math.round((d.ir_act || 0) * 100), irAch = Math.round((d.ir_ach || 0) * 100);
           const totSat = Math.round(d.total_sat || 0), satScan = Math.round(d.sat_scanned || 0), satAct = Math.round((d.sat_act || 0) * 100);
-          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>90%</td><td>${totVis}</td><td>${irProd}</td><td>${totVisib}</td><td>${irVisib}</td><td>${irAct}%</td><td class="font-black ${irAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${irAch}%</td><td>${totSat}</td><td>${satScan}</td><td class="font-black">${satAct}%</td></tr>`;
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${irTar}%</td><td>${totVis}</td><td>${irProd}</td><td>${totVisib}</td><td>${irVisib}</td><td>${irAct}%</td><td class="font-black ${irAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${irAch}%</td><td>${totSat}</td><td>${satScan}</td><td class="font-black ${satAct >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${satAct}%</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tab === 5) {
-        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th class="text-[#1F4E79]">HRID</th><th class="text-[#1F4E79] text-left">CVTCSR</th><th class="bg-cyan-100 text-cyan-950">Target</th><th class="bg-amber-100 text-amber-950">Actual</th><th class="bg-emerald-100 text-emerald-950">Achieved</th></tr></thead><tbody>`;
+        html = `<table class="table-fit-matrix"><thead><tr class="bg-gray-100 text-gray-800"><th class="text-[#1F4E79]">HRID</th><th class="text-[#1F4E79] text-left">CVTCSR</th><th class="bg-cyan-100 text-cyan-950">FIT Target</th><th class="bg-amber-100 text-amber-950">FIT Actual</th><th class="bg-emerald-100 text-emerald-950">FIT Achieved</th><th class="bg-purple-100 text-purple-950">FIT Incentive</th><th class="bg-amber-200 text-amber-950">Total Incentive</th></tr></thead><tbody>`;
         TEAM_SR_ORDER.forEach(sr => {
           const d = SALES_TARGETS[sr.key] || {};
           const fT = ((d.fit_tar || 0) * 100).toFixed(2), fA = ((d.fit_act || 0) * 100).toFixed(2), fAch = Math.round((d.fit_ach || 0) * 100);
-          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${fT}%</td><td>${fA}%</td><td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}.00%</td></tr>`;
+          const fInc = (d.fit_inc || 0).toLocaleString('vi-VN'), totInc = (d.total_inc || 0).toLocaleString('vi-VN');
+          html += `<tr><td class="font-bold">${sr.hrid}</td><td class="text-left font-bold">${sr.cvtcsr}</td><td>${fT}%</td><td>${fA}%</td><td class="font-black ${fAch >= 100 ? 'text-emerald-700' : 'text-rose-600'}">${fAch}%</td><td class="font-bold text-purple-900">${fInc} đ</td><td class="font-black text-amber-900 bg-amber-50/60">${totInc} đ</td></tr>`;
         });
         html += `</tbody></table>`;
       }
       container.innerHTML = html;
     }
 
+    async function captureFit10Canvas() {
+      const tableWrap = document.getElementById('fit10TableWrap');
+      const parentBox = document.getElementById('fit10CaptureContainer');
+      if (!tableWrap) return null;
+      const oldOverflow = parentBox ? parentBox.style.overflow : '';
+      if (parentBox) parentBox.style.overflow = 'visible';
+      try {
+        return await html2canvas(tableWrap, {
+          backgroundColor: '#FFFFFF',
+          scale: 2,
+          useCORS: true,
+          width: tableWrap.scrollWidth + 16,
+          windowWidth: tableWrap.scrollWidth + 50
+        });
+      } finally {
+        if (parentBox) parentBox.style.overflow = oldOverflow;
+      }
+    }
+
     async function shareFit10Image() {
-      const btn = document.getElementById('btnShareFit'), tableWrap = document.getElementById('fit10TableWrap');
-      if (!tableWrap) return;
+      const btn = document.getElementById('btnShareFit');
+      if (!btn) return;
       btn.innerHTML = "⏳ Đang xử lý..."; btn.disabled = true;
       try {
-        const canvas = await html2canvas(tableWrap, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, width: tableWrap.scrollWidth });
+        const canvas = await captureFit10Canvas();
+        if (!canvas) return;
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], `Bang_FIT10_${new Date().toISOString().slice(0, 10)}.png`, { type: 'image/png' });
+        const file = new File([blob], `Bang_FIT10_Tab${currentFitSubTab}_${new Date().toISOString().slice(0, 10)}.png`, { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file] });
         } else {
-          exportFit10PngImage();
+          await exportFit10PngImage();
         }
       } catch (err) {
         if (err.name !== 'AbortError') showToast("Lỗi chia sẻ: " + err.message, "error");
       } finally {
-        btn.innerHTML = "📤 Gửi Zalo / Lưu ảnh"; btn.disabled = false;
+        btn.innerHTML = "📤 Gửi Zalo"; btn.disabled = false;
       }
     }
 
     async function exportFit10PngImage() {
-      const tableWrap = document.getElementById('fit10TableWrap');
-      if (!tableWrap) return;
       try {
-        const canvas = await html2canvas(tableWrap, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, width: tableWrap.scrollWidth });
+        const canvas = await captureFit10Canvas();
+        if (!canvas) return;
         const link = document.createElement('a');
-        link.download = `Bang_FIT10_${new Date().toISOString().slice(0,10)}.png`;
+        link.download = `Bang_FIT10_Tab${currentFitSubTab}_${new Date().toISOString().slice(0,10)}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showToast("Đã tải ảnh thành công!", "success");
+        showToast("Đã tải ảnh báo cáo FIT-10!", "success");
       } catch (err) {
         showToast("Lỗi tạo ảnh: " + err.message, "error");
       }
@@ -3082,16 +3134,64 @@
       openDailyOrdersModal();
     }
 
+        let currentDailyDateMode = "DELIV"; // Mặc định luôn là 'DELIV' (Admin duyệt)
+
+    function getOrderDateByMode(orderObj, mode) {
+      if (mode === 'ORDER') return orderObj.orderDate || orderObj.date || "";
+      return orderObj.delivDate || orderObj.date || "";
+    }
+
     function openDailyOrdersModal() {
       currentModalFilter = 'ALL';
-      const sel = document.getElementById('modalOrderDateSelect');
-      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
-      if (sel) {
-        sel.innerHTML = dates.length ? dates.map(d => `<option value="${d}">Ngày ${d}</option>`).join('') : '<option value="">Chưa có đơn hàng</option>';
-      }
+      currentDailyDateMode = 'DELIV'; // Luôn reset về Admin duyệt đầu tiên khi mở card
+      updateDailyDateModeUI();
+      populateModalDateDropdown();
       renderDailyOrdersModalContent();
       document.getElementById('dailyOrdersModal')?.classList.remove('hidden');
     }
+
+    function setDailyDateMode(mode) {
+      if (currentDailyDateMode === mode) return;
+      currentDailyDateMode = mode;
+      const prevSelectedDate = document.getElementById('modalOrderDateSelect')?.value;
+      updateDailyDateModeUI();
+      populateModalDateDropdown(prevSelectedDate);
+      renderDailyOrdersModalContent();
+    }
+
+    function updateDailyDateModeUI() {
+      const isDeliv = (currentDailyDateMode === 'DELIV');
+      const btnDeliv = document.getElementById('btnModeDelivDate');
+      const btnOrder = document.getElementById('btnModeOrderDate');
+      
+      if (btnDeliv && btnOrder) {
+        btnDeliv.className = isDeliv
+          ? "py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer font-black"
+          : "py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold";
+        btnOrder.className = !isDeliv
+          ? "py-1.5 rounded-lg bg-white text-indigo-700 shadow-sm transition-all text-center cursor-pointer font-black"
+          : "py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold";
+      }
+      setText('lblDailyModalTitle', isDeliv ? 'ĐƠN ADMIN DUYỆT THEO NGÀY' : 'ĐƠN SR KEY THEO NGÀY');
+      setText('lblModalDateSelect', isDeliv ? '📅 Ngày duyệt:' : '📅 Ngày SR key:');
+    }
+
+    function populateModalDateDropdown(preferredDate = null) {
+      const sel = document.getElementById('modalOrderDateSelect');
+      if (!sel) return;
+      const dates = Array.from(new Set(
+        SEC_ORDERS.map(o => getOrderDateByMode(o, currentDailyDateMode)).filter(Boolean)
+      )).sort().reverse();
+
+      sel.innerHTML = dates.length
+        ? dates.map(d => `<option value="${d}">Ngày ${toVnDate(d)}</option>`).join('')
+        : '<option value="">Chưa có đơn hàng</option>';
+
+      if (preferredDate && dates.includes(preferredDate)) {
+        sel.value = preferredDate;
+      }
+    }
+
     function closeDailyOrdersModal() { document.getElementById('dailyOrdersModal')?.classList.add('hidden'); }
     function setModalFilter(f) { currentModalFilter = f; renderDailyOrdersModalContent(); }
 
@@ -3102,21 +3202,21 @@
       listC.innerHTML = '';
       if (!dt) { listC.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có đơn hàng.</p>'; return; }
 
-      const dOrders = SEC_ORDERS.filter(o => o.date === dt);
+      const dOrders = SEC_ORDERS.filter(o => getOrderDateByMode(o, currentDailyDateMode) === dt);
       let tHL = 0, hCount = 0, nCount = 0, sMap = {};
       TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
-         dOrders.forEach(o => {
-     if (sMap[o.sr]) {
-       sMap[o.sr].vol += o.vol; tHL += o.vol;
-       if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
-       sMap[o.sr].outlets.get(o.code).vol += o.vol;
-     }
-   });
+      dOrders.forEach(o => {
+        if (sMap[o.sr]) {
+          sMap[o.sr].vol += o.vol; tHL += o.vol;
+          if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
+          sMap[o.sr].outlets.get(o.code).vol += o.vol;
+        }
+      });
 
-   const rend = [];
-   TEAM_SRS.forEach(k => {
-     sMap[k].cases = Math.round(sMap[k].vol / CASE_VOLUME);
-     const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
+      const rend = [];
+      TEAM_SRS.forEach(k => {
+        sMap[k].cases = Math.round(sMap[k].vol / CASE_VOLUME);
+        const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
         if (currentModalFilter === 'HAS_ORDER' && !has) return;
         if (currentModalFilter === 'NO_ORDER' && has) return;
         rend.push({ key: k, name: TEAM_SR_MAP[k], data: sMap[k], has });
@@ -3246,7 +3346,7 @@
           }
         }
 
-        if (fSec) {
+         if (fSec) {
           const wb = XLSX.read(await fSec.arrayBuffer(), { dense: false });
           const raw = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames.includes("Detail") ? "Detail" : wb.SheetNames[0]], { header: 1 });
           let hIdx = 0;
@@ -3254,7 +3354,9 @@
             if ((raw[i] || []).join(' ').toLowerCase().includes('outletcode')) { hIdx = i; break; }
           }
           const h = (raw[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
-          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1, colDate = -1;
+          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1;
+          let colOrderDate = -1, colDelivDate = -1;
+
           h.forEach((hd, idx) => {
             if (hd === 'product' || hd.includes('tên sản phẩm')) colProd = idx;
             if (hd.includes('promotion') || hd.includes('khuyến mãi')) colPromo = idx;
@@ -3266,7 +3368,8 @@
             if (hd.includes('cvtcsr') || hd.includes('fullname') || hd === 'sr') colSr = idx;
             if (hd.includes('outletcode')) colOCode = idx;
             if (hd.includes('outletname')) colOName = idx;
-            if (hd.includes('ordereddate') || hd.includes('ngày')) colDate = idx;
+            if (hd.includes('ordereddate') || hd === 'orderdate') colOrderDate = idx;
+            if (hd.includes('deliverieddate') || hd.includes('deliverydate')) colDelivDate = idx;
           });
 
           SEC_ORDERS = []; PROMOTIONS = [];
@@ -3274,14 +3377,28 @@
             const row = raw[r]; if (!row || !row[colOCode]) continue;
             const prod = String(row[colProd] || '').trim(), promo = String(row[colPromo] || '').trim(), brand = String(row[colBrand] || '').trim();
             const vol = parseFloat(row[colVol]) || 0, qty = parseInt(row[colQty]) || 0, price = parseFloat(row[colPrice]) || 0, rev = parseFloat(row[colRev]) || 0;
-            const sr = normalizeSR(row[colSr]), ocode = String(row[colOCode]).trim(), oname = String(row[colOName] || '').trim(), date = parseExcelDate(row[colDate]);
+            const sr = normalizeSR(row[colSr]), ocode = String(row[colOCode]).trim(), oname = String(row[colOName] || '').trim();
+            
+            const orderDate = colOrderDate !== -1 ? parseExcelDate(row[colOrderDate]) : '';
+            const delivDate = colDelivDate !== -1 ? parseExcelDate(row[colDelivDate]) : '';
+            // Mặc định lấy ngày Admin duyệt (DeliveriedDate) làm chuẩn, nếu trống mới lấy ngày SR key
+            const primaryDate = delivDate || orderDate;
 
             if (promo && ((price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm'))) {
-              PROMOTIONS.push({ sr, date, outletCode: ocode, outletName: oname, promoName: promo, rewardItem: prod, qty });
+              PROMOTIONS.push({ sr, date: primaryDate, orderDate, delivDate, outletCode: ocode, outletName: oname, promoName: promo, rewardItem: prod, qty });
             }
             if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
 
-            SEC_ORDERS.push({ date, sr, code: ocode, name: oname, brand: detectBrand(brand, prod), product: prod, category: (prod.toLowerCase().includes("huda") || prod.toLowerCase().includes("halida")) ? "Mainstream" : "Premium", vol, qty });
+            SEC_ORDERS.push({
+              date: primaryDate,       // Mặc định cho toàn hệ thống là ngày Admin duyệt
+              delivDate: delivDate || primaryDate,
+              orderDate: orderDate || primaryDate,
+              sr, code: ocode, name: oname,
+              brand: detectBrand(brand, prod),
+              product: prod,
+              category: (prod.toLowerCase().includes("huda") || prod.toLowerCase().includes("halida")) ? "Mainstream" : "Premium",
+              vol, qty
+            });
           }
         }
 
@@ -3308,7 +3425,6 @@
           }
           AUDIT_DATA = Object.values(aMap);
         }
-
         if (fTarget) {
           const wb = XLSX.read(await fTarget.arrayBuffer(), { dense: false });
           const sTar = wb.SheetNames.find(s => s.trim().toUpperCase() === 'SR') || wb.SheetNames[0];
@@ -3316,7 +3432,14 @@
             const raw = XLSX.utils.sheet_to_json(wb.Sheets[sTar], { header: 1 });
             SALES_TARGETS = {};
             let offset = 0;
-            (raw[1] || []).forEach((v, idx) => { if (String(v || '').trim().toLowerCase() === 'cvtcsr') offset = (idx === 4) ? -1 : 0; });
+            const headerRow = (raw[1] || []).map(v => String(v || '').trim().toLowerCase());
+            headerRow.forEach((v, idx) => {
+              if (v === 'cvtcsr') offset = (idx === 4) ? -1 : 0;
+            });
+
+            // Tự động nhận diện file FIT-10 (9) mới có thêm Target2 & Actual2 (+2 cột)
+            const hasTarget2 = headerRow.some(v => v === 'target2' || v === 'actual2');
+            const s2 = hasTarget2 ? 2 : 0;
 
             raw.forEach(row => {
               if (!row || row.length < 10) return;
@@ -3324,24 +3447,57 @@
                 const norm = normalizeSR(row[c]);
                 if (TEAM_SRS.includes(norm)) {
                   let skuTarSum = 0, skuActSum = 0;
-                  for (let sc = 25; sc <= 35; sc++) skuTarSum += (parseFloat(row[sc + offset]) || 0);
-                  for (let sc = 38; sc <= 48; sc++) skuActSum += (parseFloat(row[sc + offset]) || 0);
+                  for (let sc = 25; sc <= 35; sc++) skuTarSum += (parseFloat(row[sc + offset + s2]) || 0);
+                  for (let sc = 38; sc <= 48; sc++) skuActSum += (parseFloat(row[sc + offset + s2]) || 0);
+
+                  const premTar = (parseFloat(row[18 + offset]) || 0) + (hasTarget2 ? (parseFloat(row[20 + offset]) || 0) : 0);
+                  const premAct = (parseFloat(row[19 + offset]) || 0) + (hasTarget2 ? (parseFloat(row[21 + offset]) || 0) : 0);
+                  const rawCpdAch = row[9 + offset];
 
                   SALES_TARGETS[norm] = {
-                    cpd_tar: parseFloat(row[7 + offset]) || 0, cpd_act: parseFloat(row[8 + offset]) || 0, cpd_ach: parseFloat(row[9 + offset]) || 0,
-                    vor_tar: parseFloat(row[10 + offset]) || 0, vor_act: parseFloat(row[11 + offset]) || 0, vor_ach: parseFloat(row[12 + offset]) || 0,
-                    volume_target: parseFloat(row[13 + offset]) || 0, volume_actual: parseFloat(row[14 + offset]) || 0, vol_ach: parseFloat(row[15 + offset]) || 0, vol_inc: parseFloat(row[16 + offset]) || 0,
-                    premium_target: parseFloat(row[18 + offset]) || 0, premium_actual: parseFloat(row[19 + offset]) || 0, sku_ach: parseFloat(row[20 + offset]) || 0, sku_inc: parseFloat(row[21 + offset]) || 0,
-                    mep_tar: parseFloat(row[23 + offset]) || 0, cov_tar: parseFloat(row[24 + offset]) || 0, sku_pri_tar: skuTarSum,
-                    mep_act: parseFloat(row[36 + offset]) || 0, cov_act: parseFloat(row[37 + offset]) || 0, sku_pri_act: skuActSum,
-                    mep_ach: parseFloat(row[49 + offset]) || 0, mep_inc: parseFloat(row[50 + offset]) || 0,
-                    ir_visit_tar: parseFloat(row[51 + offset]) || 0, total_visit: parseFloat(row[52 + offset]) || 0,
-                    ir_product: parseFloat(row[53 + offset]) || 0, total_visibility: parseFloat(row[54 + offset]) || 0,
-                    ir_visibility: parseFloat(row[55 + offset]) || 0, ir_act: parseFloat(row[56 + offset]) || 0,
-                    ir_ach: parseFloat(row[57 + offset]) || 0, total_sat: parseFloat(row[58 + offset]) || 0,
-                    sat_scanned: parseFloat(row[59 + offset]) || 0, sat_act: parseFloat(row[60 + offset]) || 0,
-                    fit_tar: parseFloat(row[61 + offset]) || 0, fit_act: parseFloat(row[62 + offset]) || 0, fit_ach: parseFloat(row[63 + offset]) || 0, fit_inc: parseFloat(row[64 + offset]) || 0,
-                    total_inc: parseFloat(row[67 + offset]) || 0
+                    working_pct: parseFloat(row[6 + offset]) || 1,
+                    cpd_tar: parseFloat(row[7 + offset]) || 0,
+                    cpd_act: parseFloat(row[8 + offset]) || 0,
+                    cpd_ach: (rawCpdAch === true || String(rawCpdAch).trim().toLowerCase() === 'true' || parseFloat(rawCpdAch) >= 1),
+                    vor_tar: parseFloat(row[10 + offset]) || 0,
+                    vor_act: parseFloat(row[11 + offset]) || 0,
+                    vor_ach: parseFloat(row[12 + offset]) || 0,
+                    volume_target: parseFloat(row[13 + offset]) || 0,
+                    volume_actual: parseFloat(row[14 + offset]) || 0,
+                    vol_ach: parseFloat(row[15 + offset]) || 0,
+                    vol_inc: parseFloat(row[16 + offset]) || 0,
+                    sku_type: String(row[17 + offset] || 'Premium').trim(),
+                    premium_target: premTar,
+                    premium_actual: premAct,
+                    sku_ach: parseFloat(row[20 + offset + s2]) || 0,
+                    sku_inc: parseFloat(row[21 + offset + s2]) || 0,
+                    mep_tar: parseFloat(row[23 + offset + s2]) || 0,
+                    cov_tar: parseFloat(row[24 + offset + s2]) || 0,
+                    tb_tar: parseFloat(row[27 + offset + s2]) || 0,
+                    hud_tar: parseFloat(row[29 + offset + s2]) || 0,
+                    sku_pri_tar: skuTarSum,
+                    mep_act: parseFloat(row[36 + offset + s2]) || 0,
+                    cov_act: parseFloat(row[37 + offset + s2]) || 0,
+                    tb_act: parseFloat(row[40 + offset + s2]) || 0,
+                    hud_act: parseFloat(row[42 + offset + s2]) || 0,
+                    sku_pri_act: skuActSum,
+                    mep_ach: parseFloat(row[49 + offset + s2]) || 0,
+                    mep_inc: parseFloat(row[50 + offset + s2]) || 0,
+                    ir_visit_tar: parseFloat(row[51 + offset + s2]) || 0,
+                    total_visit: parseFloat(row[52 + offset + s2]) || 0,
+                    ir_product: parseFloat(row[53 + offset + s2]) || 0,
+                    total_visibility: parseFloat(row[54 + offset + s2]) || 0,
+                    ir_visibility: parseFloat(row[55 + offset + s2]) || 0,
+                    ir_act: parseFloat(row[56 + offset + s2]) || 0,
+                    ir_ach: parseFloat(row[57 + offset + s2]) || 0,
+                    total_sat: parseFloat(row[58 + offset + s2]) || 0,
+                    sat_scanned: parseFloat(row[59 + offset + s2]) || 0,
+                    sat_act: parseFloat(row[60 + offset + s2]) || 0,
+                    fit_tar: parseFloat(row[61 + offset + s2]) || 0,
+                    fit_act: parseFloat(row[62 + offset + s2]) || 0,
+                    fit_ach: parseFloat(row[63 + offset + s2]) || 0,
+                    fit_inc: parseFloat(row[64 + offset + s2]) || 0,
+                    total_inc: parseFloat(row[67 + offset + s2]) || 0
                   };
                   break;
                 }
