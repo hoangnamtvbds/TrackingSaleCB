@@ -1005,19 +1005,29 @@
 
   <!-- ================= MODAL SOI ĐƠN HÀNG NGÀY ================= -->
   <div id="dailyOrdersModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-hidden">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-3 max-h-[82vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-4 pt-4.5 card-shadow space-y-2.5 max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 my-auto">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
         <div>
           <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
-            📦 ĐƠN DUYỆT THEO NGÀY
+            <span>📦</span><span id="lblDailyModalTitle">ĐƠN ADMIN DUYỆT THEO NGÀY</span>
           </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
+          <p class="text-[10px] text-gray-400 font-medium" id="lblDailyModalSub">Mặc định hiển thị theo ngày Admin duyệt (DeliveriedDate)</p>
         </div>
         <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
       </div>
 
+      <!-- NÚT GẠT CHUYỂN ĐỔI: ADMIN DUYỆT vs SR KEY ĐƠN -->
+      <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl text-[11px] font-extrabold gap-1">
+        <button id="btnModeDelivDate" onclick="setDailyDateMode('DELIV')" class="py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer font-black">
+          ✅ Admin duyệt
+        </button>
+        <button id="btnModeOrderDate" onclick="setDailyDateMode('ORDER')" class="py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold">
+          📱 SR Key đơn
+        </button>
+      </div>
+
       <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
-        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
+        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5" id="lblModalDateSelect">📅 Ngày duyệt:</label>
         <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm"></select>
       </div>
 
@@ -3113,16 +3123,65 @@
       openDailyOrdersModal();
     }
 
+    let currentDailyDateMode = "DELIV"; // Mặc định luôn là 'DELIV' (Admin duyệt)
+
+    function getOrderDateByMode(orderObj, mode) {
+      if (mode === 'ORDER') return orderObj.orderDate || orderObj.date || "";
+      return orderObj.delivDate || orderObj.date || "";
+    }
+
     function openDailyOrdersModal() {
       currentModalFilter = 'ALL';
-      const sel = document.getElementById('modalOrderDateSelect');
-      const dates = Array.from(new Set(SEC_ORDERS.map(o => o.date).filter(Boolean))).sort().reverse();
-      if (sel) {
-        sel.innerHTML = dates.length ? dates.map(d => `<option value="${d}">Ngày ${d}</option>`).join('') : '<option value="">Chưa có đơn hàng</option>';
-      }
+      currentDailyDateMode = 'DELIV'; // Luôn hiển thị Admin duyệt đầu tiên khi mở card
+      updateDailyDateModeUI();
+      populateModalDateDropdown();
       renderDailyOrdersModalContent();
       document.getElementById('dailyOrdersModal')?.classList.remove('hidden');
     }
+
+    function setDailyDateMode(mode) {
+      if (currentDailyDateMode === mode) return;
+      currentDailyDateMode = mode;
+      const prevSelectedDate = document.getElementById('modalOrderDateSelect')?.value;
+      updateDailyDateModeUI();
+      populateModalDateDropdown(prevSelectedDate);
+      renderDailyOrdersModalContent();
+    }
+
+    function updateDailyDateModeUI() {
+      const isDeliv = (currentDailyDateMode === 'DELIV');
+      const btnDeliv = document.getElementById('btnModeDelivDate');
+      const btnOrder = document.getElementById('btnModeOrderDate');
+      
+      if (btnDeliv && btnOrder) {
+        btnDeliv.className = isDeliv
+          ? "py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer font-black"
+          : "py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold";
+        btnOrder.className = !isDeliv
+          ? "py-1.5 rounded-lg bg-white text-indigo-700 shadow-sm transition-all text-center cursor-pointer font-black"
+          : "py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold";
+      }
+      setText('lblDailyModalTitle', isDeliv ? 'ĐƠN ADMIN DUYỆT THEO NGÀY' : 'ĐƠN SR KEY THEO NGÀY');
+      setText('lblDailyModalSub', isDeliv ? 'Đang lọc theo ngày Admin duyệt (DeliveriedDate)' : 'Đang lọc theo ngày SR bấm key đơn (OrderedDate)');
+      setText('lblModalDateSelect', isDeliv ? '📅 Ngày duyệt:' : '📅 Ngày SR key:');
+    }
+
+    function populateModalDateDropdown(preferredDate = null) {
+      const sel = document.getElementById('modalOrderDateSelect');
+      if (!sel) return;
+      const dates = Array.from(new Set(
+        SEC_ORDERS.map(o => getOrderDateByMode(o, currentDailyDateMode)).filter(Boolean)
+      )).sort().reverse();
+
+      sel.innerHTML = dates.length
+        ? dates.map(d => `<option value="${d}">Ngày ${toVnDate(d)}</option>`).join('')
+        : '<option value="">Chưa có đơn hàng</option>';
+
+      if (preferredDate && dates.includes(preferredDate)) {
+        sel.value = preferredDate;
+      }
+    }
+
     function closeDailyOrdersModal() { document.getElementById('dailyOrdersModal')?.classList.add('hidden'); }
     function setModalFilter(f) { currentModalFilter = f; renderDailyOrdersModalContent(); }
 
@@ -3133,7 +3192,7 @@
       listC.innerHTML = '';
       if (!dt) { listC.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Chưa có đơn hàng.</p>'; return; }
 
-      const dOrders = SEC_ORDERS.filter(o => o.date === dt);
+      const dOrders = SEC_ORDERS.filter(o => getOrderDateByMode(o, currentDailyDateMode) === dt);
       let tHL = 0, hCount = 0, nCount = 0, sMap = {};
       TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
          dOrders.forEach(o => {
@@ -3285,7 +3344,9 @@
             if ((raw[i] || []).join(' ').toLowerCase().includes('outletcode')) { hIdx = i; break; }
           }
           const h = (raw[hIdx] || []).map(v => String(v || '').trim().toLowerCase());
-          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1, colDate = -1;
+          let colProd = -1, colPromo = -1, colBrand = -1, colVol = -1, colQty = -1, colPrice = -1, colRev = -1, colSr = -1, colOCode = -1, colOName = -1;
+          let colOrderDate = -1, colDelivDate = -1;
+
           h.forEach((hd, idx) => {
             if (hd === 'product' || hd.includes('tên sản phẩm')) colProd = idx;
             if (hd.includes('promotion') || hd.includes('khuyến mãi')) colPromo = idx;
@@ -3297,7 +3358,8 @@
             if (hd.includes('cvtcsr') || hd.includes('fullname') || hd === 'sr') colSr = idx;
             if (hd.includes('outletcode')) colOCode = idx;
             if (hd.includes('outletname')) colOName = idx;
-            if (hd.includes('ordereddate') || hd.includes('ngày')) colDate = idx;
+            if (hd.includes('ordereddate') || hd === 'orderdate') colOrderDate = idx;
+            if (hd.includes('deliverieddate') || hd.includes('deliverydate')) colDelivDate = idx;
           });
 
           SEC_ORDERS = []; PROMOTIONS = [];
@@ -3305,14 +3367,27 @@
             const row = raw[r]; if (!row || !row[colOCode]) continue;
             const prod = String(row[colProd] || '').trim(), promo = String(row[colPromo] || '').trim(), brand = String(row[colBrand] || '').trim();
             const vol = parseFloat(row[colVol]) || 0, qty = parseInt(row[colQty]) || 0, price = parseFloat(row[colPrice]) || 0, rev = parseFloat(row[colRev]) || 0;
-            const sr = normalizeSR(row[colSr]), ocode = String(row[colOCode]).trim(), oname = String(row[colOName] || '').trim(), date = parseExcelDate(row[colDate]);
+            const sr = normalizeSR(row[colSr]), ocode = String(row[colOCode]).trim(), oname = String(row[colOName] || '').trim();
+            
+            const orderDate = colOrderDate !== -1 ? parseExcelDate(row[colOrderDate]) : '';
+            const delivDate = colDelivDate !== -1 ? parseExcelDate(row[colDelivDate]) : '';
+            const primaryDate = delivDate || orderDate;
 
             if (promo && ((price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm'))) {
-              PROMOTIONS.push({ sr, date, outletCode: ocode, outletName: oname, promoName: promo, rewardItem: prod, qty });
+              PROMOTIONS.push({ sr, date: primaryDate, orderDate, delivDate, outletCode: ocode, outletName: oname, promoName: promo, rewardItem: prod, qty });
             }
             if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
 
-            SEC_ORDERS.push({ date, sr, code: ocode, name: oname, brand: detectBrand(brand, prod), product: prod, category: (prod.toLowerCase().includes("huda") || prod.toLowerCase().includes("halida")) ? "Mainstream" : "Premium", vol, qty });
+            SEC_ORDERS.push({
+              date: primaryDate,
+              delivDate: delivDate || primaryDate,
+              orderDate: orderDate || primaryDate,
+              sr, code: ocode, name: oname,
+              brand: detectBrand(brand, prod),
+              product: prod,
+              category: (prod.toLowerCase().includes("huda") || prod.toLowerCase().includes("halida")) ? "Mainstream" : "Premium",
+              vol, qty
+            });
           }
         }
 
