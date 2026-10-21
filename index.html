@@ -1011,34 +1011,23 @@
           <h3 class="text-sm font-extrabold text-[#1F4E79] flex items-center gap-1.5 tracking-tight">
             <span>📦</span><span id="lblDailyModalTitle">ĐƠN ADMIN DUYỆT THEO NGÀY</span>
           </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Mặc định hiển thị theo ngày Admin duyệt (DeliveriedDate)</p>
+          <p class="text-[10px] text-gray-400 font-medium" id="lblDailyModalSub">Mặc định hiển thị theo ngày Admin duyệt (DeliveriedDate)</p>
         </div>
         <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
       </div>
 
       <!-- NÚT GẠT CHUYỂN ĐỔI: ADMIN DUYỆT vs SR KEY ĐƠN -->
       <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl text-[11px] font-extrabold gap-1">
-        <button id="btnModeDelivDate" onclick="setDailyDateMode('DELIV')" class="py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer">
+        <button id="btnModeDelivDate" onclick="setDailyDateMode('DELIV')" class="py-1.5 rounded-lg bg-white text-[#1F4E79] shadow-sm transition-all text-center cursor-pointer font-black">
           ✅ Admin duyệt
         </button>
-        <button id="btnModeOrderDate" onclick="setDailyDateMode('ORDER')" class="py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer">
+        <button id="btnModeOrderDate" onclick="setDailyDateMode('ORDER')" class="py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold">
           📱 SR Key đơn
         </button>
       </div>
 
       <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
         <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5" id="lblModalDateSelect">📅 Ngày duyệt:</label>
-        <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm"></select>
-      </div>
-📦 ĐƠN DUYỆT THEO NGÀY
-          </h3>
-          <p class="text-[10px] text-gray-400 font-medium">Chạm vào từng thẻ dưới để lọc nhanh SR</p>
-        </div>
-        <button onclick="closeDailyOrdersModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-500 font-bold text-base flex items-center justify-center transition-all cursor-pointer">✕</button>
-      </div>
-
-      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
-        <label class="text-[11px] font-bold text-gray-600 whitespace-nowrap pl-1.5">📅 Chọn ngày:</label>
         <select id="modalOrderDateSelect" onchange="renderDailyOrdersModalContent()" class="flex-1 p-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1F4E79] outline-none shadow-sm"></select>
       </div>
 
@@ -3134,7 +3123,7 @@
       openDailyOrdersModal();
     }
 
-        let currentDailyDateMode = "DELIV"; // Mặc định luôn là 'DELIV' (Admin duyệt)
+    let currentDailyDateMode = "DELIV"; // Mặc định luôn là 'DELIV' (Admin duyệt)
 
     function getOrderDateByMode(orderObj, mode) {
       if (mode === 'ORDER') return orderObj.orderDate || orderObj.date || "";
@@ -3143,7 +3132,7 @@
 
     function openDailyOrdersModal() {
       currentModalFilter = 'ALL';
-      currentDailyDateMode = 'DELIV'; // Luôn reset về Admin duyệt đầu tiên khi mở card
+      currentDailyDateMode = 'DELIV'; // Luôn hiển thị Admin duyệt đầu tiên khi mở card
       updateDailyDateModeUI();
       populateModalDateDropdown();
       renderDailyOrdersModalContent();
@@ -3173,6 +3162,7 @@
           : "py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition-all text-center cursor-pointer font-bold";
       }
       setText('lblDailyModalTitle', isDeliv ? 'ĐƠN ADMIN DUYỆT THEO NGÀY' : 'ĐƠN SR KEY THEO NGÀY');
+      setText('lblDailyModalSub', isDeliv ? 'Đang lọc theo ngày Admin duyệt (DeliveriedDate)' : 'Đang lọc theo ngày SR bấm key đơn (OrderedDate)');
       setText('lblModalDateSelect', isDeliv ? '📅 Ngày duyệt:' : '📅 Ngày SR key:');
     }
 
@@ -3205,18 +3195,18 @@
       const dOrders = SEC_ORDERS.filter(o => getOrderDateByMode(o, currentDailyDateMode) === dt);
       let tHL = 0, hCount = 0, nCount = 0, sMap = {};
       TEAM_SRS.forEach(k => sMap[k] = { vol: 0, cases: 0, outlets: new Map() });
-      dOrders.forEach(o => {
-        if (sMap[o.sr]) {
-          sMap[o.sr].vol += o.vol; tHL += o.vol;
-          if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
-          sMap[o.sr].outlets.get(o.code).vol += o.vol;
-        }
-      });
+         dOrders.forEach(o => {
+     if (sMap[o.sr]) {
+       sMap[o.sr].vol += o.vol; tHL += o.vol;
+       if (!sMap[o.sr].outlets.has(o.code)) sMap[o.sr].outlets.set(o.code, { name: o.name, vol: 0 });
+       sMap[o.sr].outlets.get(o.code).vol += o.vol;
+     }
+   });
 
-      const rend = [];
-      TEAM_SRS.forEach(k => {
-        sMap[k].cases = Math.round(sMap[k].vol / CASE_VOLUME);
-        const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
+   const rend = [];
+   TEAM_SRS.forEach(k => {
+     sMap[k].cases = Math.round(sMap[k].vol / CASE_VOLUME);
+     const has = sMap[k].vol > 0.001; if (has) hCount++; else nCount++;
         if (currentModalFilter === 'HAS_ORDER' && !has) return;
         if (currentModalFilter === 'NO_ORDER' && has) return;
         rend.push({ key: k, name: TEAM_SR_MAP[k], data: sMap[k], has });
@@ -3346,7 +3336,7 @@
           }
         }
 
-         if (fSec) {
+        if (fSec) {
           const wb = XLSX.read(await fSec.arrayBuffer(), { dense: false });
           const raw = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames.includes("Detail") ? "Detail" : wb.SheetNames[0]], { header: 1 });
           let hIdx = 0;
@@ -3381,7 +3371,6 @@
             
             const orderDate = colOrderDate !== -1 ? parseExcelDate(row[colOrderDate]) : '';
             const delivDate = colDelivDate !== -1 ? parseExcelDate(row[colDelivDate]) : '';
-            // Mặc định lấy ngày Admin duyệt (DeliveriedDate) làm chuẩn, nếu trống mới lấy ngày SR key
             const primaryDate = delivDate || orderDate;
 
             if (promo && ((price === 0) || (rev === 0) || prod.toLowerCase().includes('phiếu') || prod.toLowerCase().includes('dù') || brand.toLowerCase().includes('posm'))) {
@@ -3390,7 +3379,7 @@
             if (!prod || brand.toLowerCase().includes('posm') || prod.toLowerCase().includes('phiếu')) continue;
 
             SEC_ORDERS.push({
-              date: primaryDate,       // Mặc định cho toàn hệ thống là ngày Admin duyệt
+              date: primaryDate,
               delivDate: delivDate || primaryDate,
               orderDate: orderDate || primaryDate,
               sr, code: ocode, name: oname,
